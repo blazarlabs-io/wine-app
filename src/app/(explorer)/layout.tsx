@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Khula } from "next/font/google";
-import { BaseLayout } from "@/components";
-import { AuthProvider } from "@/context/authContext";
-import "./globals.css";
+import { BaseLayout, ProtectedPage } from "@/components";
+import "../globals.css";
 
 const inter = Khula({
   weight: "400",
@@ -21,13 +20,5 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body className={inter.className}>
-        <AuthProvider>
-          <BaseLayout>{children}</BaseLayout>
-        </AuthProvider>
-      </body>
-    </html>
-  );
+  return <BaseLayout>{children}</BaseLayout>;
 }

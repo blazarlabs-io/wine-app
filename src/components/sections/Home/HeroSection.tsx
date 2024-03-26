@@ -1,11 +1,16 @@
+"use client";
+
 import { Container, Text, Button } from "@/components";
 import { classNames } from "@/utils/classNames";
+import { useRouter } from "next/navigation";
 
 export interface HeroSectionProps {
   className?: string;
 }
 
 export const HeroSection = ({ className }: HeroSectionProps) => {
+  const router = useRouter();
+
   return (
     <Container
       px="3xlarge"
@@ -28,7 +33,7 @@ export const HeroSection = ({ className }: HeroSectionProps) => {
         <Button intent="primary" size="large">
           Explore
         </Button>
-        <Button intent="text" size="large">
+        <Button intent="text" size="large" onClick={() => router.push("/home")}>
           Are you a winery owner?
         </Button>
       </Container>

@@ -1,7 +1,11 @@
+"use client";
+
 import { Container, Text, Button } from "@/components";
-import { useLogin } from "@/context/loginContext";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
+import { auth } from "@/lib/firebase/client";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { useRouter } from "next/navigation";
 
 export interface LoginProps {
   title: string;
@@ -9,10 +13,30 @@ export interface LoginProps {
 }
 
 export const Login = ({ title, description }: LoginProps) => {
-  const { updateShowLogin } = useLogin();
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+
+  const handleSignIn = async () => {
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        console.log("signed in", user);
+
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.error(errorMessage);
+      });
+  };
+
+  const handleCancel = async () => {
+    router.replace("/");
+  };
 
   return (
     <Container
@@ -45,6 +69,9 @@ export const Login = ({ title, description }: LoginProps) => {
           <input
             type="email"
             placeholder="Enter your email"
+            onChange={(event: any) => {
+              setEmail(event.target.value as string);
+            }}
             className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
           />
         </Container>
@@ -56,6 +83,9 @@ export const Login = ({ title, description }: LoginProps) => {
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
+              onChange={(event: any) => {
+                setPassword(event.target.value as string);
+              }}
               className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
             />
             <button
@@ -79,11 +109,11 @@ export const Login = ({ title, description }: LoginProps) => {
           intent="secondary"
           size="medium"
           fullWidth
-          onClick={() => updateShowLogin(false)}
+          onClick={handleCancel}
         >
           Cancel
         </Button>
-        <Button intent="primary" size="medium" fullWidth>
+        <Button intent="primary" size="medium" fullWidth onClick={handleSignIn}>
           Login
         </Button>
       </Container>

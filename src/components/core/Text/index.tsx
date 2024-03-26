@@ -10,7 +10,7 @@ const text = cva("", {
       h5: ["text-[20px]", "font-medium"],
       h6: ["text-[18px]", "font-medium"],
       p1: ["text-[16px]", "", "", ""],
-      p2: ["text-[12px]", "", "", ""],
+      p2: ["text-[14px]", "", "", ""],
     },
     variant: {
       normal: ["text-on-surface"],
