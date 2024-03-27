@@ -38,7 +38,7 @@ export const WineryStat = ({ key, data }: WineryStatProps) => {
         <Icon
           icon="material-symbols:update"
           color="#cccccc"
-          className="w-[16px] h-[16px] mt-[-8px]"
+          className="min-w-[16px] min-h-[16px] mt-[-8px]"
         />
         <Text intent="p2" variant="dim">
           Updated

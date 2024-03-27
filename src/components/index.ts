@@ -5,6 +5,11 @@ export { TopBar } from "./core/Navigation/TopBar";
 export { Text } from "./core/Text";
 export { WineryStat } from "./core/Card/WineryStat";
 export { WineryLogo } from "./core/Logo/WineryLogo";
+export { Toast } from "./core/Overlays/Toast";
+export { Accordion } from "./core/Accordion";
+
+// Molecular components
+export { RegisterWinery } from "./molecules/RegisterWinery";
 
 // Layout components
 export { BaseLayout } from "./layouts/Base";

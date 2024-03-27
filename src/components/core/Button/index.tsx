@@ -32,7 +32,13 @@ const button = cva("button rounded-lg", {
     },
     size: {
       small: ["text-sm", "px-[24px]", "py-[8px]"],
-      medium: ["text-base", "px-[48px]", "py-[12px]"],
+      medium: [
+        "text-base",
+        "px-[48px]",
+        "py-[12px]",
+        "min-h-[48px]",
+        "max-h-[48px]",
+      ],
       large: ["text-lg", "px-[56px]", "py-[16px]"],
     },
     fullWidth: {

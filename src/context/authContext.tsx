@@ -9,12 +9,14 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 export interface AuthContextInterface {
   user: User | null;
-  loading: boolean;
+  authLoading: boolean;
+  updateAuthLoading: (loading: boolean) => void;
 }
 
 const contextInitialData: AuthContextInterface = {
   user: null,
-  loading: true,
+  authLoading: false,
+  updateAuthLoading: () => {},
 };
 
 const AuthContext = createContext(contextInitialData);
@@ -37,12 +39,16 @@ export const AuthProvider = ({
 }: React.PropsWithChildren): JSX.Element => {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [authLoading, setAuthLoading] = useState<boolean>(false);
+
+  const updateAuthLoading = (loading: boolean) => {
+    setAuthLoading(loading);
+  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       console.log(user);
-      setLoading(false);
+      setAuthLoading(false);
       if (user) {
         setUser(user);
         router.push("/home");
@@ -57,8 +63,8 @@ export const AuthProvider = ({
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading }}>
-      {!loading && children}
+    <AuthContext.Provider value={{ user, authLoading, updateAuthLoading }}>
+      {children}
     </AuthContext.Provider>
   );
 };

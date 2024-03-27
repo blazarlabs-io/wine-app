@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Container } from "../Container";
 import { Button } from "../Button";
 import { classNames } from "@/utils/classNames";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useAuth } from "@/context/authContext";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase/client";
@@ -17,10 +17,10 @@ export const TopBar = ({ className }: TopBarProps) => {
   const router = useRouter();
   const { user } = useAuth();
 
-  const handleLogOut = () => {
+  const handleLogOut = async () => {
     signOut(auth)
-      .then(() => {
-        router.replace("/");
+      .then(async () => {
+        redirect("/");
       })
       .catch((error) => {});
   };

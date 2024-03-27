@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Khula } from "next/font/google";
-import { BaseLayout, ProtectedPage } from "@/components";
+import { ProtectedPage } from "@/components";
+import { WineryProvider } from "@/context/wineryContext";
 import "../globals.css";
 
 const inter = Khula({
@@ -20,5 +21,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <ProtectedPage>{children}</ProtectedPage>;
+  return (
+    <ProtectedPage>
+      <WineryProvider>{children}</WineryProvider>
+    </ProtectedPage>
+  );
 }

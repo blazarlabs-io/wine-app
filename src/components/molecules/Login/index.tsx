@@ -6,31 +6,53 @@ import { useState } from "react";
 import { auth } from "@/lib/firebase/client";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/context/toastContext";
+import { ToastProps } from "@/typings/components";
+import { firebaseAuthErrors } from "@/utils/firebaseAuthErrors";
+import { useLocalStorage } from "usehooks-ts";
+import { useAuth } from "@/context/authContext";
 
 export interface LoginProps {
   title: string;
   description: string;
 }
 
+const key = "email";
+const initialValue = { address: "" };
+
 export const Login = ({ title, description }: LoginProps) => {
   const router = useRouter();
+  const { updateAuthLoading, authLoading } = useAuth();
+  const { updateToast } = useToast();
+  const [email, setEmail] = useLocalStorage(key, initialValue, {
+    initializeWithValue: false,
+  });
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
   const handleSignIn = async () => {
-    signInWithEmailAndPassword(auth, email, password)
+    updateAuthLoading(true);
+    signInWithEmailAndPassword(auth, email.address, password)
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
         console.log("signed in", user);
+        updateAuthLoading(false);
 
         // ...
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        console.error(errorMessage);
+        console.log(firebaseAuthErrors[errorCode] as string);
+        const toastProps: ToastProps = {
+          show: true,
+          status: "error",
+          message: (firebaseAuthErrors[errorCode] as string) ?? errorMessage,
+          timeout: 5000,
+        };
+        updateToast(toastProps);
+        updateAuthLoading(false);
       });
   };
 
@@ -68,9 +90,10 @@ export const Login = ({ title, description }: LoginProps) => {
           </Text>
           <input
             type="email"
+            value={email.address}
             placeholder="Enter your email"
             onChange={(event: any) => {
-              setEmail(event.target.value as string);
+              setEmail({ address: event.target.value as string });
             }}
             className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
           />
@@ -96,9 +119,9 @@ export const Login = ({ title, description }: LoginProps) => {
               }}
             >
               {showPassword ? (
-                <Icon icon="mdi:eye-outline" />
-              ) : (
                 <Icon icon="mdi:eye-off-outline" />
+              ) : (
+                <Icon icon="mdi:eye-outline" />
               )}
             </button>
           </Container>
@@ -114,7 +137,13 @@ export const Login = ({ title, description }: LoginProps) => {
           Cancel
         </Button>
         <Button intent="primary" size="medium" fullWidth onClick={handleSignIn}>
-          Login
+          {!authLoading ? (
+            "Login"
+          ) : (
+            <Container intent="flexRowCenter">
+              <Icon icon="eos-icons:loading" className="w-[16px] h-[16px]" />
+            </Container>
+          )}
         </Button>
       </Container>
     </Container>

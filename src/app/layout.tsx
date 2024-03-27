@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Khula } from "next/font/google";
 import { BaseLayout } from "@/components";
 import { AuthProvider } from "@/context/authContext";
+import { Providers } from "@/context/Providers";
 import "./globals.css";
 
 const inter = Khula({
@@ -24,9 +25,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AuthProvider>
+        <Providers>
           <BaseLayout>{children}</BaseLayout>
-        </AuthProvider>
+        </Providers>
       </body>
     </html>
   );
