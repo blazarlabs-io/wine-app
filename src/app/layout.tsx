@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { Khula } from "next/font/google";
-import { BaseLayout } from "@/components";
-import { AuthProvider } from "@/context/authContext";
 import { Providers } from "@/context/Providers";
 import "./globals.css";
 
@@ -25,9 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Providers>
-          <BaseLayout>{children}</BaseLayout>
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

@@ -28,6 +28,13 @@ body {
   font-style: normal;
 }
 
+select {
+  background: url(/dropdown.svg) 0 0 no-repeat;
+  background-size: 2em;
+  background-position: right top 80%;
+  -webkit-appearance: none;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

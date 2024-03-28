@@ -1,15 +1,7 @@
 import type { Metadata } from "next";
-import { Khula } from "next/font/google";
-import { BaseLayout, ProtectedPage } from "@/components";
+import { ProtectedPage, CleanLayout } from "@/components";
 import { WineryProvider } from "@/context/wineryContext";
 import "../globals.css";
-
-const inter = Khula({
-  weight: "400",
-  style: "normal",
-  display: "swap",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "App Name",
@@ -23,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <ProtectedPage>
-      <BaseLayout>{children}</BaseLayout>
+      <CleanLayout>{children}</CleanLayout>
     </ProtectedPage>
   );
 }

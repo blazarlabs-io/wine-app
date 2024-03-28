@@ -21,7 +21,7 @@ const container = cva("container", {
         "flex-row",
         "flex-wrap",
         "items-center",
-        "justify-between",
+        // "justify-between",
         "w-full",
       ],
       flexRowBetween: [
@@ -76,6 +76,7 @@ const container = cva("container", {
 export interface ContainerProps
   extends React.ButtonHTMLAttributes<HTMLDivElement>,
     VariantProps<typeof container> {
+  id?: string;
   intent:
     | "flexColCenter"
     | "flexColTop"
@@ -123,6 +124,7 @@ export interface ContainerProps
   props?: any;
 }
 export const Container = ({
+  id,
   intent,
   gap,
   px,
@@ -131,6 +133,7 @@ export const Container = ({
 }: ContainerProps) => {
   return (
     <div
+      id={id || ""}
       className={container({ intent, gap, px, py, className: props.className })}
     >
       {props.children}

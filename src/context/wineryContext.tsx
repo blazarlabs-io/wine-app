@@ -5,6 +5,7 @@ import {
   WineryDataProps,
   WineryGeneralInfoInterface,
   WinesInterface,
+  EuLabelsInterface,
 } from "@/typings/components";
 
 export interface WineryContextInterface extends WineryDataProps {
@@ -13,6 +14,9 @@ export interface WineryContextInterface extends WineryDataProps {
   showRegisterWinery: boolean;
   generalInfo: WineryGeneralInfoInterface;
   wines: WinesInterface[] | null;
+  singleEuLabel: EuLabelsInterface | null;
+  euLabels: EuLabelsInterface[] | null;
+  updateSingleEuLabel: (data: EuLabelsInterface) => void;
   updateFormDescription: (value: string) => void;
   updateFormTitle: (value: string) => void;
   updateWinery: (data: WineryDataProps) => void;
@@ -35,6 +39,9 @@ const contextInitialData: WineryContextInterface = {
     lastUpdated: "",
   },
   wines: null,
+  singleEuLabel: null,
+  euLabels: null,
+  updateSingleEuLabel: (data: EuLabelsInterface) => {},
   updateFormTitle: (value: string) => {},
   updateFormDescription: (value: string) => {},
   updateWinery: (data: WineryDataProps) => {},
@@ -67,7 +74,13 @@ export const WineryProvider = ({
     contextInitialData.generalInfo
   );
   const [wines, setWines] = useState<WinesInterface[]>(
-    contextInitialData.wines
+    contextInitialData.wines as WinesInterface[]
+  );
+  const [singleEuLabel, setSingleEuLabel] = useState<EuLabelsInterface | null>(
+    null
+  );
+  const [euLabels, setEuLabels] = useState<EuLabelsInterface[]>(
+    contextInitialData.euLabels as EuLabelsInterface[]
   );
 
   const updateFormTitle = (value: string) => {
@@ -84,7 +97,12 @@ export const WineryProvider = ({
 
   const updateWinery = (data: WineryDataProps) => {
     setGeneralInfo(data.generalInfo as WineryGeneralInfoInterface);
-    setWines(data.wines);
+    setWines(data.wines as WinesInterface[]);
+    setEuLabels(data.euLabels as EuLabelsInterface[]);
+  };
+
+  const updateSingleEuLabel = (data: EuLabelsInterface) => {
+    setSingleEuLabel(data);
   };
 
   useEffect(() => {}, []);
@@ -95,6 +113,9 @@ export const WineryProvider = ({
     showRegisterWinery,
     generalInfo,
     wines,
+    singleEuLabel,
+    euLabels,
+    updateSingleEuLabel,
     updateFormTitle,
     updateFormDescription,
     updateWinery,

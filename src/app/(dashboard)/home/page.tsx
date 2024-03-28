@@ -12,12 +12,13 @@ const wineryData: WineryDataProps = {
     foundedOn: "1923",
     location: "39990 Anza Road, Temecula, CA 92591",
     noOfProducedWines: wines.length.toString(),
-    vineyardsSurface: "50 km",
+    vineyardsSurface: "50 Ha",
     noOfBottlesProducedPerYear: "3000",
     grapeVarieties: "5",
     lastUpdated: new Date().toLocaleString(),
   },
   wines: wines,
+  euLabels: null,
 };
 
 // const wineryData: WineryDataProps = {
@@ -32,6 +33,7 @@ export default function DahsboardHome() {
     const newWineryData: WineryDataProps = {
       generalInfo: wineryData.generalInfo,
       wines: wineryData.wines,
+      euLabels: wineryData.euLabels,
     };
     updateWinery(newWineryData);
   }, []);

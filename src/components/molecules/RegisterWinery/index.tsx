@@ -12,6 +12,7 @@ export const RegisterWinery = () => {
     updateShowRegisterWinery,
     generalInfo,
     wines,
+    euLabels,
   } = useWinery();
   return (
     <Container
@@ -42,7 +43,7 @@ export const RegisterWinery = () => {
             value={(generalInfo && generalInfo.name) || ""}
             onChange={(event: any) => {
               generalInfo.name = event.target.value;
-              updateWinery({ generalInfo, wines });
+              updateWinery({ generalInfo, wines, euLabels });
             }}
             className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
           />
@@ -57,7 +58,7 @@ export const RegisterWinery = () => {
             value={(generalInfo && generalInfo.foundedOn) || ""}
             onChange={(event: any) => {
               generalInfo.foundedOn = event.target.value;
-              updateWinery({ generalInfo, wines });
+              updateWinery({ generalInfo, wines, euLabels });
             }}
             className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
           />
@@ -87,7 +88,7 @@ export const RegisterWinery = () => {
             value={(generalInfo && generalInfo.vineyardsSurface) || ""}
             onChange={(event: any) => {
               generalInfo.vineyardsSurface = event.target.value;
-              updateWinery({ generalInfo, wines });
+              updateWinery({ generalInfo, wines, euLabels });
             }}
             className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
           />
@@ -102,7 +103,7 @@ export const RegisterWinery = () => {
             value={(generalInfo && generalInfo.noOfProducedWines) || ""}
             onChange={(event: any) => {
               generalInfo.noOfProducedWines = event.target.value;
-              updateWinery({ generalInfo, wines });
+              updateWinery({ generalInfo, wines, euLabels });
             }}
             className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
           />
@@ -121,7 +122,7 @@ export const RegisterWinery = () => {
             }
             onChange={(event: any) => {
               generalInfo.noOfBottlesProducedPerYear = event.target.value;
-              updateWinery({ generalInfo, wines });
+              updateWinery({ generalInfo, wines, euLabels });
             }}
             className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
           />
@@ -136,7 +137,7 @@ export const RegisterWinery = () => {
             value={(generalInfo && generalInfo.grapeVarieties) || ""}
             onChange={(event: any) => {
               generalInfo.grapeVarieties = event.target.value as string;
-              updateWinery({ generalInfo, wines });
+              updateWinery({ generalInfo, wines, euLabels });
             }}
             className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
           />

@@ -98,8 +98,59 @@ export interface WinesInterface {
   packaging: WinePackagingInterface;
 }
 
+export interface EuLabelsInterface {
+  referenceNumber: string;
+  upc: string;
+  wineryName: string;
+  wineName: string;
+  harvestYear: string;
+  controlledDesignationOfOrigin: string;
+  country: string;
+  product: string;
+  alcoholLevel: string;
+  bottleSize: string;
+  kindOfWine: string;
+  colourOfWine: string;
+  producedBy: string;
+  maturedInOakBarrel: boolean;
+  bottledBy: string;
+  addressOfProducer: string;
+  ingredients: {
+    grapes: {
+      has: boolean;
+      list: string[];
+    };
+    acidityRegulators: {
+      has: boolean;
+      list: string[];
+    };
+    antioxidants: {
+      has: boolean;
+      list: string[];
+    };
+    preservatives: {
+      has: boolean;
+      list: string[];
+    };
+    stabilizers: {
+      has: boolean;
+      list: string[];
+    };
+  };
+  allergens: {
+    sulphites: boolean;
+    tanings: boolean;
+    histamins: boolean;
+    finingAgents: {
+      has: boolean;
+      list: string[];
+    };
+  };
+}
+
 // WINERY DATA PROPS
 export interface WineryDataProps {
   generalInfo: WineryGeneralInfoInterface | null;
   wines: WinesInterface[] | null;
+  euLabels: EuLabelsInterface[] | null;
 }

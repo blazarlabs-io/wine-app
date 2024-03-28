@@ -13,7 +13,7 @@ export const WineryStat = ({ key, data }: WineryStatProps) => {
   return (
     <Container
       intent="flexColLeft"
-      className="bg-surface rounded-md shadow-sm p-[16px] min-w-[196px] max-w-[196px] min-h-[196px] max-h-[196px]"
+      className="bg-surface rounded-md shadow-sm p-[16px] min-w-[216px] max-w-[216px] min-h-[216px] max-h-[216px]"
       gap="medium"
     >
       <Container intent="flexColLeft" gap="xsmall">

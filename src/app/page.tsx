@@ -1,5 +1,9 @@
-import { HomePage } from "@/components";
+import { BaseLayout, HomePage } from "@/components";
 
 export default function Home() {
-  return <HomePage />;
+  return (
+    <BaseLayout>
+      <HomePage />
+    </BaseLayout>
+  );
 }
