@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 export const LoginPage = () => {
   return (
     <>
-      <div
+      {/* <div
         style={{
           backgroundImage: "url('/bg.png')",
           backgroundSize: "contain",
@@ -22,13 +22,13 @@ export const LoginPage = () => {
           zIndex: -1,
         }}
         className=""
-      />
+      /> */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.1 }}
         exit={{ opacity: 0 }}
-        className="fixed flex flex-col items-center justify-center top-0 left-0 w-full h-full bg-surface/80 backdrop-blur-sm"
+        className="fixed flex flex-col items-center justify-center -z-1 top-0 left-0 w-full h-full bg-surface/80 backdrop-blur-sm"
       >
         <motion.div
           initial={{ scale: 0 }}

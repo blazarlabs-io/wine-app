@@ -11,6 +11,7 @@ export { Accordion } from "./core/Accordion";
 export { DropDown } from "./core/DropDown";
 export { CheckBox } from "./core/CheckBox";
 export { CheckInputText } from "./core/CheckInputText";
+export { Modal } from "./core/Overlays/Modal";
 
 // Molecular components
 export { RegisterWinery } from "./molecules/RegisterWinery";

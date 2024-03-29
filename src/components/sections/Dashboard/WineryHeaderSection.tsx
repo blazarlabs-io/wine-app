@@ -13,12 +13,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import { useWinery } from "@/context/wineryContext";
 
 export const WineryHeaderSection = () => {
-  const {
-    generalInfo,
-    updateFormTitle,
-    updateFormDescription,
-    updateShowRegisterWinery,
-  } = useWinery();
+  const { generalInfo } = useWinery();
 
   const wineryStats: WineryStatInterface[] = [
     {
@@ -57,7 +52,9 @@ export const WineryHeaderSection = () => {
       <WineryGeneralInfo />
       <Container intent="flexRowCenter" gap="xsmall">
         {wineryStats.map((stat) => (
-          <WineryStat key={stat.title} data={stat} />
+          <div key={stat.title}>
+            <WineryStat data={stat} />
+          </div>
         ))}
       </Container>
     </Container>

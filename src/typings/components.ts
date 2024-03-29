@@ -46,11 +46,16 @@ export interface WineryGeneralInfoInterface {
   name: string;
   foundedOn: string;
   location: string;
+  logo: string;
   noOfProducedWines: string;
   vineyardsSurface: string;
   noOfBottlesProducedPerYear: string;
   grapeVarieties: string;
   lastUpdated: string;
+  wineryHeadquarters: {
+    latitude: number;
+    longitude: number;
+  };
 }
 
 // WINERY WINES DATA
@@ -98,7 +103,7 @@ export interface WinesInterface {
   packaging: WinePackagingInterface;
 }
 
-export interface EuLabelsInterface {
+export interface EuLabelInterface {
   referenceNumber: string;
   upc: string;
   wineryName: string;
@@ -139,18 +144,34 @@ export interface EuLabelsInterface {
   };
   allergens: {
     sulphites: boolean;
-    tanings: boolean;
-    histamins: boolean;
-    finingAgents: {
-      has: boolean;
-      list: string[];
-    };
+    tanins: boolean;
+    histamines: boolean;
+    finingAgents: FiningAgentInterface;
   };
 }
 
+export interface FiningAgentInterface {
+  eggWhites: boolean;
+  milkProteins: boolean;
+  gelatines: boolean;
+  other: string[];
+}
+
 // WINERY DATA PROPS
-export interface WineryDataProps {
+export interface WineryDataInterface {
+  exists: boolean;
   generalInfo: WineryGeneralInfoInterface | null;
   wines: WinesInterface[] | null;
-  euLabels: EuLabelsInterface[] | null;
+  euLabels: EuLabelInterface[] | null;
+}
+
+// MODAL COMPONENT
+export interface ModalProps {
+  show: boolean;
+  title: string;
+  description: string;
+  action: {
+    label: string;
+    onAction: () => void;
+  };
 }

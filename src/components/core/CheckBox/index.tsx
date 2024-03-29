@@ -5,11 +5,12 @@ import { useState } from "react";
 
 export interface CheckBoxProps {
   label: string;
+  checked: boolean;
   onCheck: (state: boolean) => void;
 }
 
-export const CheckBox = ({ label, onCheck }: CheckBoxProps) => {
-  const [isChecked, setIsChecked] = useState<boolean>(false);
+export const CheckBox = ({ label, checked, onCheck }: CheckBoxProps) => {
+  const [isChecked, setIsChecked] = useState<boolean>(checked);
   return (
     <Container intent="flexRowLeft" gap="xsmall" className="">
       <input

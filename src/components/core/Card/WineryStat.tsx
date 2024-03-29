@@ -5,11 +5,10 @@ import { WineryStatInterface } from "@/typings/components";
 import { Icon } from "@iconify/react";
 
 export interface WineryStatProps {
-  key: string;
   data: WineryStatInterface;
 }
 
-export const WineryStat = ({ key, data }: WineryStatProps) => {
+export const WineryStat = ({ data }: WineryStatProps) => {
   return (
     <Container
       intent="flexColLeft"

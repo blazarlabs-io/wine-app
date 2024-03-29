@@ -5,14 +5,16 @@ import { Icon } from "@iconify/react";
 
 export interface TextInputCrudProps {
   placeholder: string;
+  initialItems: string[];
   onItemsChange: (items: string[]) => void;
 }
 
 export const TextInputCrud = ({
   placeholder,
+  initialItems,
   onItemsChange,
 }: TextInputCrudProps) => {
-  const [items, setItems] = useState<string[] | null>(null);
+  const [items, setItems] = useState<string[] | null>(initialItems);
   const [currentItem, setCurrentItem] = useState<string>("");
   return (
     <Container intent="flexColLeft" gap="small">

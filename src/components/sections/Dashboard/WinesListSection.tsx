@@ -49,21 +49,44 @@ export const WinesListSection = () => {
           <Accordion data={wines} />
         </>
       ) : (
-        <Container intent="flexColCenter" gap="small" className="h-full">
-          <Text intent="h4" variant="dim" className="font-normal">
-            Add new Wine
-          </Text>
-          <Button
-            intent="primary"
-            size="medium"
-            className="flex items-center gap-[8px]"
-          >
-            <Icon
-              icon="carbon:add-filled"
-              className="h-[20px] w-[20px] mt-[-4px]"
-            />
-            Add Wine
-          </Button>
+        <Container intent="flexColCenter" gap="large" className="h-full">
+          <Container intent="flexColTop" gap="xsmall">
+            <Text intent="h4" variant="dim" className="font-normal">
+              Add new Wine
+            </Text>
+            <Button
+              intent="primary"
+              size="medium"
+              disabled
+              className="flex items-center gap-[8px]"
+            >
+              <Icon
+                icon="carbon:add-filled"
+                className="h-[20px] w-[20px] mt-[-4px]"
+              />
+              Add Wine
+            </Button>
+          </Container>
+          <Container intent="flexColTop" gap="xsmall">
+            <Text intent="h4" variant="normal" className="font-normal">
+              Add new EU Label
+            </Text>
+            <Button
+              intent="primary"
+              size="medium"
+              className="flex items-center gap-[8px]"
+              onClick={() => {
+                updateFormTitle("Register EU Label");
+                updateFormDescription(
+                  "Register a new EU label for your wine. All fields marked with * are mandatory."
+                );
+                router.push("/generate-eu-label");
+              }}
+            >
+              <Icon icon="bi:qr-code" className="h-[20px] w-[20px] mt-[-4px]" />
+              Generate EU Label
+            </Button>
+          </Container>
         </Container>
       )}
     </>

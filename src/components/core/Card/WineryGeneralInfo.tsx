@@ -56,7 +56,15 @@ export const WineryGeneralInfo = () => {
         </Container>
       </Container>
       <Container intent="flexRowLeft" gap="small" className="w-full">
-        <WineryLogo url="/winery-sample-logo.png" width={72} height={72} />
+        <WineryLogo
+          url={
+            generalInfo.logo.length > 0
+              ? generalInfo.logo
+              : "/winery-sample-logo.png"
+          }
+          width={72}
+          height={72}
+        />
         <Container intent="flexColLeft" className="w-full">
           <Text intent="h3" className="text-on-surface">
             {(generalInfo && generalInfo.name) || "Winery Name"}

@@ -11,6 +11,7 @@ export const Toast = () => {
   const { show, status, message, timeout, updateToast } = useToast();
 
   useEffect(() => {
+    console.log("Toast", show, timeout);
     if (show && timeout) {
       const timer = setTimeout(() => {
         const toastProps = {
@@ -35,7 +36,7 @@ export const Toast = () => {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: "100%" }}
           className={classNames(
-            "flex items-center justify-center px-[20px] py-[16px] fixed bottom-0 m-4 rounded-md z-50",
+            "flex items-center justify-center px-[20px] py-[16px] fixed bottom-0 m-4 rounded-md z-[999]",
             status === "error" && "bg-status-error/30",
             status === "success" && "bg-status-success/30",
             status === "info" && "bg-status-info/30",

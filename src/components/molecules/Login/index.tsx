@@ -38,7 +38,7 @@ export const Login = ({ title, description }: LoginProps) => {
         const user = userCredential.user;
         console.log("signed in", user);
         updateAuthLoading(false);
-
+        router.replace("/home");
         // ...
       })
       .catch((error) => {
@@ -51,6 +51,7 @@ export const Login = ({ title, description }: LoginProps) => {
           message: (firebaseAuthErrors[errorCode] as string) ?? errorMessage,
           timeout: 5000,
         };
+        console.log(toastProps);
         updateToast(toastProps);
         updateAuthLoading(false);
       });

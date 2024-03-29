@@ -9,19 +9,37 @@ import {
 import { motion } from "framer-motion";
 import { useWinery } from "@/context/wineryContext";
 import { useEffect } from "react";
+import { useAuth } from "@/context/authContext";
+import { getWineryDataDb, initWineryInDb } from "@/utils/firestore";
+import { db } from "@/lib/firebase/client";
+import { WineryDataInterface } from "@/typings/components";
 
 export const DashboardHomePage = () => {
-  const { showRegisterWinery, generalInfo, updateShowRegisterWinery } =
+  const { user } = useAuth();
+  const { updateWinery, showRegisterWinery, updateShowRegisterWinery } =
     useWinery();
 
   useEffect(() => {
-    console.log("showRegisterWinery", showRegisterWinery);
-    if (generalInfo) {
-      updateShowRegisterWinery(false);
-    } else {
-      updateShowRegisterWinery(true);
-    }
-  }, [generalInfo]);
+    getWineryDataDb(user?.uid as string).then((data) => {
+      if (data === null) {
+        initWineryInDb(user?.uid as string);
+      }
+      if (data?.generalInfo === null || data?.generalInfo === undefined) {
+        updateShowRegisterWinery(true);
+      } else {
+        updateShowRegisterWinery(false);
+        const wineryData: WineryDataInterface = {
+          generalInfo: data.generalInfo,
+          wines: data.wines || [],
+          euLabels: data.euLabels || [],
+          exists: true,
+        };
+        console.log("Winery exists", wineryData);
+        updateWinery(wineryData);
+      }
+    });
+  }, []);
+
   return (
     <>
       {showRegisterWinery && (

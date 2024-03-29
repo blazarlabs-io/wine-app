@@ -47,8 +47,8 @@ export const AuthProvider = ({
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log(user);
       setAuthLoading(false);
+      console.log("User", user);
       if (user) {
         setUser(user);
         router.push("/home");

@@ -77,6 +77,7 @@ export interface ContainerProps
   extends React.ButtonHTMLAttributes<HTMLDivElement>,
     VariantProps<typeof container> {
   id?: string;
+  key?: string;
   intent:
     | "flexColCenter"
     | "flexColTop"
@@ -125,6 +126,7 @@ export interface ContainerProps
 }
 export const Container = ({
   id,
+  key,
   intent,
   gap,
   px,
@@ -133,6 +135,7 @@ export const Container = ({
 }: ContainerProps) => {
   return (
     <div
+      key={key || ""}
       id={id || ""}
       className={container({ intent, gap, px, py, className: props.className })}
     >

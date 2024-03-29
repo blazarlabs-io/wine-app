@@ -6,20 +6,28 @@ import { useState } from "react";
 
 export interface CheckInputTextProps {
   label: string;
+  checked: boolean;
+  value: string;
   placeholder: string;
   onBoxChecked: (state: boolean) => void;
+  onInputChange: (value: string) => void;
 }
 
 export const CheckInputText = ({
   label,
   placeholder,
+  checked,
+  value,
   onBoxChecked,
+  onInputChange,
 }: CheckInputTextProps) => {
-  const [isChecked, setIsChecked] = useState<boolean>(false);
+  const [isChecked, setIsChecked] = useState<boolean>(checked);
+  const [inputValue, setInputValue] = useState<string>("");
   return (
     <Container intent="grid-2" className="max-w-fit">
       <Container intent="flexRowCenter" className="w-[160px]">
         <CheckBox
+          checked={isChecked}
           label={label}
           onCheck={(state: boolean) => {
             setIsChecked(state);
@@ -31,10 +39,10 @@ export const CheckInputText = ({
         disabled={!isChecked}
         type="text"
         placeholder={placeholder}
-        // value={""}
+        value={value}
         onChange={(event: any) => {
-          //   generalInfo.foundedOn = event.target.value;
-          //   updateWinery({ generalInfo, wines, euLabels });
+          setInputValue(event.target.value);
+          onInputChange(event.target.value);
         }}
         className={classNames(
           isChecked

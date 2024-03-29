@@ -18,14 +18,31 @@ import {
   kindOfWineList,
   colourOfWineList,
 } from "@/utils/data";
+import { EuLabelInterface } from "@/typings/components";
+import { dateToTimestamp } from "@/utils/dateToTimestamp";
+import { useEffect, useRef } from "react";
+import { generateId } from "@/utils/generateId";
+import { useRouter } from "next/navigation";
 
 export const RegisterEuLabel = () => {
-  const {
-    formTitle,
-    formDescription,
-    updateShowRegisterWinery,
-    singleEuLabel,
-  } = useWinery();
+  const router = useRouter();
+
+  const { formTitle, formDescription, updateSingleEuLabel, singleEuLabel } =
+    useWinery();
+
+  const initialized = useRef(false);
+
+  useEffect(() => {
+    if (!initialized.current) {
+      const ref = generateId(5) + "-" + dateToTimestamp();
+      console.log(ref);
+      singleEuLabel.referenceNumber = ref;
+      updateSingleEuLabel({
+        ...(singleEuLabel as EuLabelInterface),
+        referenceNumber: ref,
+      });
+    }
+  }, []);
 
   return (
     <Container
@@ -58,7 +75,7 @@ export const RegisterEuLabel = () => {
             className="min-h-[48px] max-h-[48px]"
           >
             <Text intent="p1" variant="normal">
-              2feb0e353360b
+              {singleEuLabel.referenceNumber}
             </Text>
           </Container>
         </Container>
@@ -69,10 +86,13 @@ export const RegisterEuLabel = () => {
           <input
             type="text"
             placeholder=""
-            value={(singleEuLabel && singleEuLabel.upc) || ""}
+            value={singleEuLabel.upc}
             onChange={(event: any) => {
-              // singleEuLabel.upc = event.target.value;
-              // updateSingleEuLabel(singleEuLabel as EuLabelsInterface);
+              singleEuLabel.upc = event.target.value;
+              updateSingleEuLabel({
+                ...(singleEuLabel as EuLabelInterface),
+                upc: singleEuLabel.upc,
+              });
             }}
             className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
           />
@@ -88,10 +108,13 @@ export const RegisterEuLabel = () => {
           <input
             type="text"
             placeholder=""
-            value={(singleEuLabel && singleEuLabel.wineryName) || ""}
+            value={singleEuLabel.wineryName}
             onChange={(event: any) => {
-              // singleEuLabel.wineryName = event.target.value;
-              // updateSingleEuLabel(singleEuLabel as EuLabelsInterface);
+              singleEuLabel.wineryName = event.target.value;
+              updateSingleEuLabel({
+                ...(singleEuLabel as EuLabelInterface),
+                wineryName: singleEuLabel.wineryName,
+              });
             }}
             className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
           />
@@ -103,10 +126,13 @@ export const RegisterEuLabel = () => {
           <input
             type="text"
             placeholder=""
-            value={(singleEuLabel && singleEuLabel.wineName) || ""}
+            value={singleEuLabel.wineName}
             onChange={(event: any) => {
-              // singleEuLabel.wineName = event.target.value;
-              // updateSingleEuLabel(singleEuLabel as EuLabelsInterface);
+              singleEuLabel.wineName = event.target.value;
+              updateSingleEuLabel({
+                ...(singleEuLabel as EuLabelInterface),
+                wineName: singleEuLabel.wineName,
+              });
             }}
             className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
           />
@@ -118,10 +144,13 @@ export const RegisterEuLabel = () => {
           <input
             type="text"
             placeholder=""
-            value={(singleEuLabel && singleEuLabel.harvestYear) || ""}
+            value={singleEuLabel.harvestYear}
             onChange={(event: any) => {
-              // singleEuLabel.harvestYear = event.target.value;
-              // updateSingleEuLabel(singleEuLabel as EuLabelsInterface);
+              singleEuLabel.harvestYear = event.target.value;
+              updateSingleEuLabel({
+                ...(singleEuLabel as EuLabelInterface),
+                harvestYear: singleEuLabel.harvestYear,
+              });
             }}
             className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
           />
@@ -133,13 +162,14 @@ export const RegisterEuLabel = () => {
           <input
             type="text"
             placeholder=""
-            value={
-              (singleEuLabel && singleEuLabel.controlledDesignationOfOrigin) ||
-              ""
-            }
+            value={singleEuLabel.controlledDesignationOfOrigin}
             onChange={(event: any) => {
-              // singleEuLabel.controlledDesignationOfOrigin = event.target.value;
-              // updateSingleEuLabel(singleEuLabel as EuLabelsInterface);
+              singleEuLabel.controlledDesignationOfOrigin = event.target.value;
+              updateSingleEuLabel({
+                ...(singleEuLabel as EuLabelInterface),
+                controlledDesignationOfOrigin:
+                  singleEuLabel.controlledDesignationOfOrigin,
+              });
             }}
             className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
           />
@@ -155,8 +185,14 @@ export const RegisterEuLabel = () => {
           <DropDown
             items={countryList}
             fullWidth
-            selectedValue={(singleEuLabel && singleEuLabel.country) || null}
-            onSelect={(data: string) => {}}
+            selectedValue={singleEuLabel.country}
+            onSelect={(data: string) => {
+              singleEuLabel.country = data;
+              updateSingleEuLabel({
+                ...(singleEuLabel as EuLabelInterface),
+                country: singleEuLabel.country,
+              });
+            }}
           />
         </Container>
         <Container intent="flexColLeft" gap="xsmall" className="w-full">
@@ -166,8 +202,14 @@ export const RegisterEuLabel = () => {
           <DropDown
             items={productList}
             fullWidth
-            selectedValue={(singleEuLabel && singleEuLabel.product) || null}
-            onSelect={(data: string) => {}}
+            selectedValue={singleEuLabel.product}
+            onSelect={(data: string) => {
+              singleEuLabel.product = data;
+              updateSingleEuLabel({
+                ...(singleEuLabel as EuLabelInterface),
+                product: singleEuLabel.product,
+              });
+            }}
           />
         </Container>
         <Container intent="flexColLeft" gap="xsmall" className="w-full">
@@ -178,10 +220,13 @@ export const RegisterEuLabel = () => {
             <input
               type="text"
               placeholder=""
-              value={(singleEuLabel && singleEuLabel.alcoholLevel) || ""}
+              value={singleEuLabel.alcoholLevel}
               onChange={(event: any) => {
-                // generalInfo.foundedOn = event.target.value;
-                // updateWinery({ generalInfo, wines, euLabels });
+                singleEuLabel.alcoholLevel = event.target.value;
+                updateSingleEuLabel({
+                  ...(singleEuLabel as EuLabelInterface),
+                  alcoholLevel: singleEuLabel.alcoholLevel,
+                });
               }}
               className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
             />
@@ -195,8 +240,14 @@ export const RegisterEuLabel = () => {
           <DropDown
             items={bottleSizeList}
             fullWidth
-            selectedValue={(singleEuLabel && singleEuLabel.bottleSize) || null}
-            onSelect={(data: string) => {}}
+            selectedValue={singleEuLabel.bottleSize}
+            onSelect={(data: string) => {
+              singleEuLabel.bottleSize = data;
+              updateSingleEuLabel({
+                ...(singleEuLabel as EuLabelInterface),
+                bottleSize: singleEuLabel.bottleSize,
+              });
+            }}
           />
         </Container>
       </Container>
@@ -210,8 +261,14 @@ export const RegisterEuLabel = () => {
           <DropDown
             items={kindOfWineList}
             fullWidth
-            selectedValue={(singleEuLabel && singleEuLabel.kindOfWine) || null}
-            onSelect={(data: string) => {}}
+            selectedValue={singleEuLabel.kindOfWine}
+            onSelect={(data: string) => {
+              singleEuLabel.kindOfWine = data;
+              updateSingleEuLabel({
+                ...(singleEuLabel as EuLabelInterface),
+                kindOfWine: singleEuLabel.kindOfWine,
+              });
+            }}
           />
         </Container>
         <Container intent="flexColLeft" gap="xsmall" className="w-full">
@@ -221,10 +278,14 @@ export const RegisterEuLabel = () => {
           <DropDown
             items={colourOfWineList}
             fullWidth
-            selectedValue={
-              (singleEuLabel && singleEuLabel.colourOfWine) || null
-            }
-            onSelect={(data: string) => {}}
+            selectedValue={singleEuLabel.colourOfWine}
+            onSelect={(data: string) => {
+              singleEuLabel.colourOfWine = data;
+              updateSingleEuLabel({
+                ...(singleEuLabel as EuLabelInterface),
+                colourOfWine: singleEuLabel.colourOfWine,
+              });
+            }}
           />
         </Container>
         <Container intent="flexColLeft" gap="xsmall" className="w-full">
@@ -234,10 +295,13 @@ export const RegisterEuLabel = () => {
           <input
             type="text"
             placeholder=""
-            value={(singleEuLabel && singleEuLabel.producedBy) || ""}
+            value={singleEuLabel.producedBy}
             onChange={(event: any) => {
-              // generalInfo.foundedOn = event.target.value;
-              // updateWinery({ generalInfo, wines, euLabels });
+              singleEuLabel.producedBy = event.target.value;
+              updateSingleEuLabel({
+                ...(singleEuLabel as EuLabelInterface),
+                producedBy: singleEuLabel.producedBy,
+              });
             }}
             className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
           />
@@ -250,7 +314,13 @@ export const RegisterEuLabel = () => {
             items={["Yes", "No"]}
             fullWidth
             selectedValue={"No"}
-            onSelect={(data: string) => {}}
+            onSelect={(data: string) => {
+              singleEuLabel.maturedInOakBarrel = data === "Yes" ? true : false;
+              updateSingleEuLabel({
+                ...(singleEuLabel as EuLabelInterface),
+                maturedInOakBarrel: singleEuLabel.maturedInOakBarrel,
+              });
+            }}
           />
         </Container>
       </Container>
@@ -264,10 +334,13 @@ export const RegisterEuLabel = () => {
           <input
             type="text"
             placeholder=""
-            value={(singleEuLabel && singleEuLabel.bottledBy) || ""}
+            value={singleEuLabel.bottledBy}
             onChange={(event: any) => {
-              // generalInfo.foundedOn = event.target.value;
-              // updateWinery({ generalInfo, wines, euLabels });
+              singleEuLabel.bottledBy = event.target.value;
+              updateSingleEuLabel({
+                ...(singleEuLabel as EuLabelInterface),
+                bottledBy: singleEuLabel.bottledBy,
+              });
             }}
             className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
           />
@@ -283,10 +356,13 @@ export const RegisterEuLabel = () => {
           <input
             type="text"
             placeholder=""
-            value={(singleEuLabel && singleEuLabel.addressOfProducer) || ""}
+            value={singleEuLabel.addressOfProducer}
             onChange={(event: any) => {
-              // generalInfo.foundedOn = event.target.value;
-              // updateWinery({ generalInfo, wines, euLabels });
+              singleEuLabel.addressOfProducer = event.target.value;
+              updateSingleEuLabel({
+                ...(singleEuLabel as EuLabelInterface),
+                addressOfProducer: singleEuLabel.addressOfProducer,
+              });
             }}
             className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
           />
@@ -303,30 +379,95 @@ export const RegisterEuLabel = () => {
             <Container intent="flexRowCenter" className="h-[48px]">
               <CheckBox
                 label="Grapes"
+                checked={singleEuLabel.ingredients.grapes.has}
                 onCheck={(state: boolean) => {
-                  console.log(state);
+                  singleEuLabel.ingredients.grapes.has = state;
+                  updateSingleEuLabel({
+                    ...(singleEuLabel as EuLabelInterface),
+                    ingredients: singleEuLabel.ingredients,
+                  });
                 }}
               />
             </Container>
             <CheckInputText
               label="Acidity Regulators"
+              checked={singleEuLabel.ingredients.acidityRegulators.has}
+              value={singleEuLabel.ingredients.acidityRegulators.list[0]}
               placeholder="Malic acid (D, L-/L-)"
-              onBoxChecked={() => {}}
+              onBoxChecked={(state: boolean) => {
+                singleEuLabel.ingredients.acidityRegulators.has = state;
+                updateSingleEuLabel({
+                  ...(singleEuLabel as EuLabelInterface),
+                  ingredients: singleEuLabel.ingredients,
+                });
+              }}
+              onInputChange={(value: string) => {
+                singleEuLabel.ingredients.acidityRegulators.list[0] = value;
+                updateSingleEuLabel({
+                  ...(singleEuLabel as EuLabelInterface),
+                  ingredients: singleEuLabel.ingredients,
+                });
+              }}
             />
             <CheckInputText
               label="Antioxidants"
+              checked={singleEuLabel.ingredients.antioxidants.has}
+              value={singleEuLabel.ingredients.antioxidants.list[0]}
               placeholder="L-ascorbic acid"
-              onBoxChecked={() => {}}
+              onBoxChecked={(state: boolean) => {
+                singleEuLabel.ingredients.antioxidants.has = state;
+                updateSingleEuLabel({
+                  ...(singleEuLabel as EuLabelInterface),
+                  ingredients: singleEuLabel.ingredients,
+                });
+              }}
+              onInputChange={(value: string) => {
+                singleEuLabel.ingredients.antioxidants.list[0] = value;
+                updateSingleEuLabel({
+                  ...(singleEuLabel as EuLabelInterface),
+                  ingredients: singleEuLabel.ingredients,
+                });
+              }}
             />
             <CheckInputText
               label="Preservative"
+              checked={singleEuLabel.ingredients.preservatives.has}
+              value={singleEuLabel.ingredients.preservatives.list[0]}
               placeholder="Sulfites"
-              onBoxChecked={() => {}}
+              onBoxChecked={(state: boolean) => {
+                singleEuLabel.ingredients.preservatives.has = state;
+                updateSingleEuLabel({
+                  ...(singleEuLabel as EuLabelInterface),
+                  ingredients: singleEuLabel.ingredients,
+                });
+              }}
+              onInputChange={(value: string) => {
+                singleEuLabel.ingredients.preservatives.list[0] = value;
+                updateSingleEuLabel({
+                  ...(singleEuLabel as EuLabelInterface),
+                  ingredients: singleEuLabel.ingredients,
+                });
+              }}
             />
             <CheckInputText
               label="Stabilizer"
+              checked={singleEuLabel.ingredients.stabilizers.has}
+              value={singleEuLabel.ingredients.stabilizers.list[0]}
               placeholder="Gum arabic"
-              onBoxChecked={() => {}}
+              onBoxChecked={(state: boolean) => {
+                singleEuLabel.ingredients.stabilizers.has = state;
+                updateSingleEuLabel({
+                  ...(singleEuLabel as EuLabelInterface),
+                  ingredients: singleEuLabel.ingredients,
+                });
+              }}
+              onInputChange={(value: string) => {
+                singleEuLabel.ingredients.stabilizers.list[0] = value;
+                updateSingleEuLabel({
+                  ...(singleEuLabel as EuLabelInterface),
+                  ingredients: singleEuLabel.ingredients,
+                });
+              }}
             />
           </Container>
         </Container>
@@ -337,20 +478,35 @@ export const RegisterEuLabel = () => {
           <Container intent="grid-3" gap="large" className="h-[48px]">
             <CheckBox
               label="Sulphites"
+              checked={singleEuLabel.allergens.sulphites}
               onCheck={(state: boolean) => {
-                console.log(state);
+                singleEuLabel.allergens.sulphites = state;
+                updateSingleEuLabel({
+                  ...(singleEuLabel as EuLabelInterface),
+                  allergens: singleEuLabel.allergens,
+                });
               }}
             />
             <CheckBox
-              label="Tanings"
+              label="Tanins"
+              checked={singleEuLabel.allergens.tanins}
               onCheck={(state: boolean) => {
-                console.log(state);
+                singleEuLabel.allergens.tanins = state;
+                updateSingleEuLabel({
+                  ...(singleEuLabel as EuLabelInterface),
+                  allergens: singleEuLabel.allergens,
+                });
               }}
             />
             <CheckBox
               label="Histamines"
+              checked={singleEuLabel.allergens.histamines}
               onCheck={(state: boolean) => {
-                console.log(state);
+                singleEuLabel.allergens.histamines = state;
+                updateSingleEuLabel({
+                  ...(singleEuLabel as EuLabelInterface),
+                  allergens: singleEuLabel.allergens,
+                });
               }}
             />
           </Container>
@@ -360,27 +516,47 @@ export const RegisterEuLabel = () => {
           <Container intent="grid-3" gap="large" className="h-[48px]">
             <CheckBox
               label="Egg Whites"
+              checked={singleEuLabel.allergens.finingAgents.eggWhites}
               onCheck={(state: boolean) => {
-                console.log(state);
+                singleEuLabel.allergens.finingAgents.eggWhites = state;
+                updateSingleEuLabel({
+                  ...(singleEuLabel as EuLabelInterface),
+                  allergens: singleEuLabel.allergens,
+                });
               }}
             />
             <CheckBox
               label="Milk Proteins"
+              checked={singleEuLabel.allergens.finingAgents.milkProteins}
               onCheck={(state: boolean) => {
-                console.log(state);
+                singleEuLabel.allergens.finingAgents.milkProteins = state;
+                updateSingleEuLabel({
+                  ...(singleEuLabel as EuLabelInterface),
+                  allergens: singleEuLabel.allergens,
+                });
               }}
             />
             <CheckBox
               label="Gelatines"
+              checked={singleEuLabel.allergens.finingAgents.gelatines}
               onCheck={(state: boolean) => {
-                console.log(state);
+                singleEuLabel.allergens.finingAgents.gelatines = state;
+                updateSingleEuLabel({
+                  ...(singleEuLabel as EuLabelInterface),
+                  allergens: singleEuLabel.allergens,
+                });
               }}
             />
           </Container>
           <TextInputCrud
             placeholder="Add Fining Agent"
+            initialItems={singleEuLabel.allergens.finingAgents.other}
             onItemsChange={(items: string[]) => {
-              console.log(items);
+              singleEuLabel.allergens.finingAgents.other = items;
+              updateSingleEuLabel({
+                ...(singleEuLabel as EuLabelInterface),
+                allergens: singleEuLabel.allergens,
+              });
             }}
           />
         </Container>
@@ -392,11 +568,18 @@ export const RegisterEuLabel = () => {
           intent="secondary"
           size="medium"
           fullWidth
-          onClick={() => updateShowRegisterWinery(false)}
+          onClick={() => router.back()}
         >
           Cancel
         </Button>
-        <Button intent="primary" size="medium" fullWidth>
+        <Button
+          intent="primary"
+          size="medium"
+          fullWidth
+          onClick={() => {
+            console.log(singleEuLabel);
+          }}
+        >
           Register
         </Button>
       </Container>
