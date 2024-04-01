@@ -9,7 +9,6 @@ import {
   WineryGeneralInfo,
 } from "@/components";
 import { WineryStatInterface } from "@/typings/components";
-import { Icon } from "@iconify/react/dist/iconify.js";
 import { useWinery } from "@/context/wineryContext";
 
 export const WineryHeaderSection = () => {
@@ -47,10 +46,11 @@ export const WineryHeaderSection = () => {
       intent="flexRowBetween"
       py="large"
       px="xlarge"
+      gap="large"
       className="bg-[#3F2929] w-full"
     >
       <WineryGeneralInfo />
-      <Container intent="flexRowCenter" gap="xsmall">
+      <Container intent="flexRowBetween" gap="xsmall">
         {wineryStats.map((stat) => (
           <div key={stat.title}>
             <WineryStat data={stat} />

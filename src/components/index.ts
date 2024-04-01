@@ -12,11 +12,16 @@ export { DropDown } from "./core/DropDown";
 export { CheckBox } from "./core/CheckBox";
 export { CheckInputText } from "./core/CheckInputText";
 export { Modal } from "./core/Overlays/Modal";
+export { AuthSpinnerLoader } from "./core/Loader/AuthSpinnerLoader";
+export { SpinnerLoader } from "./core/Loader/SpinnerLoader";
+export { InfoTooltip } from "./core/Helper/InfoTooltip";
 
 // Molecular components
 export { RegisterWinery } from "./molecules/RegisterWinery";
 export { RegisterEuLabel } from "./molecules/RegisterEuLabel";
 export { TextInputCrud } from "./molecules/Crud/TextInputCrud";
+export { SimpleMapViewer } from "./molecules/MapViewer/SimpleMapViewer";
+export { LocationFinderMap } from "./molecules/MapViewer/LocationFinderMap";
 
 // Layout components
 export { BaseLayout } from "./layouts/Base";

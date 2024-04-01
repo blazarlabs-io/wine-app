@@ -1,6 +1,6 @@
 "use client";
 
-import { Container, Text, Button } from "@/components";
+import { Container, Text, Button, SpinnerLoader } from "@/components";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
 import { auth } from "@/lib/firebase/client";
@@ -138,13 +138,7 @@ export const Login = ({ title, description }: LoginProps) => {
           Cancel
         </Button>
         <Button intent="primary" size="medium" fullWidth onClick={handleSignIn}>
-          {!authLoading ? (
-            "Login"
-          ) : (
-            <Container intent="flexRowCenter">
-              <Icon icon="eos-icons:loading" className="w-[16px] h-[16px]" />
-            </Container>
-          )}
+          {!authLoading ? "Login" : <SpinnerLoader />}
         </Button>
       </Container>
     </Container>

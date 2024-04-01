@@ -61,6 +61,7 @@ export interface ButtonProps
   size?: "small" | "medium" | "large";
   fullWidth?: boolean;
   disabled?: boolean;
+  type?: "button" | "submit" | "reset";
   onClick?: () => void;
 }
 
@@ -69,12 +70,14 @@ export const Button = ({
   size,
   fullWidth,
   disabled,
+  type = "button",
   onClick,
   ...props
 }: ButtonProps) => {
   return (
     <button
       {...props}
+      type={type}
       className={button({
         intent,
         size,

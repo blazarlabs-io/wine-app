@@ -15,7 +15,7 @@ export interface AuthContextInterface {
 
 const contextInitialData: AuthContextInterface = {
   user: null,
-  authLoading: false,
+  authLoading: true,
   updateAuthLoading: () => {},
 };
 
@@ -39,7 +39,7 @@ export const AuthProvider = ({
 }: React.PropsWithChildren): JSX.Element => {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
-  const [authLoading, setAuthLoading] = useState<boolean>(false);
+  const [authLoading, setAuthLoading] = useState<boolean>(true);
 
   const updateAuthLoading = (loading: boolean) => {
     setAuthLoading(loading);
@@ -48,13 +48,17 @@ export const AuthProvider = ({
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setAuthLoading(false);
-      console.log("User", user);
+
       if (user) {
         setUser(user);
         router.push("/home");
       } else {
         setUser(null);
       }
+
+      setTimeout(() => {
+        console.log("User", user);
+      }, 3000);
     });
 
     return () => {

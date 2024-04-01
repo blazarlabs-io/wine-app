@@ -32,8 +32,9 @@ export const TextInputCrud = ({
           intent="unstyled"
           disabled={!currentItem}
           onClick={() => {
+            console.log("currentItem", currentItem);
             let its: string[] = [];
-            if (items !== null) {
+            if (items !== null && items !== undefined && items.length > 0) {
               its = [...items, currentItem];
             } else {
               its = [currentItem];
@@ -51,16 +52,18 @@ export const TextInputCrud = ({
           Add
         </Button>
       </Container>
-      <Container intent="flexRowWrap" gap="small">
-        {items !== null && items.length > 0 && (
+      <Container intent="flexRowWrap" gap="small" className="">
+        {items !== null && items !== undefined && items.length > 0 && (
           <>
             {items.map((item, index) => (
               <Container
                 intent="flexRowCenter"
-                className="max-w-fit border-2 border-primary-light rounded-full px-[16px] py-[8px] gap-[8px] bg-surface-dark text-on-surface-dark/50 hover:text-on-surface-dark transition-all duration-200 ease-in-out hover:cursor-pointer"
-                key={index}
+                className="max-w-fit border-[1.5px] border-primary-light rounded-full px-[12px] py-[6px] gap-[8px] bg-surface-dark text-on-surface-dark/50 hover:text-on-surface-dark transition-all duration-200 ease-in-out hover:cursor-pointer"
+                key={index.toString()}
               >
-                <Text variant="accent">{item}</Text>
+                <Text intent="p2" variant="accent">
+                  {item}
+                </Text>
                 <Button
                   intent="unstyled"
                   onClick={() => {

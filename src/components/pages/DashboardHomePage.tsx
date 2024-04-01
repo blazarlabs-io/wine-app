@@ -16,18 +16,28 @@ import { WineryDataInterface } from "@/typings/components";
 
 export const DashboardHomePage = () => {
   const { user } = useAuth();
-  const { updateWinery, showRegisterWinery, updateShowRegisterWinery } =
-    useWinery();
+  const {
+    updateWinery,
+    showRegisterWinery,
+    updateShowRegisterWinery,
+    updateIsEditing,
+  } = useWinery();
 
   useEffect(() => {
     getWineryDataDb(user?.uid as string).then((data) => {
       if (data === null) {
         initWineryInDb(user?.uid as string);
       }
-      if (data?.generalInfo === null || data?.generalInfo === undefined) {
+      if (
+        data?.generalInfo === null ||
+        data?.generalInfo === undefined ||
+        Object.keys(data?.generalInfo).length === 0
+      ) {
         updateShowRegisterWinery(true);
+        updateIsEditing(false);
       } else {
         updateShowRegisterWinery(false);
+        updateIsEditing(false);
         const wineryData: WineryDataInterface = {
           generalInfo: data.generalInfo,
           wines: data.wines || [],

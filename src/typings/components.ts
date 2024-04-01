@@ -45,16 +45,16 @@ export interface WineryStatInterface {
 export interface WineryGeneralInfoInterface {
   name: string;
   foundedOn: string;
-  location: string;
   logo: string;
   noOfProducedWines: string;
   vineyardsSurface: string;
   noOfBottlesProducedPerYear: string;
   grapeVarieties: string;
   lastUpdated: string;
+  certifications: string[];
   wineryHeadquarters: {
-    latitude: number;
-    longitude: number;
+    latitude: string;
+    longitude: string;
   };
 }
 

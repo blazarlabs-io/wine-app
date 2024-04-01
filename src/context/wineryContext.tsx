@@ -11,6 +11,7 @@ import {
 export interface WineryContextInterface extends WineryDataInterface {
   formTitle: string;
   formDescription: string;
+  isEditing: boolean;
   showRegisterWinery: boolean;
   generalInfo: WineryGeneralInfoInterface;
   exists: boolean;
@@ -20,6 +21,7 @@ export interface WineryContextInterface extends WineryDataInterface {
   updateSingleEuLabel: (data: EuLabelInterface) => void;
   updateFormDescription: (value: string) => void;
   updateFormTitle: (value: string) => void;
+  updateIsEditing: (value: boolean) => void;
   updateWinery: (data: WineryDataInterface) => void;
   updateShowRegisterWinery: (value: boolean) => void;
 }
@@ -28,21 +30,22 @@ export const contextInitialData: WineryContextInterface = {
   formTitle: "Register Winery",
   formDescription:
     "Please fill in the form to register your winery. All fields marked with * are mandatory.",
+  isEditing: false,
   showRegisterWinery: false,
   exists: false,
   generalInfo: {
     name: "",
     foundedOn: "",
-    location: "",
     logo: "",
     noOfProducedWines: "",
     vineyardsSurface: "",
     noOfBottlesProducedPerYear: "",
     grapeVarieties: "",
     lastUpdated: "",
+    certifications: [],
     wineryHeadquarters: {
-      latitude: 0,
-      longitude: 0,
+      latitude: "0",
+      longitude: "0",
     },
   },
   wines: null,
@@ -100,6 +103,7 @@ export const contextInitialData: WineryContextInterface = {
   euLabels: null,
   updateSingleEuLabel: (data: EuLabelInterface) => {},
   updateFormTitle: (value: string) => {},
+  updateIsEditing: (value: boolean) => {},
   updateFormDescription: (value: string) => {},
   updateWinery: (data: WineryDataInterface) => {},
   updateShowRegisterWinery: (value: boolean) => {},
@@ -127,6 +131,9 @@ export const WineryProvider = ({
   const [formDescription, setFormDescription] = useState<string>(
     contextInitialData.formDescription
   );
+  const [isEditing, setIsEditing] = useState<boolean>(
+    contextInitialData.isEditing
+  );
   const [showRegisterWinery, setShowRegisterWinery] = useState<boolean>(false);
   const [generalInfo, setGeneralInfo] = useState<WineryGeneralInfoInterface>(
     contextInitialData.generalInfo
@@ -149,6 +156,10 @@ export const WineryProvider = ({
     setFormDescription(value);
   };
 
+  const updateIsEditing = (value: boolean) => {
+    setIsEditing(value);
+  };
+
   const updateShowRegisterWinery = (value: boolean) => {
     setShowRegisterWinery(value);
   };
@@ -169,6 +180,7 @@ export const WineryProvider = ({
   const value = {
     formTitle,
     formDescription,
+    isEditing,
     showRegisterWinery,
     generalInfo,
     exists,
@@ -177,6 +189,7 @@ export const WineryProvider = ({
     euLabels,
     updateSingleEuLabel,
     updateFormTitle,
+    updateIsEditing,
     updateFormDescription,
     updateWinery,
     updateShowRegisterWinery,
