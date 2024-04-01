@@ -50,7 +50,7 @@ export const TopBar = ({ className }: TopBarProps) => {
         <Button
           onClick={() => {
             if (!user) {
-              router.push("/home");
+              router.push("/login");
             } else {
               handleLogOut();
             }

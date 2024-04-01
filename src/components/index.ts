@@ -13,6 +13,7 @@ export { CheckBox } from "./core/CheckBox";
 export { CheckInputText } from "./core/CheckInputText";
 export { Modal } from "./core/Overlays/Modal";
 export { AuthSpinnerLoader } from "./core/Loader/AuthSpinnerLoader";
+export { GeneralLoaderOverlay } from "./core/Loader/GeneralLoaderOverlay";
 export { SpinnerLoader } from "./core/Loader/SpinnerLoader";
 export { InfoTooltip } from "./core/Helper/InfoTooltip";
 
@@ -38,3 +39,4 @@ export { LoginPage } from "./pages/LoginPage";
 export { DashboardHomePage } from "./pages/DashboardHomePage";
 export { ProtectedPage } from "./pages/ProtectedPage";
 export { GenerateEuLabelPage } from "./pages/GenerateEuLabelPage";
+export { RegisterWineryPage } from "./pages/RegisterWineryPage";

@@ -17,11 +17,12 @@ export const WineryLogo = ({
     <div
       style={{
         backgroundImage: `url('${url}')`,
-        backgroundSize: "cover",
+        backgroundSize: "contain",
         backgroundRepeat: "no-repeat",
-        backgroundPosition: "top",
+        backgroundPosition: "center",
         width: width,
         height: height,
+        minWidth: "fit-content",
       }}
       className={className}
     />

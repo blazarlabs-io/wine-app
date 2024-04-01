@@ -33,7 +33,7 @@ export const LoginPage = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.1, delay: 0.25 }}
             exit={{ opacity: 0 }}
-            className="fixed flex flex-col items-center justify-center -z-1 top-0 left-0 w-full h-full bg-surface/80 backdrop-blur-sm"
+            className="fixed flex flex-col items-center justify-center -z-1 top-0 left-0 w-full h-full bg-surface-light"
           >
             <motion.div
               initial={{ scale: 0 }}

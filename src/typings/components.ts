@@ -46,6 +46,7 @@ export interface WineryGeneralInfoInterface {
   name: string;
   foundedOn: string;
   logo: string;
+  collections: string;
   noOfProducedWines: string;
   vineyardsSurface: string;
   noOfBottlesProducedPerYear: string;
@@ -55,6 +56,11 @@ export interface WineryGeneralInfoInterface {
   wineryHeadquarters: {
     latitude: string;
     longitude: string;
+  };
+  wineryRepresentative: {
+    name: string;
+    email: string;
+    phone: string;
   };
 }
 

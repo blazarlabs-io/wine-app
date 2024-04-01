@@ -37,6 +37,7 @@ export const contextInitialData: WineryContextInterface = {
     name: "",
     foundedOn: "",
     logo: "",
+    collections: "",
     noOfProducedWines: "",
     vineyardsSurface: "",
     noOfBottlesProducedPerYear: "",
@@ -46,6 +47,11 @@ export const contextInitialData: WineryContextInterface = {
     wineryHeadquarters: {
       latitude: "0",
       longitude: "0",
+    },
+    wineryRepresentative: {
+      name: "",
+      email: "",
+      phone: "",
     },
   },
   wines: null,

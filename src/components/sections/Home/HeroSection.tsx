@@ -33,7 +33,11 @@ export const HeroSection = ({ className }: HeroSectionProps) => {
         <Button intent="primary" size="large">
           Explore
         </Button>
-        <Button intent="text" size="large" onClick={() => router.push("/home")}>
+        <Button
+          intent="text"
+          size="large"
+          onClick={() => router.push("/login")}
+        >
           Are you a winery owner?
         </Button>
       </Container>

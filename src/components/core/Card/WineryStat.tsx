@@ -11,11 +11,11 @@ export interface WineryStatProps {
 export const WineryStat = ({ data }: WineryStatProps) => {
   return (
     <Container
-      intent="flexColLeft"
-      className="bg-surface rounded-md shadow-sm p-[16px] min-w-[212px] max-w-[212px] min-h-[264px] max-h-[264px]"
+      intent="flexColBetween"
+      className="bg-surface rounded-md shadow-sm p-[16px] min-w-[212px] max-w-[212px] h-full"
       gap="medium"
     >
-      <Container intent="flexColLeft" gap="xsmall">
+      <Container intent="flexColLeft" gap="xsmall" className="h-full">
         <Container intent="flexRowLeft">
           <Text intent="h2">{data.value}</Text>
         </Container>
@@ -33,7 +33,7 @@ export const WineryStat = ({ data }: WineryStatProps) => {
           </Text>
         </Container>
       </Container>
-      <Container intent="flexRowLeft" gap="xsmall">
+      <Container intent="flexRowLeft" gap="xsmall" className="h-full">
         <Icon
           icon="material-symbols:update"
           color="#cccccc"

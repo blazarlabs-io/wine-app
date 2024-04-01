@@ -11,16 +11,19 @@ import { useWinery } from "@/context/wineryContext";
 import { useEffect } from "react";
 import { useAuth } from "@/context/authContext";
 import { getWineryDataDb, initWineryInDb } from "@/utils/firestore";
-import { db } from "@/lib/firebase/client";
+import { useRouter } from "next/navigation";
 import { WineryDataInterface } from "@/typings/components";
+import { useAppState } from "@/context/appStateContext";
 
 export const DashboardHomePage = () => {
   const { user } = useAuth();
+  const { updateAppLoading } = useAppState();
+  const router = useRouter();
   const {
-    updateWinery,
     showRegisterWinery,
     updateShowRegisterWinery,
     updateIsEditing,
+    updateWinery,
   } = useWinery();
 
   useEffect(() => {
@@ -35,6 +38,7 @@ export const DashboardHomePage = () => {
       ) {
         updateShowRegisterWinery(true);
         updateIsEditing(false);
+        router.push("/register-winery");
       } else {
         updateShowRegisterWinery(false);
         updateIsEditing(false);
@@ -46,6 +50,7 @@ export const DashboardHomePage = () => {
         };
         console.log("Winery exists", wineryData);
         updateWinery(wineryData);
+        updateAppLoading(false);
       }
     });
   }, []);

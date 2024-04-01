@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  WineryStat,
-  Container,
-  Button,
-  Text,
-  WineryLogo,
-  WineryGeneralInfo,
-} from "@/components";
+import { WineryStat, Container, WineryGeneralInfo } from "@/components";
 import { WineryStatInterface } from "@/typings/components";
 import { useWinery } from "@/context/wineryContext";
 
@@ -16,8 +9,8 @@ export const WineryHeaderSection = () => {
 
   const wineryStats: WineryStatInterface[] = [
     {
-      title: "Number of Produced Wines",
-      value: (generalInfo && generalInfo.noOfProducedWines) || "0",
+      title: "Wine Collections",
+      value: (generalInfo && generalInfo.collections) || "0",
       icon: "fluent:drink-wine-24-regular",
       updatedAt: (generalInfo && generalInfo.lastUpdated) || "",
     },
@@ -25,12 +18,6 @@ export const WineryHeaderSection = () => {
       title: "Vineyards Surface",
       value: (generalInfo && generalInfo.vineyardsSurface) || "0",
       icon: "material-symbols:landscape-outline",
-      updatedAt: (generalInfo && generalInfo.lastUpdated) || "",
-    },
-    {
-      title: "Number of Bottles Produced Last Year",
-      value: (generalInfo && generalInfo.noOfBottlesProducedPerYear) || "0",
-      icon: "la:wine-bottle",
       updatedAt: (generalInfo && generalInfo.lastUpdated) || "",
     },
     {
@@ -47,12 +34,12 @@ export const WineryHeaderSection = () => {
       py="large"
       px="xlarge"
       gap="large"
-      className="bg-[#3F2929] w-full"
+      className="bg-[#3F2929] w-full min-h-[320px] max-h-[320px]"
     >
       <WineryGeneralInfo />
-      <Container intent="flexRowBetween" gap="xsmall">
+      <Container intent="flexRowBetween" gap="medium" className="h-full">
         {wineryStats.map((stat) => (
-          <div key={stat.title}>
+          <div key={stat.title} className="h-full">
             <WineryStat data={stat} />
           </div>
         ))}

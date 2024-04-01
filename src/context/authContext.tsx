@@ -3,6 +3,7 @@
 import { auth } from "@/lib/firebase/client";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import { useAppState } from "./appStateContext";
 
 // LIBS
 import { createContext, useContext, useEffect, useState } from "react";
@@ -37,6 +38,8 @@ export const useAuth = (): AuthContextInterface => {
 export const AuthProvider = ({
   children,
 }: React.PropsWithChildren): JSX.Element => {
+  const { updateAppLoading } = useAppState();
+
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState<boolean>(true);
@@ -48,7 +51,7 @@ export const AuthProvider = ({
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setAuthLoading(false);
-
+      updateAppLoading(true);
       if (user) {
         setUser(user);
         router.push("/home");
