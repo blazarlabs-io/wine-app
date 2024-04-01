@@ -21,7 +21,7 @@ const container = cva("container", {
         "flex-row",
         "flex-wrap",
         "items-center",
-        "justify-between",
+        // "justify-between",
         "w-full",
       ],
       flexRowBetween: [
@@ -31,6 +31,20 @@ const container = cva("container", {
         "justify-between",
         "w-full",
       ],
+      flexColBetween: [
+        "flex",
+        "flex-col",
+        "items-start",
+        "justify-between",
+        "w-full",
+      ],
+      "grid-2": ["grid", "grid-cols-2", "w-full", "justify-center"],
+      "grid-3": ["grid", "grid-cols-3", "w-full", "justify-center"],
+      "grid-4": ["grid", "grid-cols-4", "w-full", "justify-center"],
+      "grid-5": ["grid", "grid-cols-5", "w-full", "justify-center"],
+      "grid-6": ["grid", "grid-cols-6", "w-full", "justify-center"],
+      "grid-7": ["grid", "grid-cols-7", "w-full", "justify-center"],
+      "grid-8": ["grid", "grid-cols-8", "w-full", "justify-center"],
     },
     px: {
       none: [""],
@@ -69,6 +83,8 @@ const container = cva("container", {
 export interface ContainerProps
   extends React.ButtonHTMLAttributes<HTMLDivElement>,
     VariantProps<typeof container> {
+  id?: string;
+  key?: string;
   intent:
     | "flexColCenter"
     | "flexColTop"
@@ -77,7 +93,16 @@ export interface ContainerProps
     | "flexRowRight"
     | "flexRowCenter"
     | "flexRowWrap"
-    | "flexRowBetween";
+    | "flexRowBetween"
+    | "flexColBetween"
+    | "grid-2"
+    | "grid-3"
+    | "grid-4"
+    | "grid-5"
+    | "grid-6"
+    | "grid-7"
+    | "grid-8";
+
   px?:
     | "none"
     | "xsmall"
@@ -108,6 +133,8 @@ export interface ContainerProps
   props?: any;
 }
 export const Container = ({
+  id,
+  key,
   intent,
   gap,
   px,
@@ -116,6 +143,8 @@ export const Container = ({
 }: ContainerProps) => {
   return (
     <div
+      key={key || ""}
+      id={id || ""}
       className={container({ intent, gap, px, py, className: props.className })}
     >
       {props.children}

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Khula } from "next/font/google";
-import { BaseLayout } from "@/components";
-import { LoginProvider } from "@/context/loginContext";
+import { Providers } from "@/context/Providers";
 import "./globals.css";
 
 const inter = Khula({
@@ -22,12 +21,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <LoginProvider>
-      <html lang="en">
-        <body className={inter.className}>
-          <BaseLayout>{children}</BaseLayout>
-        </body>
-      </html>
-    </LoginProvider>
+    <html lang="en">
+      <body className={inter.className}>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
   );
 }

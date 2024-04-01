@@ -32,7 +32,13 @@ const button = cva("button rounded-lg", {
     },
     size: {
       small: ["text-sm", "px-[24px]", "py-[8px]"],
-      medium: ["text-base", "px-[48px]", "py-[12px]"],
+      medium: [
+        "text-base",
+        "px-[48px]",
+        "py-[12px]",
+        "min-h-[48px]",
+        "max-h-[48px]",
+      ],
       large: ["text-lg", "px-[56px]", "py-[16px]"],
     },
     fullWidth: {
@@ -55,6 +61,7 @@ export interface ButtonProps
   size?: "small" | "medium" | "large";
   fullWidth?: boolean;
   disabled?: boolean;
+  type?: "button" | "submit" | "reset";
   onClick?: () => void;
 }
 
@@ -63,12 +70,14 @@ export const Button = ({
   size,
   fullWidth,
   disabled,
+  type = "button",
   onClick,
   ...props
 }: ButtonProps) => {
   return (
     <button
       {...props}
+      type={type}
       className={button({
         intent,
         size,

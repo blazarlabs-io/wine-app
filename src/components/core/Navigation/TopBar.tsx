@@ -4,14 +4,26 @@ import Image from "next/image";
 import { Container } from "../Container";
 import { Button } from "../Button";
 import { classNames } from "@/utils/classNames";
-import { useLogin } from "@/context/loginContext";
+import { redirect, useRouter } from "next/navigation";
+import { useAuth } from "@/context/authContext";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase/client";
 
 export interface TopBarProps {
   className?: string;
 }
 
 export const TopBar = ({ className }: TopBarProps) => {
-  const { updateShowLogin } = useLogin();
+  const router = useRouter();
+  const { user } = useAuth();
+
+  const handleLogOut = async () => {
+    signOut(auth)
+      .then(async () => {
+        redirect("/");
+      })
+      .catch((error) => {});
+  };
 
   return (
     <Container
@@ -37,12 +49,16 @@ export const TopBar = ({ className }: TopBarProps) => {
       <Container intent="flexRowRight" gap="medium">
         <Button
           onClick={() => {
-            updateShowLogin(true);
+            if (!user) {
+              router.push("/login");
+            } else {
+              handleLogOut();
+            }
           }}
           intent="text"
           size="medium"
         >
-          Log in as winery owner
+          {!user ? "Log in as winery owner" : "Log out"}
         </Button>
       </Container>
     </Container>

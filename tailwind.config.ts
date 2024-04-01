@@ -31,8 +31,8 @@ const config: Config = {
         },
         status: {
           success: "#B9FF74",
-          warning: "#FE7171",
-          error: "#FEDD68",
+          warning: "#FEDD68",
+          error: "#FE7171",
           info: "#81E8FF",
           disabled: "#5A5A5A",
         },

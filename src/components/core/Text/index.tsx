@@ -1,4 +1,5 @@
-import { cva, type VariantProps } from "class-variance-authority";
+import { cva } from "class-variance-authority";
+import { TextProps } from "@/typings/components";
 
 const text = cva("", {
   variants: {
@@ -10,11 +11,11 @@ const text = cva("", {
       h5: ["text-[20px]", "font-medium"],
       h6: ["text-[18px]", "font-medium"],
       p1: ["text-[16px]", "", "", ""],
-      p2: ["text-[12px]", "", "", ""],
+      p2: ["text-[14px]", "", "", ""],
     },
     variant: {
       normal: ["text-on-surface"],
-      accent: ["text-primary"],
+      accent: ["text-primary-light"],
       dim: ["text-on-surface/80"],
       inverted: ["text-surface"],
       error: ["text-status-error"],
@@ -25,21 +26,6 @@ const text = cva("", {
   },
   compoundVariants: [{ intent: "p1", variant: "normal", class: "" }],
 });
-
-export interface TextProps {
-  children: React.ReactNode;
-  className?: string;
-  intent?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p1" | "p2";
-  variant?:
-    | "normal"
-    | "accent"
-    | "dim"
-    | "inverted"
-    | "error"
-    | "success"
-    | "warning"
-    | "info";
-}
 
 export const Text = ({
   children,

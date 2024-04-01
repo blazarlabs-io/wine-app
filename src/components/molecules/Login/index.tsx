@@ -1,7 +1,17 @@
-import { Container, Text, Button } from "@/components";
-import { useLogin } from "@/context/loginContext";
+"use client";
+
+import { Container, Text, Button, SpinnerLoader } from "@/components";
 import { Icon } from "@iconify/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { auth } from "@/lib/firebase/client";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/context/toastContext";
+import { ToastProps } from "@/typings/components";
+import { firebaseAuthErrors } from "@/utils/firebaseAuthErrors";
+import { useLocalStorage } from "usehooks-ts";
+import { useAuth } from "@/context/authContext";
+import { useAppState } from "@/context/appStateContext";
 
 export interface LoginProps {
   title: string;
@@ -9,10 +19,61 @@ export interface LoginProps {
 }
 
 export const Login = ({ title, description }: LoginProps) => {
-  const { updateShowLogin } = useLogin();
+  const { user } = useAuth();
+  const router = useRouter();
+  const { updateAuthLoading, authLoading } = useAuth();
+  const { updateToast } = useToast();
+  const { updateAppLoading } = useAppState();
+  const [email, setEmail] = useLocalStorage(
+    "email",
+    { address: "" },
+    {
+      initializeWithValue: false,
+    }
+  );
+  const [password, setPassword] = useLocalStorage(
+    "password",
+    { value: "" },
+    {
+      initializeWithValue: false,
+    }
+  );
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+
+  useEffect(() => {
+    !user && updateAppLoading(false);
+  }, []);
+
+  const handleSignIn = async () => {
+    updateAuthLoading(true);
+    signInWithEmailAndPassword(auth, email.address, password.value)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        console.log("signed in", user);
+        updateAuthLoading(false);
+        updateAppLoading(true);
+        router.replace("/home");
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(firebaseAuthErrors[errorCode] as string);
+        const toastProps: ToastProps = {
+          show: true,
+          status: "error",
+          message: (firebaseAuthErrors[errorCode] as string) ?? errorMessage,
+          timeout: 5000,
+        };
+        console.log(toastProps);
+        updateToast(toastProps);
+        updateAuthLoading(false);
+      });
+  };
+
+  const handleCancel = async () => {
+    router.replace("/");
+  };
 
   return (
     <Container
@@ -44,7 +105,11 @@ export const Login = ({ title, description }: LoginProps) => {
           </Text>
           <input
             type="email"
+            value={email.address}
             placeholder="Enter your email"
+            onChange={(event: any) => {
+              setEmail({ address: event.target.value as string });
+            }}
             className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
           />
         </Container>
@@ -54,8 +119,12 @@ export const Login = ({ title, description }: LoginProps) => {
           </Text>
           <Container intent="flexRowLeft" gap="xsmall" className="relative">
             <input
+              value={password.value}
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
+              onChange={(event: any) => {
+                setPassword({ value: event.target.value as string });
+              }}
               className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
             />
             <button
@@ -66,9 +135,9 @@ export const Login = ({ title, description }: LoginProps) => {
               }}
             >
               {showPassword ? (
-                <Icon icon="mdi:eye-outline" />
-              ) : (
                 <Icon icon="mdi:eye-off-outline" />
+              ) : (
+                <Icon icon="mdi:eye-outline" />
               )}
             </button>
           </Container>
@@ -79,12 +148,12 @@ export const Login = ({ title, description }: LoginProps) => {
           intent="secondary"
           size="medium"
           fullWidth
-          onClick={() => updateShowLogin(false)}
+          onClick={handleCancel}
         >
           Cancel
         </Button>
-        <Button intent="primary" size="medium" fullWidth>
-          Login
+        <Button intent="primary" size="medium" fullWidth onClick={handleSignIn}>
+          {!authLoading ? "Login" : <SpinnerLoader />}
         </Button>
       </Container>
     </Container>
