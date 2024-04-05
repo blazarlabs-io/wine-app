@@ -9,6 +9,7 @@ export interface CheckInputTextProps {
   checked: boolean;
   value: string;
   placeholder: string;
+  isRequired?: boolean;
   onBoxChecked: (state: boolean) => void;
   onInputChange: (value: string) => void;
 }
@@ -18,6 +19,7 @@ export const CheckInputText = ({
   placeholder,
   checked,
   value,
+  isRequired,
   onBoxChecked,
   onInputChange,
 }: CheckInputTextProps) => {
@@ -36,6 +38,7 @@ export const CheckInputText = ({
         />
       </Container>
       <input
+        required={isRequired ? true : false}
         disabled={!isChecked}
         type="text"
         placeholder={placeholder}

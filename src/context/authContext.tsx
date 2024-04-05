@@ -57,6 +57,7 @@ export const AuthProvider = ({
         router.push("/home");
       } else {
         setUser(null);
+        updateAppLoading(false);
       }
 
       setTimeout(() => {
