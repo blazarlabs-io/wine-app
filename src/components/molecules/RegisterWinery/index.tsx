@@ -17,7 +17,7 @@ import {
 } from "@/typings/components";
 import {
   registerWineryGeneralInfoToDb,
-  uploadImageToStorage,
+  uploadLogoToStorage,
 } from "@/utils/firestore";
 import { useRef, useState } from "react";
 import { validateFileSizeInMegabytes } from "@/utils/validateFileSizeInMegabytes";
@@ -72,7 +72,7 @@ export const RegisterWinery = () => {
 
   const handleRegistration = () => {
     setIsLoading(true);
-    uploadImageToStorage(user?.uid as string, logoFile as File, (url) => {
+    uploadLogoToStorage(user?.uid as string, logoFile as File, (url) => {
       console.log("handleRegistration", url);
       generalInfo.logo = url;
       const newWineryData: WineryDataInterface = {

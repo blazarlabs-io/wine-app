@@ -48,7 +48,7 @@ export const DashboardHomePage = () => {
           euLabels: data.euLabels || [],
           exists: true,
         };
-        console.log("Winery exists", wineryData);
+        // console.log("Winery exists", wineryData);
         updateWinery(wineryData);
         updateAppLoading(false);
       }

@@ -56,29 +56,30 @@ export const TextInputCrud = ({
         {items !== null && items !== undefined && items.length > 0 && (
           <>
             {items.map((item, index) => (
-              <Container
-                intent="flexRowCenter"
-                className="max-w-fit border-[1.5px] border-primary-light rounded-full px-[12px] py-[6px] gap-[8px] bg-surface-dark text-on-surface-dark/50 hover:text-on-surface-dark transition-all duration-200 ease-in-out hover:cursor-pointer"
-                key={index.toString()}
-              >
-                <Text intent="p2" variant="accent">
-                  {item}
-                </Text>
-                <Button
-                  intent="unstyled"
-                  onClick={() => {
-                    const its = items.filter((_, i) => i !== index);
-                    setItems(its);
-                    onItemsChange(its);
-                  }}
-                  className="text-[16px] flex items-center max-w-fit text-primary-light hover:text-primary transition-all duration-200 ease-in-out"
+              <div key={index.toString()}>
+                <Container
+                  intent="flexRowCenter"
+                  className="max-w-fit border-[1.5px] border-primary-light rounded-full px-[12px] py-[6px] gap-[8px] bg-surface-dark text-on-surface-dark/50 hover:text-on-surface-dark transition-all duration-200 ease-in-out hover:cursor-pointer"
                 >
-                  <Icon
-                    icon="material-symbols:close"
-                    className="mt-[-5px] h-[16px] w-[16px]"
-                  />
-                </Button>
-              </Container>
+                  <Text intent="p2" variant="accent">
+                    {item}
+                  </Text>
+                  <Button
+                    intent="unstyled"
+                    onClick={() => {
+                      const its = items.filter((_, i) => i !== index);
+                      setItems(its);
+                      onItemsChange(its);
+                    }}
+                    className="text-[16px] flex items-center max-w-fit text-primary-light hover:text-primary transition-all duration-200 ease-in-out"
+                  >
+                    <Icon
+                      icon="material-symbols:close"
+                      className="mt-[-5px] h-[16px] w-[16px]"
+                    />
+                  </Button>
+                </Container>
+              </div>
             ))}
           </>
         )}

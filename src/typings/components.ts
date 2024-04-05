@@ -126,6 +126,7 @@ export interface EuLabelInterface {
   maturedInOakBarrel: boolean;
   bottledBy: string;
   addressOfProducer: string;
+  qrCodeUrl: string;
   ingredients: {
     grapes: {
       has: boolean;
@@ -166,6 +167,12 @@ export interface FiningAgentInterface {
 // WINERY DATA PROPS
 export interface WineryDataInterface {
   exists: boolean;
+  generalInfo: WineryGeneralInfoInterface | null;
+  wines: WinesInterface[] | null;
+  euLabels: EuLabelInterface[] | null;
+}
+
+export interface WineryInterface {
   generalInfo: WineryGeneralInfoInterface | null;
   wines: WinesInterface[] | null;
   euLabels: EuLabelInterface[] | null;

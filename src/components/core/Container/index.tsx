@@ -38,6 +38,7 @@ const container = cva("container", {
         "justify-between",
         "w-full",
       ],
+      "grid-1": ["grid", "grid-cols-1", "w-full", "justify-center"],
       "grid-2": ["grid", "grid-cols-2", "w-full", "justify-center"],
       "grid-3": ["grid", "grid-cols-3", "w-full", "justify-center"],
       "grid-4": ["grid", "grid-cols-4", "w-full", "justify-center"],
@@ -86,6 +87,7 @@ export interface ContainerProps
   id?: string;
   key?: string;
   intent:
+    | "unstyled"
     | "flexColCenter"
     | "flexColTop"
     | "flexColLeft"
@@ -95,6 +97,7 @@ export interface ContainerProps
     | "flexRowWrap"
     | "flexRowBetween"
     | "flexColBetween"
+    | "grid-1"
     | "grid-2"
     | "grid-3"
     | "grid-4"

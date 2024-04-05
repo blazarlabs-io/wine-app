@@ -72,6 +72,7 @@ export const contextInitialData: WineryContextInterface = {
     maturedInOakBarrel: false,
     bottledBy: "",
     addressOfProducer: "",
+    qrCodeUrl: "",
     ingredients: {
       grapes: {
         has: false,

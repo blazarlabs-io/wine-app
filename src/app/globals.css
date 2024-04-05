@@ -20,6 +20,7 @@
 
 body {
   background-color: theme("colors.surface.DEFAULT");
+  overflow-y: scroll;
 }
 
 .kaushan {
@@ -41,6 +42,30 @@ select {
   }
 }
 
+/* SCROLL STYLING */
+/* width */
+::-webkit-scrollbar {
+  width: 16px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: theme("colors.surface.DEFAULT");
+  border-radius: 4px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: theme("colors.surface.light");
+  border-radius: 4px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: theme("colors.primary.light");
+}
+
+/* DEBUG STYLING */
 .debug-red {
   border-width: 2px;
   border-color: rgb(255, 0, 0);

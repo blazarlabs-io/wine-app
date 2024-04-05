@@ -30,13 +30,26 @@ export const TopBar = ({ className }: TopBarProps) => {
       px="large"
       py="small"
       intent="flexRowBetween"
-      className={classNames(className, "bg-surface/80", "backdrop-blur-sm")}
+      className={classNames(
+        className,
+        "bg-surface-light/70",
+        "backdrop-blur-sm w-full sticky top-0 z-50"
+      )}
     >
       <Container intent="flexRowLeft" className="w-full">
         <Image src="/logo-by-eehub.svg" alt="Logo" width={224} height={56} />
       </Container>
       <Container intent="flexRowCenter" gap="large" className="">
-        <button className="max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out">
+        <button
+          onClick={() => router.push("/home")}
+          className="max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out"
+        >
+          Home
+        </button>
+        <button
+          onClick={() => router.push("/explore")}
+          className="max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out"
+        >
           Explore
         </button>
         <button className="max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out">
@@ -56,7 +69,6 @@ export const TopBar = ({ className }: TopBarProps) => {
             }
           }}
           intent="text"
-          size="medium"
         >
           {!user ? "Log in as winery owner" : "Log out"}
         </Button>

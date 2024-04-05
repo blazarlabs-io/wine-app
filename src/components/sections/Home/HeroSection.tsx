@@ -30,7 +30,11 @@ export const HeroSection = ({ className }: HeroSectionProps) => {
         </Text>
       </Container>
       <Container intent="flexRowLeft">
-        <Button intent="primary" size="large">
+        <Button
+          intent="primary"
+          size="large"
+          onClick={() => router.push("/explore")}
+        >
           Explore
         </Button>
         <Button

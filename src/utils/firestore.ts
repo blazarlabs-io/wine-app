@@ -1,5 +1,15 @@
-import { WineryGeneralInfoInterface } from "@/typings/components";
-import { DocumentData, doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  EuLabelInterface,
+  WineryGeneralInfoInterface,
+} from "@/typings/components";
+import {
+  DocumentData,
+  arrayUnion,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { db, storage } from "@/lib/firebase/client";
 
@@ -8,7 +18,7 @@ export const initWineryInDb = async (docId: string) => {
   try {
     await setDoc(
       doc(db, "wineries", docId),
-      { uid: docId, generalInfo: {} },
+      { uid: docId, generalInfo: {}, euLabels: [], wines: [] },
       { merge: true }
     );
   } catch (e) {
@@ -39,7 +49,15 @@ export const registerWineryGeneralInfoToDb = async (
   setDoc(docRef, { generalInfo: wineryData }, { merge: true });
 };
 
-export const uploadImageToStorage = async (
+export const registerWineryEuLabel = async (
+  docId: string,
+  euLabel: EuLabelInterface
+) => {
+  const docRef = doc(db, "wineries", docId as string);
+  await updateDoc(docRef, { euLabels: arrayUnion(euLabel) });
+};
+
+export const uploadLogoToStorage = async (
   id: string,
   file: File,
   callback: (url: string) => void
@@ -56,6 +74,44 @@ export const uploadImageToStorage = async (
   );
 
   const uploadTask = uploadBytesResumable(imgRef, file);
+
+  uploadTask.on(
+    "state_changed",
+    (snapshot) => {
+      const progress = Math.round(
+        (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+      );
+    },
+    (error) => {
+      console.log(error);
+    },
+    () => {
+      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        callback(downloadURL);
+      });
+    }
+  );
+};
+
+export const uploadQrCodeToStorage = async (
+  id: string,
+  file: string,
+  name: string,
+  callback: (url: string) => void
+) => {
+  const blob = await fetch(file).then((r) => r.blob());
+  const newImage = new File([blob], name + ".png", { type: "image/png" });
+
+  if (!file) {
+    getWineryDataDb(id).then((data) => {
+      callback(data?.generalInfo.logo || "");
+    });
+    return;
+  }
+
+  const imgRef = ref(storage, "images/" + id + "/" + name + ".png");
+
+  const uploadTask = uploadBytesResumable(imgRef, newImage);
 
   uploadTask.on(
     "state_changed",

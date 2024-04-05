@@ -3,15 +3,20 @@ import { Container, Button, Text, Accordion } from "@/components";
 import { Icon } from "@iconify/react";
 import { useWinery } from "@/context/wineryContext";
 import { useRouter } from "next/navigation";
+import { useAppState } from "@/context/appStateContext";
+import { useRealtimeDb } from "@/context/realtimeDbContext";
 
 export const WinesListSection = () => {
-  const { wines, updateFormTitle, updateFormDescription } = useWinery();
+  const { euLabels, updateFormTitle, updateFormDescription } = useWinery();
   const router = useRouter();
+  const { updateAppLoading } = useAppState();
+
+  const { wineryEuLabels } = useRealtimeDb();
 
   return (
     <>
-      {wines && wines.length > 0 ? (
-        <>
+      {wineryEuLabels && wineryEuLabels.length > 0 ? (
+        <Container intent="flexColLeft" className="">
           <Container
             intent="flexRowLeft"
             py="medium"
@@ -46,8 +51,10 @@ export const WinesListSection = () => {
               Add Wine
             </Button>
           </Container>
-          <Accordion data={wines} />
-        </>
+          <div className="w-full">
+            <Accordion data={wineryEuLabels} />
+          </div>
+        </Container>
       ) : (
         <Container intent="flexColCenter" gap="large" className="h-full">
           <Container intent="flexColTop" gap="xsmall">
@@ -76,6 +83,7 @@ export const WinesListSection = () => {
               size="medium"
               className="flex items-center gap-[8px]"
               onClick={() => {
+                updateAppLoading(true);
                 updateFormTitle("Register EU Label");
                 updateFormDescription(
                   "Register a new EU label for your wine. All fields marked with * are mandatory."
