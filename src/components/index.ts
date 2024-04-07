@@ -21,6 +21,7 @@ export { SideBarFilter } from "./core/Filter/SideBarFilter";
 export { DropDownFilter } from "./core/Filter/DropDownFilter";
 export { SearchFilter } from "./core/Filter/SearchFilter";
 export { WineCard } from "./core/Card/WineCard";
+export { BounceLoader } from "./core/Loader/BounceLoader";
 
 // Molecular components
 export { RegisterWinery } from "./molecules/RegisterWinery";
@@ -32,6 +33,8 @@ export { ReviewEuLabel } from "./molecules/ReviewEuLabel";
 export { IngredientViewer } from "./molecules/IngredientViewer";
 export { AllergenViewer } from "./molecules/AllergenViewer";
 export { EuLabelItem } from "./molecules/EuLabelItem";
+export { EuLabelGeneralViewer } from "./molecules/EuLabelGeneralViewer";
+export { EuLabelsAccordion } from "./molecules/EuLabelsAccordion";
 
 // Layout components
 export { BaseLayout } from "./layouts/Base";

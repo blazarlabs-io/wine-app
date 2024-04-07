@@ -14,6 +14,7 @@ import { getWineryDataDb, initWineryInDb } from "@/utils/firestore";
 import { useRouter } from "next/navigation";
 import { WineryDataInterface } from "@/typings/components";
 import { useAppState } from "@/context/appStateContext";
+import { useRealtimeDb } from "@/context/realtimeDbContext";
 
 export const DashboardHomePage = () => {
   const { user } = useAuth();
@@ -26,10 +27,13 @@ export const DashboardHomePage = () => {
     updateWinery,
   } = useWinery();
 
+  const { wineryGeneralInfo, updateWineryGeneralInfo, tier, level } =
+    useRealtimeDb();
+
   useEffect(() => {
     getWineryDataDb(user?.uid as string).then((data) => {
       if (data === null) {
-        initWineryInDb(user?.uid as string);
+        // initWineryInDb(user?.uid as string);
       }
       if (
         data?.generalInfo === null ||
@@ -40,16 +44,18 @@ export const DashboardHomePage = () => {
         updateIsEditing(false);
         router.push("/register-winery");
       } else {
-        updateShowRegisterWinery(false);
-        updateIsEditing(false);
-        const wineryData: WineryDataInterface = {
-          generalInfo: data.generalInfo,
-          wines: data.wines || [],
-          euLabels: data.euLabels || [],
-          exists: true,
-        };
-        // console.log("Winery exists", wineryData);
-        updateWinery(wineryData);
+        // updateShowRegisterWinery(false);
+        // updateIsEditing(false);
+        // const wineryData: WineryDataInterface = {
+        //   wineryGeneralInfo: data.generalInfo,
+        //   tier: data.tier,
+        //   level: data.level,
+        //   wines: data.wines || [],
+        //   euLabels: data.euLabels || [],
+        //   exists: true,
+        // };
+        // // console.log("Winery exists", wineryData);
+        // updateWineryGeneralInfo(data.generalInfo);
         updateAppLoading(false);
       }
     });
@@ -81,7 +87,7 @@ export const DashboardHomePage = () => {
           </motion.div>
         </motion.div>
       )}
-      <Container intent="flexColTop" className="w-full h-full">
+      <Container intent="flexColTop" className="min-w-full h-full">
         <WineryHeaderSection />
         <WinesListSection />
       </Container>

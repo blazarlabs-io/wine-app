@@ -5,8 +5,12 @@ import {
 import {
   DocumentData,
   arrayUnion,
+  collection,
+  collectionGroup,
   doc,
   getDoc,
+  getDocs,
+  query,
   setDoc,
   updateDoc,
 } from "firebase/firestore";
@@ -129,4 +133,26 @@ export const uploadQrCodeToStorage = async (
       });
     }
   );
+};
+
+export const getWineByRefNumber = async (
+  refNumber: string,
+  callback: (label: EuLabelInterface | null) => void
+) => {
+  const wineries = query(collection(db, "wineries"));
+  const querySnapshot = await getDocs(wineries);
+  querySnapshot.forEach((doc) => {
+    if (doc.data().euLabels) {
+      doc.data().euLabels.forEach((label: EuLabelInterface) => {
+        if (label.referenceNumber === refNumber) {
+          // console.log(doc.id, " => ", label);
+          callback(label);
+        } else {
+          // callback(null);
+        }
+      });
+    } else {
+      // callback(null);
+    }
+  });
 };

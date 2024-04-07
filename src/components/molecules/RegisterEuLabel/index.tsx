@@ -34,6 +34,7 @@ import {
 } from "@/utils/firestore";
 import { useAuth } from "@/context/authContext";
 import { euLabelUrlComposer } from "@/utils/euLabelUrlComposer";
+import { useRealtimeDb } from "@/context/realtimeDbContext";
 
 export const RegisterEuLabel = () => {
   const router = useRouter();
@@ -45,6 +46,9 @@ export const RegisterEuLabel = () => {
     singleEuLabel,
     isEditing,
   } = useWinery();
+
+  const { wineryGeneralInfo, updateWineryEuLabels } = useRealtimeDb();
+
   const initialized = useRef(false);
   const { user } = useAuth();
 
@@ -54,15 +58,6 @@ export const RegisterEuLabel = () => {
   useEffect(() => {
     updateAppLoading(false);
 
-    getWineryDataDb(user?.uid as string).then((data) => {
-      console.log(data);
-      singleEuLabel.wineryName = data?.generalInfo?.name;
-      updateSingleEuLabel({
-        ...(singleEuLabel as EuLabelInterface),
-        wineryName: singleEuLabel.wineryName,
-      });
-    });
-
     if (!initialized.current) {
       const ref = generateId(5) + "-" + dateToTimestamp();
       console.log(ref);
@@ -70,6 +65,7 @@ export const RegisterEuLabel = () => {
       updateSingleEuLabel({
         ...(singleEuLabel as EuLabelInterface),
         referenceNumber: ref,
+        wineryName: wineryGeneralInfo.name,
       });
     }
   }, []);
@@ -392,7 +388,7 @@ export const RegisterEuLabel = () => {
                 isRequired
                 items={["Yes", "No"]}
                 fullWidth
-                selectedValue={"No"}
+                selectedValue={singleEuLabel.maturedInOakBarrel ? "Yes" : "No"}
                 onSelect={(data: string) => {
                   singleEuLabel.maturedInOakBarrel =
                     data === "Yes" ? true : false;

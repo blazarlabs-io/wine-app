@@ -11,10 +11,7 @@ import {
 import { Icon } from "@iconify/react";
 import { useWinery } from "@/context/wineryContext";
 import { useAuth } from "@/context/authContext";
-import {
-  WineryDataInterface,
-  WineryGeneralInfoInterface,
-} from "@/typings/components";
+import { WineryGeneralInfoInterface } from "@/typings/components";
 import {
   registerWineryGeneralInfoToDb,
   uploadLogoToStorage,
@@ -23,23 +20,21 @@ import { useRef, useState } from "react";
 import { validateFileSizeInMegabytes } from "@/utils/validateFileSizeInMegabytes";
 import { useModal } from "@/context/modalContext";
 import { useRouter } from "next/navigation";
+import { useRealtimeDb } from "@/context/realtimeDbContext";
 
 export const RegisterWinery = () => {
   const { user } = useAuth();
   const router = useRouter();
   const { updateModal } = useModal();
   const {
-    updateWinery,
     formTitle,
     formDescription,
     updateShowRegisterWinery,
-    generalInfo,
-    wines,
-    euLabels,
-    exists,
     updateIsEditing,
     isEditing,
   } = useWinery();
+
+  const { wineryGeneralInfo, updateWineryGeneralInfo } = useRealtimeDb();
 
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -73,18 +68,12 @@ export const RegisterWinery = () => {
   const handleRegistration = () => {
     setIsLoading(true);
     uploadLogoToStorage(user?.uid as string, logoFile as File, (url) => {
-      console.log("handleRegistration", url);
-      generalInfo.logo = url;
-      const newWineryData: WineryDataInterface = {
-        generalInfo,
-        wines,
-        euLabels,
-        exists,
-      };
-      updateWinery(newWineryData);
+      wineryGeneralInfo.logo = url;
+
       // UPDATE TO DATABASE
-      const newGeneralInfo: WineryGeneralInfoInterface = generalInfo;
-      console.log("newGeneralInfo", newGeneralInfo);
+      const newGeneralInfo: WineryGeneralInfoInterface = wineryGeneralInfo;
+      updateWineryGeneralInfo(newGeneralInfo);
+
       registerWineryGeneralInfoToDb(user?.uid as string, newGeneralInfo);
       setIsLoading(false);
       router.replace("/home");
@@ -116,8 +105,8 @@ export const RegisterWinery = () => {
               <LocationFinderMap
                 onPin={(lat, lon) => {
                   console.log("onPin", lat, lon);
-                  generalInfo.wineryHeadquarters.latitude = lat;
-                  generalInfo.wineryHeadquarters.longitude = lon;
+                  wineryGeneralInfo.wineryHeadquarters.latitude = lat;
+                  wineryGeneralInfo.wineryHeadquarters.longitude = lon;
                 }}
               />
               <Container intent="flexRowBetween" className="mt-[48px] w-full">
@@ -161,19 +150,13 @@ export const RegisterWinery = () => {
                   required
                   type="text"
                   placeholder=""
-                  value={generalInfo.name}
+                  value={wineryGeneralInfo.name}
                   onChange={(event: any) => {
                     const newGeneralInfo = {
-                      ...generalInfo,
+                      ...wineryGeneralInfo,
                       name: event.target.value,
                     };
-                    const newWineryData: WineryDataInterface = {
-                      generalInfo: newGeneralInfo,
-                      wines,
-                      euLabels,
-                      exists,
-                    };
-                    updateWinery(newWineryData);
+                    updateWineryGeneralInfo(newGeneralInfo);
                   }}
                   className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
                 />
@@ -189,19 +172,13 @@ export const RegisterWinery = () => {
                   required
                   type="text"
                   placeholder=""
-                  value={generalInfo.foundedOn}
+                  value={wineryGeneralInfo.foundedOn}
                   onChange={(event: any) => {
                     const newGeneralInfo = {
-                      ...generalInfo,
+                      ...wineryGeneralInfo,
                       foundedOn: event.target.value,
                     };
-                    const newWineryData: WineryDataInterface = {
-                      generalInfo: newGeneralInfo,
-                      wines,
-                      euLabels,
-                      exists,
-                    };
-                    updateWinery(newWineryData);
+                    updateWineryGeneralInfo(newGeneralInfo);
                   }}
                   className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
                 />
@@ -261,19 +238,13 @@ export const RegisterWinery = () => {
                   required
                   type="text"
                   placeholder=""
-                  value={generalInfo.collections}
+                  value={wineryGeneralInfo.collections}
                   onChange={(event: any) => {
                     const newGeneralInfo = {
-                      ...generalInfo,
+                      ...wineryGeneralInfo,
                       collections: event.target.value,
                     };
-                    const newWineryData: WineryDataInterface = {
-                      generalInfo: newGeneralInfo,
-                      wines,
-                      euLabels,
-                      exists,
-                    };
-                    updateWinery(newWineryData);
+                    updateWineryGeneralInfo(newGeneralInfo);
                   }}
                   className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
                 />
@@ -291,19 +262,13 @@ export const RegisterWinery = () => {
                   required
                   type="text"
                   placeholder=""
-                  value={generalInfo.vineyardsSurface}
+                  value={wineryGeneralInfo.vineyardsSurface}
                   onChange={(event: any) => {
                     const newGeneralInfo = {
-                      ...generalInfo,
+                      ...wineryGeneralInfo,
                       vineyardsSurface: event.target.value,
                     };
-                    const newWineryData: WineryDataInterface = {
-                      generalInfo: newGeneralInfo,
-                      wines,
-                      euLabels,
-                      exists,
-                    };
-                    updateWinery(newWineryData);
+                    updateWineryGeneralInfo(newGeneralInfo);
                   }}
                   className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
                 />
@@ -319,19 +284,13 @@ export const RegisterWinery = () => {
                   required
                   type="text"
                   placeholder=""
-                  value={generalInfo.noOfProducedWines}
+                  value={wineryGeneralInfo.noOfProducedWines}
                   onChange={(event: any) => {
                     const newGeneralInfo = {
-                      ...generalInfo,
+                      ...wineryGeneralInfo,
                       noOfProducedWines: event.target.value,
                     };
-                    const newWineryData: WineryDataInterface = {
-                      generalInfo: newGeneralInfo,
-                      wines,
-                      euLabels,
-                      exists,
-                    };
-                    updateWinery(newWineryData);
+                    updateWineryGeneralInfo(newGeneralInfo);
                   }}
                   className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
                 />
@@ -349,19 +308,13 @@ export const RegisterWinery = () => {
                   required
                   type="text"
                   placeholder=""
-                  value={generalInfo.noOfBottlesProducedPerYear}
+                  value={wineryGeneralInfo.noOfBottlesProducedPerYear}
                   onChange={(event: any) => {
                     const newGeneralInfo = {
-                      ...generalInfo,
+                      ...wineryGeneralInfo,
                       noOfBottlesProducedPerYear: event.target.value,
                     };
-                    const newWineryData: WineryDataInterface = {
-                      generalInfo: newGeneralInfo,
-                      wines,
-                      euLabels,
-                      exists,
-                    };
-                    updateWinery(newWineryData);
+                    updateWineryGeneralInfo(newGeneralInfo);
                   }}
                   className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
                 />
@@ -377,19 +330,13 @@ export const RegisterWinery = () => {
                   required
                   type="text"
                   placeholder=""
-                  value={generalInfo.grapeVarieties}
+                  value={wineryGeneralInfo.grapeVarieties}
                   onChange={(event: any) => {
                     const newGeneralInfo = {
-                      ...generalInfo,
+                      ...wineryGeneralInfo,
                       grapeVarieties: event.target.value,
                     };
-                    const newWineryData: WineryDataInterface = {
-                      generalInfo: newGeneralInfo,
-                      wines,
-                      euLabels,
-                      exists,
-                    };
-                    updateWinery(newWineryData);
+                    updateWineryGeneralInfo(newGeneralInfo);
                   }}
                   className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
                 />
@@ -403,20 +350,14 @@ export const RegisterWinery = () => {
                 <InfoTooltip text="Include the name of any certification your winery has." />
               </Container>
               <TextInputCrud
-                initialItems={generalInfo.certifications}
+                initialItems={wineryGeneralInfo.certifications}
                 placeholder=""
                 onItemsChange={(items) => {
                   const newGeneralInfo = {
-                    ...generalInfo,
+                    ...wineryGeneralInfo,
                     certifications: items,
                   };
-                  const newWineryData: WineryDataInterface = {
-                    generalInfo: newGeneralInfo,
-                    wines,
-                    euLabels,
-                    exists,
-                  };
-                  updateWinery(newWineryData);
+                  updateWineryGeneralInfo(newGeneralInfo);
                 }}
               />
             </Container>
@@ -434,23 +375,18 @@ export const RegisterWinery = () => {
                 <input
                   required
                   type="text"
-                  value={generalInfo.wineryHeadquarters.latitude}
+                  value={wineryGeneralInfo.wineryHeadquarters.latitude}
                   placeholder=""
                   onChange={(event: any) => {
                     const newGeneralInfo = {
-                      ...generalInfo,
+                      ...wineryGeneralInfo,
                       wineryHeadquarters: {
                         latitude: event.target.value,
-                        longitude: generalInfo.wineryHeadquarters.longitude,
+                        longitude:
+                          wineryGeneralInfo.wineryHeadquarters.longitude,
                       },
                     };
-                    const newWineryData: WineryDataInterface = {
-                      generalInfo: newGeneralInfo,
-                      wines,
-                      euLabels,
-                      exists,
-                    };
-                    updateWinery(newWineryData);
+                    updateWineryGeneralInfo(newGeneralInfo);
                   }}
                   className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
                 />
@@ -462,23 +398,17 @@ export const RegisterWinery = () => {
                 <input
                   required
                   type="text"
-                  value={generalInfo.wineryHeadquarters.longitude}
+                  value={wineryGeneralInfo.wineryHeadquarters.longitude}
                   placeholder=""
                   onChange={(event: any) => {
                     const newGeneralInfo = {
-                      ...generalInfo,
+                      ...wineryGeneralInfo,
                       wineryHeadquarters: {
-                        latitude: generalInfo.wineryHeadquarters.latitude,
+                        latitude: wineryGeneralInfo.wineryHeadquarters.latitude,
                         longitude: event.target.value,
                       },
                     };
-                    const newWineryData: WineryDataInterface = {
-                      generalInfo: newGeneralInfo,
-                      wines,
-                      euLabels,
-                      exists,
-                    };
-                    updateWinery(newWineryData);
+                    updateWineryGeneralInfo(newGeneralInfo);
                   }}
                   className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
                 />
@@ -511,24 +441,18 @@ export const RegisterWinery = () => {
                 <input
                   required
                   type="text"
-                  value={generalInfo.wineryRepresentative.name}
+                  value={wineryGeneralInfo.wineryRepresentative.name}
                   placeholder=""
                   onChange={(event: any) => {
                     const newGeneralInfo = {
-                      ...generalInfo,
+                      ...wineryGeneralInfo,
                       wineryRepresentative: {
                         name: event.target.value,
-                        email: generalInfo.wineryRepresentative.email,
-                        phone: generalInfo.wineryRepresentative.phone,
+                        email: wineryGeneralInfo.wineryRepresentative.email,
+                        phone: wineryGeneralInfo.wineryRepresentative.phone,
                       },
                     };
-                    const newWineryData: WineryDataInterface = {
-                      generalInfo: newGeneralInfo,
-                      wines,
-                      euLabels,
-                      exists,
-                    };
-                    updateWinery(newWineryData);
+                    updateWineryGeneralInfo(newGeneralInfo);
                   }}
                   className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
                 />
@@ -540,24 +464,18 @@ export const RegisterWinery = () => {
                 <input
                   required
                   type="email"
-                  value={generalInfo.wineryRepresentative.email}
+                  value={wineryGeneralInfo.wineryRepresentative.email}
                   placeholder=""
                   onChange={(event: any) => {
                     const newGeneralInfo = {
-                      ...generalInfo,
+                      ...wineryGeneralInfo,
                       wineryRepresentative: {
-                        name: generalInfo.wineryRepresentative.name,
+                        name: wineryGeneralInfo.wineryRepresentative.name,
                         email: event.target.value,
-                        phone: generalInfo.wineryRepresentative.phone,
+                        phone: wineryGeneralInfo.wineryRepresentative.phone,
                       },
                     };
-                    const newWineryData: WineryDataInterface = {
-                      generalInfo: newGeneralInfo,
-                      wines,
-                      euLabels,
-                      exists,
-                    };
-                    updateWinery(newWineryData);
+                    updateWineryGeneralInfo(newGeneralInfo);
                   }}
                   className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
                 />
@@ -575,24 +493,18 @@ export const RegisterWinery = () => {
                   type="tel"
                   id="phone"
                   pattern="[0-9]{10,14}"
-                  value={generalInfo.wineryRepresentative.phone}
+                  value={wineryGeneralInfo.wineryRepresentative.phone}
                   placeholder=""
                   onChange={(event: any) => {
                     const newGeneralInfo = {
-                      ...generalInfo,
+                      ...wineryGeneralInfo,
                       wineryRepresentative: {
-                        name: generalInfo.wineryRepresentative.name,
-                        email: generalInfo.wineryRepresentative.email,
+                        name: wineryGeneralInfo.wineryRepresentative.name,
+                        email: wineryGeneralInfo.wineryRepresentative.email,
                         phone: event.target.value,
                       },
                     };
-                    const newWineryData: WineryDataInterface = {
-                      generalInfo: newGeneralInfo,
-                      wines,
-                      euLabels,
-                      exists,
-                    };
-                    updateWinery(newWineryData);
+                    updateWineryGeneralInfo(newGeneralInfo);
                   }}
                   className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
                 />

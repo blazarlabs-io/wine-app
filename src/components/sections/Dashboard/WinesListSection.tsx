@@ -1,5 +1,11 @@
 "use client";
-import { Container, Button, Text, Accordion } from "@/components";
+import {
+  Container,
+  Button,
+  Text,
+  Accordion,
+  EuLabelsAccordion,
+} from "@/components";
 import { Icon } from "@iconify/react";
 import { useWinery } from "@/context/wineryContext";
 import { useRouter } from "next/navigation";
@@ -7,7 +13,7 @@ import { useAppState } from "@/context/appStateContext";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
 
 export const WinesListSection = () => {
-  const { euLabels, updateFormTitle, updateFormDescription } = useWinery();
+  const { updateFormTitle, updateFormDescription } = useWinery();
   const router = useRouter();
   const { updateAppLoading } = useAppState();
 
@@ -16,7 +22,7 @@ export const WinesListSection = () => {
   return (
     <>
       {wineryEuLabels && wineryEuLabels.length > 0 ? (
-        <Container intent="flexColLeft" className="">
+        <Container intent="flexColLeft" className="min-w-full">
           <Container
             intent="flexRowLeft"
             py="medium"
@@ -51,12 +57,16 @@ export const WinesListSection = () => {
               Add Wine
             </Button>
           </Container>
-          <div className="w-full">
-            <Accordion data={wineryEuLabels} />
+          <div className="min-w-full">
+            <EuLabelsAccordion data={wineryEuLabels} />
           </div>
         </Container>
       ) : (
-        <Container intent="flexColCenter" gap="large" className="h-full">
+        <Container
+          intent="flexColCenter"
+          gap="large"
+          className="min-w-full h-full"
+        >
           <Container intent="flexColTop" gap="xsmall">
             <Text intent="h4" variant="dim" className="font-normal">
               Add new Wine

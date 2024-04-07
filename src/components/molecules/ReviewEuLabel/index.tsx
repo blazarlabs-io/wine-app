@@ -17,10 +17,7 @@ export const ReviewEuLabel = ({
   onCancel,
 }: ReviewEuLabelProps) => {
   return (
-    <Container
-      intent="flexRowCenter"
-      className="w-full h-full bg-surface/80 backdrop-blur-sm fixed z-[999] top-0 left-0"
-    >
+    <div className="flex items-center justify-center w-full h-full bg-surface/80 backdrop-blur-sm fixed z-[999] top-0 left-0">
       <Container
         intent="flexColCenter"
         px="large"
@@ -70,6 +67,6 @@ export const ReviewEuLabel = ({
           </Button>
         </Container>
       </Container>
-    </Container>
+    </div>
   );
 };

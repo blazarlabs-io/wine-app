@@ -17,7 +17,7 @@ export const IngredientViewer = ({
       <Text intent="p2" variant="dim" className="">
         {title}
       </Text>
-      {ingredient.has ? (
+      {ingredient !== undefined && ingredient.has ? (
         <Container intent="flexColLeft" gap="small" className="max-w-fit">
           {ingredient.list.map((item) => (
             <div
