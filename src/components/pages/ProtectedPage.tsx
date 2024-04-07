@@ -15,8 +15,6 @@ export const ProtectedPage = ({ children }: React.PropsWithChildren) => {
   const router = useRouter();
 
   const { updateAppLoading } = useAppState();
-  const { updateWinery, updateShowRegisterWinery, updateIsEditing } =
-    useWinery();
 
   console.log("PROTECTED");
 
@@ -24,9 +22,6 @@ export const ProtectedPage = ({ children }: React.PropsWithChildren) => {
     updateAppLoading(false);
     redirect("/login");
   } else {
-    ////////////////////
-
-    /////////////////////
     return children;
   }
 };

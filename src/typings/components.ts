@@ -167,13 +167,17 @@ export interface FiningAgentInterface {
 // WINERY DATA PROPS
 export interface WineryDataInterface {
   exists: boolean;
-  generalInfo: WineryGeneralInfoInterface | null;
+  wineryGeneralInfo: WineryGeneralInfoInterface | null;
+  tier: string | null;
+  level: string | null;
   wines: WinesInterface[] | null;
   euLabels: EuLabelInterface[] | null;
 }
 
 export interface WineryInterface {
   generalInfo: WineryGeneralInfoInterface | null;
+  tier: string | null;
+  level: string | null;
   wines: WinesInterface[] | null;
   euLabels: EuLabelInterface[] | null;
 }

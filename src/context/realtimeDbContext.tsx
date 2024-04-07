@@ -12,8 +12,12 @@ import { useAuth } from "./authContext";
 
 export interface RealtimeDbContextInterface {
   wineryGeneralInfo: WineryGeneralInfoInterface;
+  tier: string;
+  level: string;
   wineryEuLabels: EuLabelInterface[];
   updateWineryGeneralInfo: (data: WineryGeneralInfoInterface) => void;
+  updateTier: (tier: string) => void;
+  updateLevel: (level: string) => void;
   updateWineryEuLabels: (data: EuLabelInterface[]) => void;
 }
 
@@ -39,8 +43,12 @@ const contextInitialData: RealtimeDbContextInterface = {
       phone: "",
     },
   },
+  tier: "",
+  level: "",
   wineryEuLabels: [],
   updateWineryGeneralInfo: () => {},
+  updateTier: () => {},
+  updateLevel: () => {},
   updateWineryEuLabels: () => {},
 };
 
@@ -65,6 +73,9 @@ export const RealtimeDbProvider = ({
     contextInitialData.wineryGeneralInfo
   );
 
+  const [tier, setTier] = useState(contextInitialData.tier);
+  const [level, setLevel] = useState(contextInitialData.level);
+
   const [wineryEuLabels, setWineryEuLabels] = useState(
     contextInitialData.wineryEuLabels
   );
@@ -72,6 +83,10 @@ export const RealtimeDbProvider = ({
   const updateWineryGeneralInfo = (data: WineryGeneralInfoInterface) => {
     setWineryGeneralInfo(data);
   };
+
+  const updateTier = (tier: string) => setTier(tier);
+
+  const updateLevel = (level: string) => setLevel(level);
 
   const updateWineryEuLabels = (data: EuLabelInterface[]) => {
     setWineryEuLabels(data);
@@ -85,11 +100,21 @@ export const RealtimeDbProvider = ({
     const unsubscribe: Unsubscribe = onSnapshot(docRef, (snapshot) => {
       const wineryData = snapshot.data() as WineryInterface;
       if (wineryData) {
-        console.log(wineryData);
-        updateWineryGeneralInfo(
-          wineryData.generalInfo as WineryGeneralInfoInterface
-        );
+        let generalInfo: WineryGeneralInfoInterface;
+
+        if (
+          Object.keys(wineryData.generalInfo as WineryGeneralInfoInterface)
+            .length === 0
+        ) {
+          generalInfo = contextInitialData.wineryGeneralInfo;
+        } else {
+          generalInfo = wineryData.generalInfo as WineryGeneralInfoInterface;
+        }
+
+        updateWineryGeneralInfo(generalInfo);
         updateWineryEuLabels(wineryData.euLabels as EuLabelInterface[]);
+        setTier(wineryData.tier as string);
+        setLevel(wineryData.level as string);
       }
     });
 
@@ -100,8 +125,12 @@ export const RealtimeDbProvider = ({
 
   const value = {
     wineryGeneralInfo,
+    tier,
+    level,
     wineryEuLabels,
     updateWineryGeneralInfo,
+    updateTier,
+    updateLevel,
     updateWineryEuLabels,
   };
 

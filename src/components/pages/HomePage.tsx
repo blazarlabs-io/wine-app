@@ -19,6 +19,7 @@ export const HomePage = () => {
           position: "absolute",
           zIndex: -1,
         }}
+        className=""
       />
       <HeroSection />
     </Container>

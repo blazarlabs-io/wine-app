@@ -33,7 +33,7 @@ export const TopBar = ({ className }: TopBarProps) => {
       className={classNames(
         className,
         "bg-surface-light/70",
-        "backdrop-blur-sm w-full sticky top-0 z-50"
+        "backdrop-blur-sm min-w-full sticky top-0 z-50"
       )}
     >
       <Container intent="flexRowLeft" className="w-full">
