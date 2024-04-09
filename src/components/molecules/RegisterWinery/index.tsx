@@ -164,12 +164,11 @@ export const RegisterWinery = () => {
               <Container intent="flexColLeft" gap="xsmall">
                 <Container intent="flexRowLeft" gap="xsmall">
                   <Text intent="p1" variant="dim">
-                    * Founded On
+                    Founded On
                   </Text>
                   <InfoTooltip text="What year was your winery founded?" />
                 </Container>
                 <input
-                  required
                   type="text"
                   placeholder=""
                   value={wineryGeneralInfo.foundedOn}
@@ -188,7 +187,7 @@ export const RegisterWinery = () => {
               <Container intent="flexColLeft" gap="xsmall">
                 <Container intent="flexRowLeft" gap="xsmall">
                   <Text intent="p1" variant="dim">
-                    * Winery Logo
+                    Winery Logo
                   </Text>
                   <InfoTooltip text="Winery logo image up to 2Mb file size." />
                 </Container>
@@ -230,12 +229,11 @@ export const RegisterWinery = () => {
               <Container intent="flexColLeft" gap="xsmall">
                 <Container intent="flexRowLeft" gap="xsmall">
                   <Text intent="p1" variant="dim">
-                    * Wine Collections
+                    Wine Collections
                   </Text>
                   <InfoTooltip text="How many wine collections has the winery ever created (approximately)" />
                 </Container>
                 <input
-                  required
                   type="text"
                   placeholder=""
                   value={wineryGeneralInfo.collections}
@@ -254,12 +252,11 @@ export const RegisterWinery = () => {
               <Container intent="flexColLeft" gap="xsmall">
                 <Container intent="flexRowLeft" gap="xsmall">
                   <Text intent="p1" variant="dim">
-                    * Wineyards Surface
+                    Wineyards Surface
                   </Text>
                   <InfoTooltip text="What is the overall owned vineyards surface in hectares?" />
                 </Container>
                 <input
-                  required
                   type="text"
                   placeholder=""
                   value={wineryGeneralInfo.vineyardsSurface}
@@ -276,12 +273,11 @@ export const RegisterWinery = () => {
               <Container intent="flexColLeft" gap="xsmall">
                 <Container intent="flexRowLeft" gap="xsmall">
                   <Text intent="p1" variant="dim">
-                    * No. of Produced Wines
+                    Wine quantity produced
                   </Text>
                   <InfoTooltip text="How many different wines did your winery produce last year?" />
                 </Container>
                 <input
-                  required
                   type="text"
                   placeholder=""
                   value={wineryGeneralInfo.noOfProducedWines}
@@ -300,12 +296,11 @@ export const RegisterWinery = () => {
               <Container intent="flexColLeft" gap="xsmall">
                 <Container intent="flexRowLeft" gap="xsmall">
                   <Text intent="p1" variant="dim">
-                    * No. of Bottles Produced
+                    No. of Bottles Produced
                   </Text>
                   <InfoTooltip text="Quantity of bottles produced last year?" />
                 </Container>
                 <input
-                  required
                   type="text"
                   placeholder=""
                   value={wineryGeneralInfo.noOfBottlesProducedPerYear}
@@ -322,12 +317,11 @@ export const RegisterWinery = () => {
               <Container intent="flexColLeft" gap="xsmall">
                 <Container intent="flexRowLeft" gap="xsmall">
                   <Text intent="p1" variant="dim">
-                    * Grape Varieties
+                    Grape Varieties
                   </Text>
                   <InfoTooltip text="Quantity of grape varieties grown." />
                 </Container>
                 <input
-                  required
                   type="text"
                   placeholder=""
                   value={wineryGeneralInfo.grapeVarieties}
@@ -363,7 +357,7 @@ export const RegisterWinery = () => {
             </Container>
             <Container intent="flexRowLeft" gap="xsmall">
               <Text intent="p1" variant="dim">
-                * Winery Headquarters
+                Winery Headquarters
               </Text>
               <InfoTooltip text="Enter the Latitude and Longitude of your winery location or find it in the map." />
             </Container>
@@ -373,7 +367,6 @@ export const RegisterWinery = () => {
                   Latitude
                 </Text>
                 <input
-                  required
                   type="text"
                   value={wineryGeneralInfo.wineryHeadquarters.latitude}
                   placeholder=""
@@ -396,7 +389,6 @@ export const RegisterWinery = () => {
                   Longitude
                 </Text>
                 <input
-                  required
                   type="text"
                   value={wineryGeneralInfo.wineryHeadquarters.longitude}
                   placeholder=""
@@ -425,21 +417,20 @@ export const RegisterWinery = () => {
                 height="16"
                 className="mt-[-4px]"
               />
-              Find in map
+              Find on map
             </Button>
             <Container intent="flexRowLeft" gap="xsmall">
               <Text intent="p1" variant="dim">
-                * Winery Representative
+                Winery Representative
               </Text>
               <InfoTooltip text="Enter following information of your winery's representative." />
             </Container>
             <Container intent="grid-3" gap="medium">
               <Container intent="flexColLeft" gap="xsmall">
                 <Text intent="p2" variant="dim">
-                  * Name
+                  Name
                 </Text>
                 <input
-                  required
                   type="text"
                   value={wineryGeneralInfo.wineryRepresentative.name}
                   placeholder=""
@@ -459,10 +450,9 @@ export const RegisterWinery = () => {
               </Container>
               <Container intent="flexColLeft" gap="xsmall">
                 <Text intent="p2" variant="dim">
-                  * Email
+                  Email
                 </Text>
                 <input
-                  required
                   type="email"
                   value={wineryGeneralInfo.wineryRepresentative.email}
                   placeholder=""
@@ -483,13 +473,12 @@ export const RegisterWinery = () => {
               <Container intent="flexColLeft" gap="xsmall" className="w-full">
                 <Container intent="flexRowLeft" gap="xsmall" className="w-full">
                   <Text intent="p1" variant="dim" className="w-full">
-                    * Phone
+                    Phone
                   </Text>
                   <InfoTooltip text="Please provide the representative phone with the area code. Don't use + or ()." />
                 </Container>
 
                 <input
-                  required
                   type="tel"
                   id="phone"
                   pattern="[0-9]{10,14}"

@@ -6,6 +6,7 @@ import {
   Text,
   WineryLogo,
   SimpleMapViewer,
+  InfoTooltip,
 } from "@/components";
 import { Icon } from "@iconify/react";
 import { useWinery } from "@/context/wineryContext";
@@ -109,19 +110,33 @@ export const WineryGeneralInfo = ({
               Edit details
             </Container>
           </Button>
-          <Container intent="flexRowCenter" gap="xsmall" className="w-full">
-            <Icon
-              icon="material-symbols:verified-outline"
-              className="w-[20px] h-[20px] text-secondary"
-            />
-            <Text>{`Tier ${tier}`}</Text>
+          <Container intent="flexRowLeft" gap="xsmall" className="w-full">
+            <div>
+              <Icon
+                icon="material-symbols:verified-outline"
+                className="w-[20px] h-[20px] text-secondary"
+              />
+            </div>
+            <div className="min-w-fit">
+              <Text>{`Tier ${tier}`}</Text>
+            </div>
+            <div>
+              <InfoTooltip text="Tier" />
+            </div>
           </Container>
           <Container intent="flexRowCenter" gap="xsmall" className="w-full">
-            <Icon
-              icon="mage:gem-stone"
-              className="w-[20px] h-[20px] text-status-warning"
-            />
-            <Text>{level}</Text>
+            <div>
+              <Icon
+                icon="mage:gem-stone"
+                className="w-[20px] h-[20px] text-status-warning"
+              />
+            </div>
+            <div>
+              <Text>{level}</Text>
+            </div>
+            <div>
+              <InfoTooltip text="Level" />
+            </div>
           </Container>
         </Container>
         <Container
@@ -134,7 +149,7 @@ export const WineryGeneralInfo = ({
               wineryGeneralInfo.logo !== undefined &&
               wineryGeneralInfo.logo.length > 0
                 ? wineryGeneralInfo.logo
-                : "/winery-sample-logo.png"
+                : "/winery-sample-logo.svg"
             }
             width={80}
             height={80}

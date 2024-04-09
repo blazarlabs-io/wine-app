@@ -9,6 +9,7 @@ import {
   Text,
   TextInputCrud,
   ReviewEuLabel,
+  InfoTooltip,
 } from "@/components";
 import { Icon } from "@iconify/react";
 import { useWinery } from "@/context/wineryContext";
@@ -31,10 +32,19 @@ import {
   getWineryDataDb,
   registerWineryEuLabel,
   uploadQrCodeToStorage,
+  uploadWineImageToStorage,
 } from "@/utils/firestore";
 import { useAuth } from "@/context/authContext";
 import { euLabelUrlComposer } from "@/utils/euLabelUrlComposer";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
+import { typeOfWineList } from "@/utils/data/typeOfWineList";
+import { validateFileSizeInMegabytes } from "@/utils/validateFileSizeInMegabytes";
+import { useModal } from "@/context/modalContext";
+import { httpsCallable } from "firebase/functions";
+import { functions } from "@/lib/firebase/client";
+import { firebaseAuthErrors } from "@/utils/firebaseAuthErrors";
+import { generateEuLabelHtml } from "@/utils/generateEuLabelHtml";
+import { fileToBase64 } from "@/utils/fileToBase64";
 
 export const RegisterEuLabel = () => {
   const router = useRouter();
@@ -47,6 +57,10 @@ export const RegisterEuLabel = () => {
     isEditing,
   } = useWinery();
 
+  const { updateModal } = useModal();
+
+  const inputFileRef = useRef<any>(null);
+
   const { wineryGeneralInfo, updateWineryEuLabels } = useRealtimeDb();
 
   const initialized = useRef(false);
@@ -54,6 +68,10 @@ export const RegisterEuLabel = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showReview, setShowReview] = useState<boolean>(false);
+  const [qrCodeFile, setQrCodeFile] = useState<string | null>(null);
+  const [wineImageFile, setWineImageFile] = useState<File | null>(null);
+
+  const sendEmail = httpsCallable(functions, "sendEmail");
 
   useEffect(() => {
     updateAppLoading(false);
@@ -78,8 +96,16 @@ export const RegisterEuLabel = () => {
       singleEuLabel.referenceNumber,
       (url: string) => {
         singleEuLabel.qrCodeUrl = url;
-        registerWineryEuLabel(user?.uid as string, singleEuLabel);
-        setIsLoading(false);
+        uploadWineImageToStorage(
+          user?.uid as string,
+          wineImageFile as File,
+          singleEuLabel.referenceNumber,
+          (url: string) => {
+            singleEuLabel.wineImageUrl = url;
+            registerWineryEuLabel(user?.uid as string, singleEuLabel);
+            setIsLoading(false);
+          }
+        );
       }
     );
   };
@@ -89,6 +115,32 @@ export const RegisterEuLabel = () => {
     event.preventDefault();
     setShowReview(true);
   };
+
+  const createQrCodeFile = async () => {
+    const blob = await fetch(getQrCodeImageData("euLabelQrCode")).then((r) =>
+      r.blob()
+    );
+    return new Promise<File>((resolve) => {
+      const file = new File([blob], singleEuLabel.referenceNumber + ".png", {
+        type: "image/png",
+      });
+      resolve(file);
+    });
+  };
+
+  useEffect(() => {
+    createQrCodeFile()
+      .then((file: File) => {
+        console.log("FILE", file);
+        fileToBase64(file).then((base64: any) => {
+          console.log("BASE64", base64);
+          setQrCodeFile(base64);
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [showReview]);
 
   return (
     <Container
@@ -104,6 +156,30 @@ export const RegisterEuLabel = () => {
           onAccept={() => {
             handleRegistration();
             setShowReview(false);
+            sendEmail({
+              data: {
+                from: "it@blazarlabs.io",
+                to: user?.email,
+                subject: "Your new EU label has been created!",
+                text: `Congratulations, you have successfuly registered a new EU-Only Label.`,
+                html: generateEuLabelHtml(
+                  euLabelUrlComposer(singleEuLabel.referenceNumber),
+                  singleEuLabel.qrCodeUrl
+                ),
+              },
+            })
+              .then((result) => {
+                // Read result of the Cloud Function.
+                /** @type {any} */
+                const data = result.data;
+                const sanitizedMessage: any = data;
+                console.log(sanitizedMessage.message);
+              })
+              .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(firebaseAuthErrors[errorCode] as string);
+              });
             router.replace("/home");
           }}
           onCancel={() => setShowReview(false)}
@@ -125,7 +201,7 @@ export const RegisterEuLabel = () => {
       {/* First Row */}
       <form onSubmit={handleSubmit}>
         <Container intent="flexColCenter" gap="medium">
-          <Container intent="grid-2" gap="medium">
+          <Container intent="grid-4" gap="medium">
             <Container intent="flexColLeft" gap="xsmall">
               <Text intent="p1" variant="dim">
                 Reference Number
@@ -157,6 +233,51 @@ export const RegisterEuLabel = () => {
                   });
                 }}
                 className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
+              />
+            </Container>
+            <Container intent="flexColLeft" gap="xsmall" className="col-span-2">
+              <Container intent="flexRowLeft" gap="xsmall">
+                <Text intent="p1" variant="dim">
+                  Winery Image
+                </Text>
+                <InfoTooltip
+                  width={240}
+                  text="For optimal display, please upload a photo of your wine bottle against a single-color background. Ensure the bottle is vertical, occupies 80-90% of the photo's height, and is free from unnecessary elements. High or studio lighting is preferred. You can change this photo later if needed."
+                />
+              </Container>
+              <input
+                ref={inputFileRef}
+                type="file"
+                accept="image/*"
+                multiple={false}
+                title=""
+                onChange={(event: any) => {
+                  const validFile = validateFileSizeInMegabytes(
+                    event.target.files[0],
+                    2
+                  );
+                  if (!validFile) {
+                    inputFileRef.current.value = "";
+                    updateModal({
+                      show: true,
+                      title: "Error",
+                      description: "File size should be less than 2MB",
+                      action: {
+                        label: "OK",
+                        onAction: () =>
+                          updateModal({
+                            show: false,
+                            title: "",
+                            description: "",
+                            action: { label: "", onAction: () => {} },
+                          }),
+                      },
+                    });
+                  } else {
+                    setWineImageFile(event.target.files[0]);
+                  }
+                }}
+                className="text-primary-light file:border-2 file:border-primary-light file:px-[36px] file:py-[10px] file:rounded-lg file:bg-transparent file:text-primary-light file:font-semibold transition-all duration-300 ease-in-out"
               />
             </Container>
           </Container>
@@ -265,18 +386,18 @@ export const RegisterEuLabel = () => {
             </Container>
             <Container intent="flexColLeft" gap="xsmall" className="w-full">
               <Text intent="p1" variant="dim">
-                * Product
+                * Type of Wine
               </Text>
               <DropDown
-                items={productList}
+                items={typeOfWineList}
                 isRequired
                 fullWidth
-                selectedValue={singleEuLabel.product}
+                selectedValue={singleEuLabel.typeOfWine}
                 onSelect={(data: string) => {
-                  singleEuLabel.product = data;
+                  singleEuLabel.typeOfWine = data;
                   updateSingleEuLabel({
                     ...(singleEuLabel as EuLabelInterface),
-                    product: singleEuLabel.product,
+                    typeOfWine: singleEuLabel.typeOfWine,
                   });
                 }}
               />
@@ -327,24 +448,6 @@ export const RegisterEuLabel = () => {
           <Container intent="grid-4" gap="small" className="w-full">
             <Container intent="flexColLeft" gap="xsmall" className="w-full">
               <Text intent="p1" variant="dim">
-                * Kind of Wine
-              </Text>
-              <DropDown
-                items={kindOfWineList}
-                isRequired
-                fullWidth
-                selectedValue={singleEuLabel.kindOfWine}
-                onSelect={(data: string) => {
-                  singleEuLabel.kindOfWine = data;
-                  updateSingleEuLabel({
-                    ...(singleEuLabel as EuLabelInterface),
-                    kindOfWine: singleEuLabel.kindOfWine,
-                  });
-                }}
-              />
-            </Container>
-            <Container intent="flexColLeft" gap="xsmall" className="w-full">
-              <Text intent="p1" variant="dim">
                 * Colour of Wine
               </Text>
               <DropDown
@@ -362,19 +465,52 @@ export const RegisterEuLabel = () => {
               />
             </Container>
             <Container intent="flexColLeft" gap="xsmall" className="w-full">
-              <Text intent="p1" variant="dim">
-                * Produced By
-              </Text>
+              <Container intent="flexRowLeft" gap="xsmall">
+                <Text intent="p1" variant="dim">
+                  * Produced By
+                </Text>
+                <InfoTooltip text="Please update if the wine is produced by an outsourced vendor" />
+              </Container>
               <input
                 required
                 type="text"
                 placeholder=""
-                value={singleEuLabel.producedBy}
+                value={
+                  singleEuLabel.producedBy.length === 0
+                    ? wineryGeneralInfo.name
+                    : singleEuLabel.producedBy
+                }
                 onChange={(event: any) => {
                   singleEuLabel.producedBy = event.target.value;
                   updateSingleEuLabel({
                     ...(singleEuLabel as EuLabelInterface),
                     producedBy: singleEuLabel.producedBy,
+                  });
+                }}
+                className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
+              />
+            </Container>
+            <Container intent="flexColLeft" gap="xsmall" className="w-full">
+              <Container intent="flexRowLeft" gap="xsmall">
+                <Text intent="p1" variant="dim">
+                  * Bottled By
+                </Text>
+                <InfoTooltip text="Please update if the wine is bottled by an outsourced vendor" />
+              </Container>
+              <input
+                required
+                type="text"
+                placeholder=""
+                value={
+                  singleEuLabel.bottledBy.length === 0
+                    ? singleEuLabel.wineryName
+                    : singleEuLabel.bottledBy
+                }
+                onChange={(event: any) => {
+                  singleEuLabel.bottledBy = event.target.value;
+                  updateSingleEuLabel({
+                    ...(singleEuLabel as EuLabelInterface),
+                    bottledBy: singleEuLabel.bottledBy,
                   });
                 }}
                 className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
@@ -403,25 +539,6 @@ export const RegisterEuLabel = () => {
 
           {/* Sixth Row */}
           <div className="grid grid-cols-4 gap-[16px] w-full">
-            <Container intent="flexColLeft" gap="xsmall" className="w-full">
-              <Text intent="p1" variant="dim">
-                * Bottled By
-              </Text>
-              <input
-                required
-                type="text"
-                placeholder=""
-                value={singleEuLabel.bottledBy}
-                onChange={(event: any) => {
-                  singleEuLabel.bottledBy = event.target.value;
-                  updateSingleEuLabel({
-                    ...(singleEuLabel as EuLabelInterface),
-                    bottledBy: singleEuLabel.bottledBy,
-                  });
-                }}
-                className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
-              />
-            </Container>
             <Container
               intent="flexColLeft"
               gap="xsmall"
@@ -471,7 +588,11 @@ export const RegisterEuLabel = () => {
                   label="Acidity Regulators"
                   checked={singleEuLabel.ingredients.acidityRegulators.has}
                   value={singleEuLabel.ingredients.acidityRegulators.list[0]}
-                  placeholder="Malic acid (D, L-/L-)"
+                  placeholder={
+                    singleEuLabel.ingredients.acidityRegulators.has
+                      ? ""
+                      : "Malic Acid (D, L-/L-)"
+                  }
                   onBoxChecked={(state: boolean) => {
                     singleEuLabel.ingredients.acidityRegulators.has = state;
                     updateSingleEuLabel({
@@ -491,7 +612,11 @@ export const RegisterEuLabel = () => {
                   label="Antioxidants"
                   checked={singleEuLabel.ingredients.antioxidants.has}
                   value={singleEuLabel.ingredients.antioxidants.list[0]}
-                  placeholder="L-ascorbic acid"
+                  placeholder={
+                    singleEuLabel.ingredients.antioxidants.has
+                      ? ""
+                      : "L-ascorbic acid"
+                  }
                   onBoxChecked={(state: boolean) => {
                     singleEuLabel.ingredients.antioxidants.has = state;
                     updateSingleEuLabel({
@@ -511,7 +636,11 @@ export const RegisterEuLabel = () => {
                   label="Preservative"
                   checked={singleEuLabel.ingredients.preservatives.has}
                   value={singleEuLabel.ingredients.preservatives.list[0]}
-                  placeholder="Sulfites"
+                  placeholder={
+                    singleEuLabel.ingredients.preservatives.has
+                      ? ""
+                      : "Sulfites"
+                  }
                   onBoxChecked={(state: boolean) => {
                     singleEuLabel.ingredients.preservatives.has = state;
                     updateSingleEuLabel({
@@ -531,7 +660,11 @@ export const RegisterEuLabel = () => {
                   label="Stabilizer"
                   checked={singleEuLabel.ingredients.stabilizers.has}
                   value={singleEuLabel.ingredients.stabilizers.list[0]}
-                  placeholder="Gum arabic"
+                  placeholder={
+                    singleEuLabel.ingredients.stabilizers.has
+                      ? ""
+                      : "Gum arabic"
+                  }
                   onBoxChecked={(state: boolean) => {
                     singleEuLabel.ingredients.stabilizers.has = state;
                     updateSingleEuLabel({

@@ -25,29 +25,29 @@ export const ReviewEuLabel = ({
         gap="large"
         className="min-w-[460px] max-w-[460px] max-h-fit bg-surface-light rounded-lg p-4"
       >
-        <Container intent="flexColTop" gap="medium">
+        <Container intent="flexColLeft" gap="medium">
           <Text intent="h3" className="font-bold">
-            Confirm EU Label Registration
+            EU Label Registration
           </Text>
           <Text intent="p1" variant="dim">
-            You are about to register a new EU Label. Please review the details.
-            This operation cannot be undone.
+            The following QR code and url will be used to identify your EU only
+            label.
           </Text>
         </Container>
         <QRCode
-          value={qrCodeValue} // here you should keep the link/value(string) for which you are generation promocode
-          size={250} // the dimension of the QR code (number)
-          qrStyle="squares" // type of qr code, wether you want dotted ones or the square ones
-          eyeRadius={4} // radius of the promocode eye
-          id={"sample-qr"} // id of the qr code
+          value={qrCodeValue}
+          size={250}
+          qrStyle="squares"
+          eyeRadius={4}
+          id={"sample-qr"}
         />
         <Container intent="flexRowCenter" className="hidden">
           <QRCode
-            value={qrCodeValue} // here you should keep the link/value(string) for which you are generation promocode
-            size={1500} // the dimension of the QR code (number)
-            qrStyle="squares" // type of qr code, wether you want dotted ones or the square ones
-            eyeRadius={4} // radius of the promocode eye
-            id={qrCodeId} // id of the qr code
+            value={qrCodeValue}
+            size={1500}
+            qrStyle="squares"
+            eyeRadius={4}
+            id={qrCodeId}
           />
         </Container>
         <Container

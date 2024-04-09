@@ -42,7 +42,7 @@ export const WinesListSection = () => {
               className="flex items-center gap-[8px]"
             >
               <Icon icon="bi:qr-code" className="h-[20px] w-[20px] mt-[-4px]" />
-              Generate EU Label
+              Add wine for EU Label only
             </Button>
             <Button
               intent="primary"
@@ -54,7 +54,7 @@ export const WinesListSection = () => {
                 icon="carbon:add-filled"
                 className="h-[20px] w-[20px] mt-[-4px]"
               />
-              Add Wine
+              Add wine for supply chain tracking
             </Button>
           </Container>
           <div className="min-w-full">
@@ -65,11 +65,11 @@ export const WinesListSection = () => {
         <Container
           intent="flexColCenter"
           gap="large"
-          className="min-w-full h-full"
+          className="min-w-full h-full min-h-[400px]"
         >
           <Container intent="flexColTop" gap="xsmall">
             <Text intent="h4" variant="dim" className="font-normal">
-              Add new Wine
+              Add wine for supply chain tracking
             </Text>
             <Button
               intent="primary"
@@ -86,7 +86,7 @@ export const WinesListSection = () => {
           </Container>
           <Container intent="flexColTop" gap="xsmall">
             <Text intent="h4" variant="normal" className="font-normal">
-              Add new EU Label
+              Add wine for EU Label only
             </Text>
             <Button
               intent="primary"

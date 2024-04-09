@@ -37,16 +37,16 @@ export const contextInitialData: WineryContextInterface = {
     harvestYear: "",
     controlledDesignationOfOrigin: "",
     country: "",
-    product: "",
     alcoholLevel: "",
     bottleSize: "",
-    kindOfWine: "",
+    typeOfWine: "",
     colourOfWine: "",
     producedBy: "",
     maturedInOakBarrel: false,
     bottledBy: "",
     addressOfProducer: "",
     qrCodeUrl: "",
+    wineImageUrl: "",
     ingredients: {
       grapes: {
         has: false,

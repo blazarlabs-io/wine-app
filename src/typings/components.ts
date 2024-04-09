@@ -117,16 +117,16 @@ export interface EuLabelInterface {
   harvestYear: string;
   controlledDesignationOfOrigin: string;
   country: string;
-  product: string;
   alcoholLevel: string;
   bottleSize: string;
-  kindOfWine: string;
+  typeOfWine: string;
   colourOfWine: string;
   producedBy: string;
   maturedInOakBarrel: boolean;
   bottledBy: string;
   addressOfProducer: string;
   qrCodeUrl: string;
+  wineImageUrl: string;
   ingredients: {
     grapes: {
       has: boolean;

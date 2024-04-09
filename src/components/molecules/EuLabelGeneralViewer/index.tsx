@@ -18,7 +18,7 @@ export const EuLabelGeneralViewer = ({
   return (
     <>
       {item && item !== undefined ? (
-        <div className="flex flex-col items-start justify-center min-w-full">
+        <div className="flex flex-col items-start justify-center min-w-full gap-[24px]">
           <Container intent="flexColLeft" className="max-w-fit">
             <Text intent="h6" variant="accent" className="font-semibold">
               General Information

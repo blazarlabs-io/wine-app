@@ -135,6 +135,41 @@ export const uploadQrCodeToStorage = async (
   );
 };
 
+export const uploadWineImageToStorage = async (
+  id: string,
+  file: File,
+  refNumber: string,
+  callback: (url: string) => void
+) => {
+  if (!file) {
+    callback("");
+    return;
+  }
+  const imgRef = ref(
+    storage,
+    "images/" + id + "/wines" + "/" + refNumber + "." + file.type.split("/")[1]
+  );
+
+  const uploadTask = uploadBytesResumable(imgRef, file);
+
+  uploadTask.on(
+    "state_changed",
+    (snapshot) => {
+      const progress = Math.round(
+        (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+      );
+    },
+    (error) => {
+      console.log(error);
+    },
+    () => {
+      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        callback(downloadURL);
+      });
+    }
+  );
+};
+
 export const getWineByRefNumber = async (
   refNumber: string,
   callback: (label: EuLabelInterface | null) => void

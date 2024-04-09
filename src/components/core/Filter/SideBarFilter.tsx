@@ -8,13 +8,13 @@ export const SideBarFilter = () => {
       <DropDownFilter
         label="Search by winery"
         items={["Winery 1", "Winery 2"]}
-        selectedValue={"Winery 1"}
+        selectedValue={""}
         onSelect={(item: string) => {}}
       />
       <DropDownFilter
         label="Search by wine type"
         items={["Wine 1", "Wine 2"]}
-        selectedValue={"Wine 1"}
+        selectedValue={""}
         onSelect={(item: string) => {}}
       />
       <SearchFilter label="Search UPC code" />
