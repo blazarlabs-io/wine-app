@@ -11,7 +11,6 @@ export const Toast = () => {
   const { show, status, message, timeout, updateToast } = useToast();
 
   useEffect(() => {
-    console.log("Toast", show, timeout);
     if (show && timeout) {
       const timer = setTimeout(() => {
         const toastProps = {

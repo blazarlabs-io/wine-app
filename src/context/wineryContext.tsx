@@ -6,23 +6,19 @@ import {
   WineryGeneralInfoInterface,
   WinesInterface,
   EuLabelInterface,
-} from "@/typings/components";
+} from "@/typings/winery";
 
-export interface WineryContextInterface extends WineryDataInterface {
+export interface WineryContextInterface {
   formTitle: string;
   formDescription: string;
   isEditing: boolean;
   showRegisterWinery: boolean;
-  generalInfo: WineryGeneralInfoInterface;
   exists: boolean;
-  wines: WinesInterface[] | null;
   singleEuLabel: EuLabelInterface;
-  euLabels: EuLabelInterface[] | null;
   updateSingleEuLabel: (data: EuLabelInterface) => void;
   updateFormDescription: (value: string) => void;
   updateFormTitle: (value: string) => void;
   updateIsEditing: (value: boolean) => void;
-  updateWinery: (data: WineryDataInterface) => void;
   updateShowRegisterWinery: (value: boolean) => void;
 }
 
@@ -33,85 +29,72 @@ export const contextInitialData: WineryContextInterface = {
   isEditing: false,
   showRegisterWinery: false,
   exists: false,
-  generalInfo: {
-    name: "",
-    foundedOn: "",
-    logo: "",
-    collections: "",
-    noOfProducedWines: "",
-    vineyardsSurface: "",
-    noOfBottlesProducedPerYear: "",
-    grapeVarieties: "",
-    lastUpdated: "",
-    certifications: [],
-    wineryHeadquarters: {
-      latitude: "0",
-      longitude: "0",
-    },
-    wineryRepresentative: {
-      name: "",
-      email: "",
-      phone: "",
-    },
-  },
-  wines: null,
   singleEuLabel: {
     referenceNumber: "",
     upc: "",
     wineryName: "",
-    wineName: "",
+    wineCollectionName: "",
     harvestYear: "",
     controlledDesignationOfOrigin: "",
     country: "",
-    product: "",
     alcoholLevel: "",
     bottleSize: "",
-    kindOfWine: "",
+    typeOfWine: "",
     colourOfWine: "",
-    producedBy: "",
-    maturedInOakBarrel: false,
-    bottledBy: "",
-    addressOfProducer: "",
+    qrCodeUrl: "",
+    wineImageUrl: "",
     ingredients: {
       grapes: {
         has: false,
         list: [],
       },
       acidityRegulators: {
+        allergens: {
+          has: false,
+          list: [],
+        },
         has: false,
         list: [],
       },
       antioxidants: {
+        allergens: {
+          has: false,
+          list: [],
+        },
         has: false,
         list: [],
       },
       preservatives: {
+        allergens: {
+          has: false,
+          list: [],
+        },
         has: false,
         list: [],
       },
       stabilizers: {
+        allergens: {
+          has: false,
+          list: [],
+        },
         has: false,
         list: [],
       },
-    },
-    allergens: {
-      sulphites: false,
-      tanins: false,
-      histamines: false,
       finingAgents: {
-        eggWhites: false,
-        milkProteins: false,
-        gelatines: false,
-        other: [],
+        allergens: {
+          has: false,
+          list: [],
+        },
+        has: false,
+        list: [],
       },
+      sugars: "",
     },
   },
-  euLabels: null,
   updateSingleEuLabel: (data: EuLabelInterface) => {},
   updateFormTitle: (value: string) => {},
   updateIsEditing: (value: boolean) => {},
   updateFormDescription: (value: string) => {},
-  updateWinery: (data: WineryDataInterface) => {},
   updateShowRegisterWinery: (value: boolean) => {},
 };
 
@@ -141,17 +124,9 @@ export const WineryProvider = ({
     contextInitialData.isEditing
   );
   const [showRegisterWinery, setShowRegisterWinery] = useState<boolean>(false);
-  const [generalInfo, setGeneralInfo] = useState<WineryGeneralInfoInterface>(
-    contextInitialData.generalInfo
-  );
-  const [wines, setWines] = useState<WinesInterface[]>(
-    contextInitialData.wines as WinesInterface[]
-  );
+
   const [singleEuLabel, setSingleEuLabel] = useState<EuLabelInterface>(
     contextInitialData.singleEuLabel
-  );
-  const [euLabels, setEuLabels] = useState<EuLabelInterface[]>(
-    contextInitialData.euLabels as EuLabelInterface[]
   );
 
   const updateFormTitle = (value: string) => {
@@ -172,9 +147,6 @@ export const WineryProvider = ({
 
   const updateWinery = (data: WineryDataInterface) => {
     setExists(data.exists);
-    setGeneralInfo(data.generalInfo as WineryGeneralInfoInterface);
-    setWines(data.wines as WinesInterface[]);
-    setEuLabels(data.euLabels as EuLabelInterface[]);
   };
 
   const updateSingleEuLabel = (data: EuLabelInterface) => {
@@ -188,16 +160,12 @@ export const WineryProvider = ({
     formDescription,
     isEditing,
     showRegisterWinery,
-    generalInfo,
     exists,
-    wines,
     singleEuLabel,
-    euLabels,
     updateSingleEuLabel,
     updateFormTitle,
     updateIsEditing,
     updateFormDescription,
-    updateWinery,
     updateShowRegisterWinery,
   };
 

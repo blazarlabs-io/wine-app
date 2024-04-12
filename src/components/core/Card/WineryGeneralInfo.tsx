@@ -6,22 +6,28 @@ import {
   Text,
   WineryLogo,
   SimpleMapViewer,
+  InfoTooltip,
 } from "@/components";
 import { Icon } from "@iconify/react";
 import { useWinery } from "@/context/wineryContext";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
+import { useRealtimeDb } from "@/context/realtimeDbContext";
+import { classNames } from "@/utils/classNames";
 
-export const WineryGeneralInfo = () => {
+export interface WineryGeneralInfoProps {
+  fullWidth?: boolean;
+}
+
+export const WineryGeneralInfo = ({
+  fullWidth = true,
+}: WineryGeneralInfoProps) => {
   const [showMap, setShowMap] = useState<boolean>(false);
   const router = useRouter();
-  const {
-    generalInfo,
-    updateFormTitle,
-    updateFormDescription,
-    updateIsEditing,
-  } = useWinery();
+  const { updateFormTitle, updateFormDescription, updateIsEditing } =
+    useWinery();
+  const { wineryGeneralInfo, level, tier } = useRealtimeDb();
 
   return (
     <>
@@ -60,8 +66,8 @@ export const WineryGeneralInfo = () => {
                 />
               </Button>
               <SimpleMapViewer
-                lat={generalInfo.wineryHeadquarters.latitude}
-                lon={generalInfo.wineryHeadquarters.longitude}
+                lat={wineryGeneralInfo.wineryHeadquarters.latitude}
+                lon={wineryGeneralInfo.wineryHeadquarters.longitude}
               />
             </motion.div>
           </motion.div>
@@ -72,7 +78,10 @@ export const WineryGeneralInfo = () => {
         gap="medium"
         px="medium"
         py="medium"
-        className="bg-surface w-full rounded-md h-full"
+        className={classNames(
+          "bg-surface rounded-md h-full",
+          fullWidth ? "w-full" : "max-w-fit"
+        )}
       >
         <Container
           intent="grid-3"
@@ -101,19 +110,33 @@ export const WineryGeneralInfo = () => {
               Edit details
             </Container>
           </Button>
-          <Container intent="flexRowCenter" gap="xsmall" className="w-full">
-            <Icon
-              icon="material-symbols:verified-outline"
-              className="w-[20px] h-[20px] text-secondary"
-            />
-            <Text>Tier 1</Text>
+          <Container intent="flexRowLeft" gap="xsmall" className="w-full">
+            <div>
+              <Icon
+                icon="material-symbols:verified-outline"
+                className="w-[20px] h-[20px] text-secondary"
+              />
+            </div>
+            <div className="min-w-fit">
+              <Text>{`Tier ${tier}`}</Text>
+            </div>
+            <div>
+              <InfoTooltip text="Tier" />
+            </div>
           </Container>
           <Container intent="flexRowCenter" gap="xsmall" className="w-full">
-            <Icon
-              icon="mage:gem-stone"
-              className="w-[20px] h-[20px] text-status-warning"
-            />
-            <Text>Bronze</Text>
+            <div>
+              <Icon
+                icon="mage:gem-stone"
+                className="w-[20px] h-[20px] text-status-warning"
+              />
+            </div>
+            <div>
+              <Text>{level}</Text>
+            </div>
+            <div>
+              <InfoTooltip text="Level" />
+            </div>
           </Container>
         </Container>
         <Container
@@ -123,9 +146,10 @@ export const WineryGeneralInfo = () => {
         >
           <WineryLogo
             url={
-              generalInfo.logo !== undefined && generalInfo.logo.length > 0
-                ? generalInfo.logo
-                : "/winery-sample-logo.png"
+              wineryGeneralInfo.logo !== undefined &&
+              wineryGeneralInfo.logo.length > 0
+                ? wineryGeneralInfo.logo
+                : "/winery-sample-logo.svg"
             }
             width={80}
             height={80}
@@ -133,17 +157,18 @@ export const WineryGeneralInfo = () => {
 
           <Container intent="flexColLeft" className="w-full">
             <Text intent="h3" className="text-on-surface">
-              {(generalInfo && generalInfo.name) || "Winery Name"}
+              {(wineryGeneralInfo && wineryGeneralInfo.name) || "Winery Name"}
             </Text>
             <Text intent="p1" variant="dim" className="text-on-surface">
-              {`Founded on ${(generalInfo && generalInfo.foundedOn) || "N/A"}`}
+              {`Founded on ${
+                (wineryGeneralInfo && wineryGeneralInfo.foundedOn) || "N/A"
+              }`}
             </Text>
           </Container>
         </Container>
         <Button
           intent="unstyled"
           onClick={() => {
-            console.log("Show on map");
             setShowMap(true);
           }}
           className="min-w-fit p-0 text-primary-light font-semibold hover:text-primary transition-all duration-300 ease-in-out"

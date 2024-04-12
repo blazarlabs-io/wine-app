@@ -1,3 +1,50 @@
+export type ContainrIntentType =
+  | "unstyled"
+  | "flexColCenter"
+  | "flexColTop"
+  | "flexColLeft"
+  | "flexRowLeft"
+  | "flexRowRight"
+  | "flexRowCenter"
+  | "flexRowWrap"
+  | "flexRowBetween"
+  | "flexColBetween"
+  | "grid-1"
+  | "grid-2"
+  | "grid-3"
+  | "grid-4"
+  | "grid-5"
+  | "grid-6"
+  | "grid-7"
+  | "grid-8";
+export type ContainerGapType =
+  | "none"
+  | "xsmall"
+  | "small"
+  | "medium"
+  | "large"
+  | "xlarge"
+  | "2xlarge"
+  | "3xlarge";
+export type ContainerPxType =
+  | "none"
+  | "xsmall"
+  | "small"
+  | "medium"
+  | "large"
+  | "xlarge"
+  | "2xlarge"
+  | "3xlarge";
+export type ContainerPyType =
+  | "none"
+  | "xsmall"
+  | "small"
+  | "medium"
+  | "large"
+  | "xlarge"
+  | "2xlarge"
+  | "3xlarge";
+
 // TEXT COMPONENT
 export type TextIntentType =
   | "h1"
@@ -39,136 +86,6 @@ export interface WineryStatInterface {
   icon: any;
   value: string;
   updatedAt: string;
-}
-
-// WINERY GENERAL DATA
-export interface WineryGeneralInfoInterface {
-  name: string;
-  foundedOn: string;
-  logo: string;
-  collections: string;
-  noOfProducedWines: string;
-  vineyardsSurface: string;
-  noOfBottlesProducedPerYear: string;
-  grapeVarieties: string;
-  lastUpdated: string;
-  certifications: string[];
-  wineryHeadquarters: {
-    latitude: string;
-    longitude: string;
-  };
-  wineryRepresentative: {
-    name: string;
-    email: string;
-    phone: string;
-  };
-}
-
-// WINERY WINES DATA
-export interface WineGeneralInfoInterface {
-  collectionName: string;
-  bottlesProduced: string;
-  yearOfBottling: string;
-}
-
-export interface WineCharacteristicsInterface {
-  alcoholContent: string;
-  residualSugar: string;
-  acidityLevel: string;
-  tanningLevel: string;
-  wineColor: string;
-  aromaProfile: string;
-  flavorProfile: string;
-  sulfiteLevel: string;
-}
-
-export interface WineStorageConditionsInterface {
-  initialStorage: string;
-  temperature: string;
-  lightExposure: string;
-  humidityLevel: string;
-  vibrationLevel: string;
-}
-
-export interface WineMakingTechniquesInterface {
-  technique: "singleGrape" | "cepage" | "coupage";
-}
-
-export interface WinePackagingInterface {
-  bottleType: string;
-  bottleSizing: string;
-  closureType: string;
-  upcCode: string;
-}
-
-export interface WinesInterface {
-  generalInfo: WineGeneralInfoInterface;
-  characteristics: WineCharacteristicsInterface;
-  storageConditions: WineStorageConditionsInterface;
-  makingTechniques: WineMakingTechniquesInterface;
-  packaging: WinePackagingInterface;
-}
-
-export interface EuLabelInterface {
-  referenceNumber: string;
-  upc: string;
-  wineryName: string;
-  wineName: string;
-  harvestYear: string;
-  controlledDesignationOfOrigin: string;
-  country: string;
-  product: string;
-  alcoholLevel: string;
-  bottleSize: string;
-  kindOfWine: string;
-  colourOfWine: string;
-  producedBy: string;
-  maturedInOakBarrel: boolean;
-  bottledBy: string;
-  addressOfProducer: string;
-  ingredients: {
-    grapes: {
-      has: boolean;
-      list: string[];
-    };
-    acidityRegulators: {
-      has: boolean;
-      list: string[];
-    };
-    antioxidants: {
-      has: boolean;
-      list: string[];
-    };
-    preservatives: {
-      has: boolean;
-      list: string[];
-    };
-    stabilizers: {
-      has: boolean;
-      list: string[];
-    };
-  };
-  allergens: {
-    sulphites: boolean;
-    tanins: boolean;
-    histamines: boolean;
-    finingAgents: FiningAgentInterface;
-  };
-}
-
-export interface FiningAgentInterface {
-  eggWhites: boolean;
-  milkProteins: boolean;
-  gelatines: boolean;
-  other: string[];
-}
-
-// WINERY DATA PROPS
-export interface WineryDataInterface {
-  exists: boolean;
-  generalInfo: WineryGeneralInfoInterface | null;
-  wines: WinesInterface[] | null;
-  euLabels: EuLabelInterface[] | null;
 }
 
 // MODAL COMPONENT

@@ -10,26 +10,21 @@ import { motion } from "framer-motion";
 import { useWinery } from "@/context/wineryContext";
 import { useEffect } from "react";
 import { useAuth } from "@/context/authContext";
-import { getWineryDataDb, initWineryInDb } from "@/utils/firestore";
+import { getWineryDataDb } from "@/utils/firestore";
 import { useRouter } from "next/navigation";
-import { WineryDataInterface } from "@/typings/components";
 import { useAppState } from "@/context/appStateContext";
 
 export const DashboardHomePage = () => {
   const { user } = useAuth();
   const { updateAppLoading } = useAppState();
   const router = useRouter();
-  const {
-    showRegisterWinery,
-    updateShowRegisterWinery,
-    updateIsEditing,
-    updateWinery,
-  } = useWinery();
+  const { showRegisterWinery, updateShowRegisterWinery, updateIsEditing } =
+    useWinery();
 
   useEffect(() => {
     getWineryDataDb(user?.uid as string).then((data) => {
       if (data === null) {
-        initWineryInDb(user?.uid as string);
+        // initWineryInDb(user?.uid as string);
       }
       if (
         data?.generalInfo === null ||
@@ -40,16 +35,6 @@ export const DashboardHomePage = () => {
         updateIsEditing(false);
         router.push("/register-winery");
       } else {
-        updateShowRegisterWinery(false);
-        updateIsEditing(false);
-        const wineryData: WineryDataInterface = {
-          generalInfo: data.generalInfo,
-          wines: data.wines || [],
-          euLabels: data.euLabels || [],
-          exists: true,
-        };
-        console.log("Winery exists", wineryData);
-        updateWinery(wineryData);
         updateAppLoading(false);
       }
     });
@@ -81,7 +66,7 @@ export const DashboardHomePage = () => {
           </motion.div>
         </motion.div>
       )}
-      <Container intent="flexColTop" className="w-full h-full">
+      <Container intent="flexColTop" className="min-w-full h-full">
         <WineryHeaderSection />
         <WinesListSection />
       </Container>

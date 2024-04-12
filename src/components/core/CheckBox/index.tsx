@@ -6,14 +6,21 @@ import { useState } from "react";
 export interface CheckBoxProps {
   label: string;
   checked: boolean;
+  isRequired?: boolean;
   onCheck: (state: boolean) => void;
 }
 
-export const CheckBox = ({ label, checked, onCheck }: CheckBoxProps) => {
+export const CheckBox = ({
+  label,
+  checked,
+  onCheck,
+  isRequired,
+}: CheckBoxProps) => {
   const [isChecked, setIsChecked] = useState<boolean>(checked);
   return (
     <Container intent="flexRowLeft" gap="xsmall" className="">
       <input
+        required={isRequired ? true : false}
         onChange={() => {
           let state = !isChecked;
           setIsChecked(state);
@@ -24,9 +31,7 @@ export const CheckBox = ({ label, checked, onCheck }: CheckBoxProps) => {
         id="checkbox"
         checked={isChecked}
       />
-      <label for="checkbox" className="text-sm text-on-surface-dark">
-        {label}
-      </label>
+      <label className="text-sm text-on-surface-dark">{label}</label>
     </Container>
   );
 };

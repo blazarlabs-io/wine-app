@@ -1,17 +1,22 @@
 "use client";
-import { Container, Button, Text, Accordion } from "@/components";
+import { Container, Button, Text, EuLabelsAccordion } from "@/components";
 import { Icon } from "@iconify/react";
 import { useWinery } from "@/context/wineryContext";
 import { useRouter } from "next/navigation";
+import { useAppState } from "@/context/appStateContext";
+import { useRealtimeDb } from "@/context/realtimeDbContext";
 
 export const WinesListSection = () => {
-  const { wines, updateFormTitle, updateFormDescription } = useWinery();
+  const { updateFormTitle, updateFormDescription } = useWinery();
   const router = useRouter();
+  const { updateAppLoading } = useAppState();
+
+  const { wineryEuLabels } = useRealtimeDb();
 
   return (
     <>
-      {wines && wines.length > 0 ? (
-        <>
+      {wineryEuLabels && wineryEuLabels.length > 0 ? (
+        <Container intent="flexColLeft" className="min-w-full">
           <Container
             intent="flexRowLeft"
             py="medium"
@@ -31,7 +36,7 @@ export const WinesListSection = () => {
               className="flex items-center gap-[8px]"
             >
               <Icon icon="bi:qr-code" className="h-[20px] w-[20px] mt-[-4px]" />
-              Generate EU Label
+              Add wine for EU Label only
             </Button>
             <Button
               intent="primary"
@@ -43,16 +48,22 @@ export const WinesListSection = () => {
                 icon="carbon:add-filled"
                 className="h-[20px] w-[20px] mt-[-4px]"
               />
-              Add Wine
+              Add wine for supply chain tracking
             </Button>
           </Container>
-          <Accordion data={wines} />
-        </>
+          <div className="min-w-full">
+            <EuLabelsAccordion data={wineryEuLabels} />
+          </div>
+        </Container>
       ) : (
-        <Container intent="flexColCenter" gap="large" className="h-full">
+        <Container
+          intent="flexColCenter"
+          gap="large"
+          className="min-w-full h-full min-h-[400px]"
+        >
           <Container intent="flexColTop" gap="xsmall">
             <Text intent="h4" variant="dim" className="font-normal">
-              Add new Wine
+              Add wine for supply chain tracking
             </Text>
             <Button
               intent="primary"
@@ -69,13 +80,14 @@ export const WinesListSection = () => {
           </Container>
           <Container intent="flexColTop" gap="xsmall">
             <Text intent="h4" variant="normal" className="font-normal">
-              Add new EU Label
+              Add wine for EU Label only
             </Text>
             <Button
               intent="primary"
               size="medium"
               className="flex items-center gap-[8px]"
               onClick={() => {
+                updateAppLoading(true);
                 updateFormTitle("Register EU Label");
                 updateFormDescription(
                   "Register a new EU label for your wine. All fields marked with * are mandatory."

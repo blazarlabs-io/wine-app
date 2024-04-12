@@ -1,0 +1,72 @@
+"use client";
+
+import { Container, Text, Button } from "@/components";
+import { QRCode } from "react-qrcode-logo";
+
+export interface ReviewEuLabelProps {
+  qrCodeValue: string;
+  qrCodeId: string;
+  onAccept: () => void;
+  onCancel: () => void;
+}
+
+export const ReviewEuLabel = ({
+  qrCodeValue,
+  qrCodeId,
+  onAccept,
+  onCancel,
+}: ReviewEuLabelProps) => {
+  return (
+    <div className="flex items-center justify-center w-full h-full bg-surface/80 backdrop-blur-sm fixed z-[999] top-0 left-0">
+      <Container
+        intent="flexColCenter"
+        px="large"
+        py="large"
+        gap="large"
+        className="min-w-[460px] max-w-[460px] max-h-fit bg-surface-light rounded-lg p-4"
+      >
+        <Container intent="flexColLeft" gap="medium">
+          <Text intent="h3" className="font-bold">
+            EU Label Registration
+          </Text>
+          <Text intent="p1" variant="dim">
+            The following QR code and url will be used to identify your EU only
+            label.
+          </Text>
+        </Container>
+        <QRCode
+          value={qrCodeValue}
+          size={250}
+          qrStyle="squares"
+          eyeRadius={4}
+          id={"sample-qr"}
+        />
+        <Container intent="flexRowCenter" className="hidden">
+          <QRCode
+            value={qrCodeValue}
+            size={1500}
+            qrStyle="squares"
+            eyeRadius={4}
+            id={qrCodeId}
+          />
+        </Container>
+        <Container
+          intent="flexRowCenter"
+          px="medium"
+          py="small"
+          className="w-full bg-surface rounded-md"
+        >
+          <Text variant="dim">{qrCodeValue}</Text>
+        </Container>
+        <Container intent="flexRowBetween" gap="medium" className="w-full">
+          <Button intent="secondary" fullWidth size="medium" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button intent="primary" fullWidth size="medium" onClick={onAccept}>
+            Confirm
+          </Button>
+        </Container>
+      </Container>
+    </div>
+  );
+};

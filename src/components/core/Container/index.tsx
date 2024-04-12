@@ -1,3 +1,9 @@
+import {
+  ContainerGapType,
+  ContainerPxType,
+  ContainerPyType,
+  ContainrIntentType,
+} from "@/typings/components";
 import { cva, type VariantProps } from "class-variance-authority";
 
 const container = cva("container", {
@@ -38,6 +44,7 @@ const container = cva("container", {
         "justify-between",
         "w-full",
       ],
+      "grid-1": ["grid", "grid-cols-1", "w-full", "justify-center"],
       "grid-2": ["grid", "grid-cols-2", "w-full", "justify-center"],
       "grid-3": ["grid", "grid-cols-3", "w-full", "justify-center"],
       "grid-4": ["grid", "grid-cols-4", "w-full", "justify-center"],
@@ -85,51 +92,10 @@ export interface ContainerProps
     VariantProps<typeof container> {
   id?: string;
   key?: string;
-  intent:
-    | "flexColCenter"
-    | "flexColTop"
-    | "flexColLeft"
-    | "flexRowLeft"
-    | "flexRowRight"
-    | "flexRowCenter"
-    | "flexRowWrap"
-    | "flexRowBetween"
-    | "flexColBetween"
-    | "grid-2"
-    | "grid-3"
-    | "grid-4"
-    | "grid-5"
-    | "grid-6"
-    | "grid-7"
-    | "grid-8";
-
-  px?:
-    | "none"
-    | "xsmall"
-    | "small"
-    | "medium"
-    | "large"
-    | "xlarge"
-    | "2xlarge"
-    | "3xlarge";
-  py?:
-    | "none"
-    | "xsmall"
-    | "small"
-    | "medium"
-    | "large"
-    | "xlarge"
-    | "2xlarge"
-    | "3xlarge";
-  gap?:
-    | "none"
-    | "xsmall"
-    | "small"
-    | "medium"
-    | "large"
-    | "xlarge"
-    | "2xlarge"
-    | "3xlarge";
+  intent: ContainrIntentType;
+  px?: ContainerPxType;
+  py?: ContainerPyType;
+  gap?: ContainerGapType;
   props?: any;
 }
 export const Container = ({

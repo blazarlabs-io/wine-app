@@ -6,10 +6,17 @@ import React, {
   useRef,
   useMemo,
   useCallback,
+  RefAttributes,
 } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  MapContainerProps,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import L from "leaflet";
+import L, { LatLngExpression } from "leaflet";
 
 const initialPos = [51.5063074745453, -0.13525403437173164];
 
@@ -26,8 +33,8 @@ const LocationMarker = ({ onPin }: LocationFinderMapProps) => {
   const eventHandlers = useMemo(
     () => ({
       dragend() {
-        const marker = markerRef.current;
-        if (marker != null) {
+        const marker: any = markerRef.current;
+        if (marker !== null) {
           setPosition(marker.getLatLng());
           const lat = marker.getLatLng().lat;
           const lon = marker.getLatLng().lng;
@@ -46,7 +53,7 @@ const LocationMarker = ({ onPin }: LocationFinderMapProps) => {
       icon={icon}
       draggable={draggable}
       eventHandlers={eventHandlers}
-      position={position}
+      position={position as LatLngExpression}
       ref={markerRef}
     >
       <Popup minWidth={90}>
@@ -60,8 +67,8 @@ const LocationMarker = ({ onPin }: LocationFinderMapProps) => {
   );
 };
 
-export const LocationFinderMap = ({ onPin }: LocationFinderMapProps) => {
-  const [map, setMap] = useState(null);
+export default function LocationFinderMap({ onPin }: LocationFinderMapProps) {
+  const [map, setMap] = useState<any | null>(null);
 
   useEffect(() => {
     if (map) {
@@ -73,11 +80,11 @@ export const LocationFinderMap = ({ onPin }: LocationFinderMapProps) => {
 
   return (
     <MapContainer
-      center={initialPos}
+      center={initialPos as LatLngExpression}
       zoom={17}
       scrollWheelZoom={true}
       style={{ height: "640px", width: "100%" }}
-      whenCreated={setMap}
+      whenReady={() => setMap(map)}
     >
       <TileLayer
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -87,4 +94,4 @@ export const LocationFinderMap = ({ onPin }: LocationFinderMapProps) => {
       <LocationMarker onPin={onPin} />
     </MapContainer>
   );
-};
+}

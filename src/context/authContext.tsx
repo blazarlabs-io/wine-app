@@ -53,15 +53,14 @@ export const AuthProvider = ({
       setAuthLoading(false);
       updateAppLoading(true);
       if (user) {
+        // console.log("User", user);
         setUser(user);
-        router.push("/home");
+        updateAppLoading(false);
+        // router.push("/home");
       } else {
         setUser(null);
+        updateAppLoading(false);
       }
-
-      setTimeout(() => {
-        console.log("User", user);
-      }, 3000);
     });
 
     return () => {

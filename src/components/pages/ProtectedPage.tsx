@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { getWineryDataDb, initWineryInDb } from "@/utils/firestore";
 import { useAuth } from "@/context/authContext";
 import { useWinery } from "@/context/wineryContext";
-import { WineryDataInterface } from "@/typings/components";
+import { WineryDataInterface } from "@/typings/winery";
 import { useAppState } from "@/context/appStateContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -15,8 +15,6 @@ export const ProtectedPage = ({ children }: React.PropsWithChildren) => {
   const router = useRouter();
 
   const { updateAppLoading } = useAppState();
-  const { updateWinery, updateShowRegisterWinery, updateIsEditing } =
-    useWinery();
 
   console.log("PROTECTED");
 
@@ -24,9 +22,6 @@ export const ProtectedPage = ({ children }: React.PropsWithChildren) => {
     updateAppLoading(false);
     redirect("/login");
   } else {
-    ////////////////////
-
-    /////////////////////
     return children;
   }
 };
