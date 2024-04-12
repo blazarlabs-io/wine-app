@@ -5,7 +5,7 @@ export interface ResponsiveInterface {
   height: number | undefined;
 }
 
-export type ResponsiveSize = "mobile" | "tablet" | "laptop" | "desktop";
+export type ResponsiveSize = "mobile" | "desktop";
 
 export const useResponsive = () => {
   const [windowSize, setWindowSize] = useState<ResponsiveInterface>({
@@ -27,11 +27,7 @@ export const useResponsive = () => {
 
       if (window.innerWidth < 640) {
         setResponsiveSize("mobile");
-      } else if (window.innerWidth < 1024) {
-        setResponsiveSize("tablet");
       } else if (window.innerWidth < 1280) {
-        setResponsiveSize("laptop");
-      } else {
         setResponsiveSize("desktop");
       }
     }

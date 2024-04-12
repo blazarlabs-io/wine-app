@@ -1,3 +1,5 @@
+"use client";
+
 import {
   AllergenViewer,
   Container,
@@ -5,8 +7,10 @@ import {
   IngredientViewer,
   BounceLoader,
   Text,
+  GrapesViewer,
 } from "@/components";
-import { EuLabelInterface } from "@/typings/components";
+import { EuLabelInterface } from "@/typings/winery";
+import { useResponsive } from "@/hooks/useResponsive";
 
 export interface EuLabelGeneralViewerInterface {
   item: EuLabelInterface;
@@ -15,132 +19,177 @@ export interface EuLabelGeneralViewerInterface {
 export const EuLabelGeneralViewer = ({
   item,
 }: EuLabelGeneralViewerInterface) => {
+  const { responsiveSize } = useResponsive();
   return (
     <>
       {item && item !== undefined ? (
-        <div className="flex flex-col items-start justify-center min-w-full gap-[24px]">
-          <Container intent="flexColLeft" className="max-w-fit">
-            <Text intent="h6" variant="accent" className="font-semibold">
-              General Information
-            </Text>
-          </Container>
-          <Container intent="grid-5" gap="large" className="">
-            <EuLabelItem
-              title="Reference Number"
-              value={item.referenceNumber}
-            />
-            <EuLabelItem title="Wine Name" value={item.wineName} />
-            <EuLabelItem title="UPC" value={item.upc} />
-            <EuLabelItem title="Harvest Year" value={item.harvestYear} />
-            <EuLabelItem title="Country" value={item.country} />
-            <EuLabelItem
-              title="Controlled Designation of Origin"
-              value={item.controlledDesignationOfOrigin}
-            />
-            <EuLabelItem
-              title="Alcohol Level"
-              value={item.alcoholLevel + " %vol"}
-            />
-            <EuLabelItem title="Product" value={item.product} />
-            <EuLabelItem title="Kind of Wine" value={item.kindOfWine} />
-            <EuLabelItem title="Colour of Wine" value={item.colourOfWine} />
-            <EuLabelItem title="Bottle Size" value={item.bottleSize} />
-            <EuLabelItem title="Produced By" value={item.producedBy} />
-            <EuLabelItem title="Bottled By" value={item.bottledBy} />
-          </Container>
+        <>
+          {responsiveSize !== "mobile" ? (
+            <div className="flex flex-col items-start justify-center min-w-full gap-[24px]">
+              <Container intent="flexColLeft" className="max-w-fit">
+                <Text intent="h6" variant="accent" className="font-semibold">
+                  General Information
+                </Text>
+              </Container>
+              <Container intent="grid-5" gap="large" className="">
+                <EuLabelItem
+                  title="Reference Number"
+                  variant="surface"
+                  value={item.referenceNumber}
+                />
+                <EuLabelItem title="UPC" value={item.upc} variant="surface" />
+              </Container>
+              <Container intent="grid-5" gap="large">
+                <EuLabelItem
+                  title="Wine Name"
+                  variant="surface"
+                  value={item.wineCollectionName}
+                />
+                <EuLabelItem
+                  title="Harvest Year"
+                  value={item.harvestYear}
+                  variant="surface"
+                />
+                <EuLabelItem
+                  title="Country"
+                  value={item.country}
+                  variant="surface"
+                />
+                <div className="col-span-2">
+                  <EuLabelItem
+                    title="Controlled Designation of Origin"
+                    value={item.controlledDesignationOfOrigin}
+                    variant="surface"
+                  />
+                </div>
+              </Container>
 
-          {/* Ingredients */}
-          <Container intent="flexColLeft" className="max-w-fit">
-            <Text intent="h6" variant="accent" className="font-semibold">
-              Ingredients
-            </Text>
-          </Container>
-          <Container intent="grid-5" gap="large" className="">
-            <Container intent="flexColLeft" gap="small" className="w-full">
-              <Text intent="p2" variant="dim">
-                Grapes
-              </Text>
-              {item.ingredients.grapes.has ? <Text>Yes</Text> : <Text>No</Text>}
-            </Container>
-            <IngredientViewer
-              title="Acidity Regulators"
-              ingredient={item.ingredients.acidityRegulators}
-            />
-            <IngredientViewer
-              title="Antioxidants"
-              ingredient={item.ingredients.antioxidants}
-            />
-            <IngredientViewer
-              title="Preservatives"
-              ingredient={item.ingredients.preservatives}
-            />
-            <IngredientViewer
-              title="Stabilizers"
-              ingredient={item.ingredients.stabilizers}
-            />
-          </Container>
-
-          {/* Allergens */}
-          <Container intent="flexColLeft" className="max-w-fit">
-            <Text intent="h6" variant="accent" className="font-semibold">
-              Allergens
-            </Text>
-          </Container>
-          <Container intent="grid-5" gap="large" className="">
-            <Container
-              intent="flexColLeft"
-              gap="medium"
-              className="w-full col-span-2"
-            >
-              <Text intent="p2" variant="dim">
-                Fining Agents
-              </Text>
-              <Container intent="flexColLeft" gap="medium">
-                <Container intent="flexRowLeft" gap="small" className="w-full">
-                  <AllergenViewer
-                    title="Egg Whites"
-                    has={item.allergens.finingAgents.eggWhites}
-                  />
-                  <AllergenViewer
-                    title="Milk Proteins"
-                    has={item.allergens.finingAgents.milkProteins}
-                  />
-                  <AllergenViewer
-                    title="Gelatines"
-                    has={item.allergens.finingAgents.gelatines}
-                  />
-                </Container>
-                <Container intent="flexColLeft" gap="small" className="w-full">
-                  <Text intent="p2" variant="dim">
-                    Other Agents
+              <Container intent="grid-5" gap="large">
+                <EuLabelItem
+                  title="Type of Wine"
+                  value={item.typeOfWine}
+                  variant="surface"
+                />
+                <EuLabelItem
+                  title="Colour of Wine"
+                  value={item.colourOfWine}
+                  variant="surface"
+                />
+                <EuLabelItem
+                  title="Alcohol Level"
+                  value={item.alcoholLevel + " %vol"}
+                  variant="surface"
+                />
+                <EuLabelItem
+                  title="Bottle Size"
+                  value={item.bottleSize}
+                  variant="surface"
+                />
+              </Container>
+              {/* Ingredients */}
+              <Container intent="flexColLeft" className="max-w-fit">
+                <Text intent="h6" variant="accent" className="font-semibold">
+                  Ingredients
+                </Text>
+              </Container>
+              <Container intent="grid-5" gap="large" className="">
+                <GrapesViewer
+                  title="Grapes Varieties"
+                  variant="surface"
+                  ingredient={item.ingredients.grapes.list}
+                />
+                <IngredientViewer
+                  title="Acidity Regulators"
+                  variant="surface"
+                  ingredient={item.ingredients.acidityRegulators}
+                />
+                <IngredientViewer
+                  title="Antioxidants"
+                  variant="surface"
+                  ingredient={item.ingredients.antioxidants}
+                />
+              </Container>
+              <Container intent="grid-5" gap="large">
+                <IngredientViewer
+                  title="Preservatives"
+                  variant="surface"
+                  ingredient={item.ingredients.preservatives}
+                />
+                <IngredientViewer
+                  title="Stabilizers"
+                  variant="surface"
+                  ingredient={item.ingredients.stabilizers}
+                />
+                <Container
+                  intent="flexColLeft"
+                  gap="small"
+                  className="bg-surface-dark rounded-md p-[16px] w-full"
+                >
+                  <Text intent="p2" variant="dim" className="">
+                    Sugars (g/100g)
                   </Text>
-                  <Container
-                    intent="flexRowLeft"
-                    gap="small"
-                    className="w-full"
-                  >
-                    {item.allergens.finingAgents.other.map((agent) => (
-                      <div
-                        key={agent}
-                        className="border border-primary-light rounded-full px-[12px] py-[6px]"
-                      >
-                        <Text intent="p2" variant="accent">
-                          {agent}
-                        </Text>
-                      </div>
-                    ))}
-                  </Container>
+                  <Text intent="p1">{item.ingredients.sugars + " g/100g"}</Text>
                 </Container>
               </Container>
-            </Container>
-            <AllergenViewer title="Sulphites" has={item.allergens.sulphites} />
-            <AllergenViewer title="Tanins" has={item.allergens.tanins} />
-            <AllergenViewer
-              title="Histamines"
-              has={item.allergens.histamines}
-            />
-          </Container>
-        </div>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center min-w-full gap-[24px]">
+              <Container intent="flexColCenter" className="max-w-fit">
+                <Text intent="h5" variant="accent" className="font-semibold">
+                  General Information
+                </Text>
+              </Container>
+              <EuLabelItem
+                centered
+                title="Reference Number"
+                value={item.referenceNumber}
+              />
+              <Container intent="grid-2" gap="medium" className="">
+                <EuLabelItem
+                  title="Wine Name"
+                  value={item.wineCollectionName}
+                  variant="surface"
+                />
+                <EuLabelItem title="UPC" value={item.upc} variant="surface" />
+                <EuLabelItem
+                  title="Harvest Year"
+                  value={item.harvestYear}
+                  variant="surface"
+                />
+                <EuLabelItem
+                  title="Country"
+                  value={item.country}
+                  variant="surface"
+                />
+                <EuLabelItem
+                  title="Controlled Designation of Origin"
+                  value={item.controlledDesignationOfOrigin}
+                  variant="surface"
+                />
+                <EuLabelItem
+                  title="Alcohol Level"
+                  value={item.alcoholLevel + " %vol"}
+                  variant="surface"
+                />
+                <EuLabelItem
+                  title="Type of Wine"
+                  value={item.typeOfWine}
+                  variant="surface"
+                />
+                <EuLabelItem
+                  title="Colour of Wine"
+                  value={item.colourOfWine}
+                  variant="surface"
+                />
+                <EuLabelItem
+                  title="Bottle Size"
+                  value={item.bottleSize}
+                  variant="surface"
+                />
+              </Container>
+            </div>
+          )}
+        </>
       ) : (
         <Container intent="flexColCenter" className="min-h-[320px]">
           <BounceLoader width="40" height="40" />

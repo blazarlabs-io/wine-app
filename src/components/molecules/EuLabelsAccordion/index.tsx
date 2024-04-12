@@ -9,7 +9,7 @@ import {
   IngredientViewer,
   Text,
 } from "@/components";
-import { EuLabelInterface, WinesInterface } from "@/typings/components";
+import { EuLabelInterface, WinesInterface } from "@/typings/winery";
 import { euLabelUrlComposer } from "@/utils/euLabelUrlComposer";
 import { textFromKey } from "@/utils/textFromKey";
 import { Icon } from "@iconify/react";
@@ -38,7 +38,7 @@ export const EuLabelsAccordion = ({ data }: EuLabelsAccordionProps) => {
         <div className="flex flex-col w-full">
           <div className="flex flex-col items-center min-w-full gap-[12px]">
             {data.map((item) => (
-              <AccordionItem key={item.wineName} item={item} />
+              <AccordionItem key={item.wineCollectionName} item={item} />
             ))}
           </div>
         </div>
@@ -91,7 +91,7 @@ const AccordionItem = ({ item }: EuLabelsAccordionItemInterface) => {
         > */}
         <div className="flex items-center w-full justify-center">
           <Text intent="p1" className="font-normal text-on-surface">
-            {item.wineName}
+            {item.wineCollectionName}
           </Text>
         </div>
         <div className="flex items-center w-full justify-center">
@@ -168,7 +168,7 @@ const AccordionItem = ({ item }: EuLabelsAccordionItemInterface) => {
                   src={item.qrCodeUrl}
                   width={112}
                   height={112}
-                  alt={item.wineName}
+                  alt={item.wineCollectionName}
                   className="rounded-md"
                 />
               </div>

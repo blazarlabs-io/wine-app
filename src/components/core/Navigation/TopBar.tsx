@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-key */
 "use client";
 
 import Image from "next/image";
@@ -26,20 +27,20 @@ export const TopBar = ({ className }: TopBarProps) => {
   const items = [
     <button
       onClick={() => router.push("/home")}
-      className="max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out"
+      className="text-2xl max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out"
     >
       Home
     </button>,
     <button
       onClick={() => router.push("/explore")}
-      className="max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out"
+      className="text-2xl max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out"
     >
       Explore
     </button>,
-    <button className="max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out">
+    <button className="text-2xl max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out">
       About
     </button>,
-    <button className="max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out">
+    <button className="text-2xl max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out">
       Contacts
     </button>,
   ];
@@ -172,11 +173,12 @@ export const MobileMenu = ({ show, items, onClose }: MobileMenuProps) => {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 1, x: "100%" }}
           transition={{ duration: 0.3 }}
-          className="fixed w-screen z-[9999] h-screen bg-surface-light debug-red overflow-hidden touch-none"
+          className="fixed w-screen z-[9999] h-screen bg-surface-light overflow-hidden touch-none"
         >
           <Container
             intent="flexColCenter"
-            className="max-w-screen h-screen relative debug-blue"
+            gap="medium"
+            className="max-w-screen h-screen relative"
           >
             <Button
               onClick={() => {
@@ -193,9 +195,7 @@ export const MobileMenu = ({ show, items, onClose }: MobileMenuProps) => {
               />
             </Button>
             {items.map((item, index) => (
-              <div key={index} className="debug-green">
-                {item}
-              </div>
+              <div key={index}>{item}</div>
             ))}
           </Container>
         </motion.div>

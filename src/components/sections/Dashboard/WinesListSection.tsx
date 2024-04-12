@@ -1,11 +1,5 @@
 "use client";
-import {
-  Container,
-  Button,
-  Text,
-  Accordion,
-  EuLabelsAccordion,
-} from "@/components";
+import { Container, Button, Text, EuLabelsAccordion } from "@/components";
 import { Icon } from "@iconify/react";
 import { useWinery } from "@/context/wineryContext";
 import { useRouter } from "next/navigation";

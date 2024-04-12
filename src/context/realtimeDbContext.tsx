@@ -5,7 +5,7 @@ import {
   EuLabelInterface,
   WineryGeneralInfoInterface,
   WineryInterface,
-} from "@/typings/components";
+} from "@/typings/winery";
 import { Unsubscribe, doc, onSnapshot } from "firebase/firestore";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./authContext";

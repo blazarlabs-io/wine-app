@@ -1,7 +1,4 @@
-import {
-  EuLabelInterface,
-  WineryGeneralInfoInterface,
-} from "@/typings/components";
+import { EuLabelInterface, WineryGeneralInfoInterface } from "@/typings/winery";
 import {
   DocumentData,
   arrayUnion,

@@ -10,25 +10,16 @@ import { motion } from "framer-motion";
 import { useWinery } from "@/context/wineryContext";
 import { useEffect } from "react";
 import { useAuth } from "@/context/authContext";
-import { getWineryDataDb, initWineryInDb } from "@/utils/firestore";
+import { getWineryDataDb } from "@/utils/firestore";
 import { useRouter } from "next/navigation";
-import { WineryDataInterface } from "@/typings/components";
 import { useAppState } from "@/context/appStateContext";
-import { useRealtimeDb } from "@/context/realtimeDbContext";
 
 export const DashboardHomePage = () => {
   const { user } = useAuth();
   const { updateAppLoading } = useAppState();
   const router = useRouter();
-  const {
-    showRegisterWinery,
-    updateShowRegisterWinery,
-    updateIsEditing,
-    updateWinery,
-  } = useWinery();
-
-  const { wineryGeneralInfo, updateWineryGeneralInfo, tier, level } =
-    useRealtimeDb();
+  const { showRegisterWinery, updateShowRegisterWinery, updateIsEditing } =
+    useWinery();
 
   useEffect(() => {
     getWineryDataDb(user?.uid as string).then((data) => {
@@ -44,18 +35,6 @@ export const DashboardHomePage = () => {
         updateIsEditing(false);
         router.push("/register-winery");
       } else {
-        // updateShowRegisterWinery(false);
-        // updateIsEditing(false);
-        // const wineryData: WineryDataInterface = {
-        //   wineryGeneralInfo: data.generalInfo,
-        //   tier: data.tier,
-        //   level: data.level,
-        //   wines: data.wines || [],
-        //   euLabels: data.euLabels || [],
-        //   exists: true,
-        // };
-        // // console.log("Winery exists", wineryData);
-        // updateWineryGeneralInfo(data.generalInfo);
         updateAppLoading(false);
       }
     });

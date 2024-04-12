@@ -2,25 +2,24 @@
 
 import {
   Button,
-  CheckBox,
-  CheckInputText,
   Container,
   DropDown,
   Text,
   TextInputCrud,
   ReviewEuLabel,
   InfoTooltip,
+  TextAndNumberInputCrud,
+  CheckBox,
 } from "@/components";
 import { Icon } from "@iconify/react";
 import { useWinery } from "@/context/wineryContext";
 import {
   countryList,
-  productList,
   bottleSizeList,
-  kindOfWineList,
   colourOfWineList,
+  typeOfWineList,
 } from "@/utils/data";
-import { EuLabelInterface } from "@/typings/components";
+import { EuLabelInterface, ItemWithPercentage } from "@/typings/winery";
 import { dateToTimestamp } from "@/utils/dateToTimestamp";
 import { useEffect, useRef, useState } from "react";
 import { generateId } from "@/utils/generateId";
@@ -29,7 +28,6 @@ import { useAppState } from "@/context/appStateContext";
 import { getQrCodeImageData } from "@/utils/getQrCodeImageData";
 import React from "react";
 import {
-  getWineryDataDb,
   registerWineryEuLabel,
   uploadQrCodeToStorage,
   uploadWineImageToStorage,
@@ -37,7 +35,6 @@ import {
 import { useAuth } from "@/context/authContext";
 import { euLabelUrlComposer } from "@/utils/euLabelUrlComposer";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
-import { typeOfWineList } from "@/utils/data/typeOfWineList";
 import { validateFileSizeInMegabytes } from "@/utils/validateFileSizeInMegabytes";
 import { useModal } from "@/context/modalContext";
 import { httpsCallable } from "firebase/functions";
@@ -58,10 +55,9 @@ export const RegisterEuLabel = () => {
   } = useWinery();
 
   const { updateModal } = useModal();
-
   const inputFileRef = useRef<any>(null);
 
-  const { wineryGeneralInfo, updateWineryEuLabels } = useRealtimeDb();
+  const { wineryGeneralInfo } = useRealtimeDb();
 
   const initialized = useRef(false);
   const { user } = useAuth();
@@ -90,11 +86,13 @@ export const RegisterEuLabel = () => {
 
   const handleRegistration = () => {
     setIsLoading(true);
+    updateAppLoading(true);
     uploadQrCodeToStorage(
       user?.uid as string,
       getQrCodeImageData("euLabelQrCode"),
       singleEuLabel.referenceNumber,
       (url: string) => {
+        console.log("QRCODE URL", url);
         singleEuLabel.qrCodeUrl = url;
         uploadWineImageToStorage(
           user?.uid as string,
@@ -104,6 +102,65 @@ export const RegisterEuLabel = () => {
             singleEuLabel.wineImageUrl = url;
             registerWineryEuLabel(user?.uid as string, singleEuLabel);
             setIsLoading(false);
+            sendEmail({
+              data: {
+                from: "it@blazarlabs.io",
+                to: user?.email,
+                subject: "Your new EU label has been created!",
+                text: `Congratulations, you have successfuly registered a new EU-Only Label.`,
+                html: generateEuLabelHtml(
+                  euLabelUrlComposer(singleEuLabel.referenceNumber),
+                  singleEuLabel.qrCodeUrl
+                ),
+              },
+            })
+              .then((result) => {
+                // Read result of the Cloud Function.
+                /** @type {any} */
+                const data = result.data;
+                const sanitizedMessage: any = data;
+
+                updateAppLoading(false);
+                updateModal({
+                  show: true,
+                  title: "Success",
+                  description:
+                    "Your EU Label has been registered, and an email has been sent to you with the details.",
+                  action: {
+                    label: "OK",
+                    onAction: () => {
+                      updateModal({
+                        show: false,
+                        title: "",
+                        description: "",
+                        action: { label: "", onAction: () => {} },
+                      }),
+                        router.replace("/home");
+                    },
+                  },
+                });
+              })
+              .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+
+                updateAppLoading(false);
+                updateModal({
+                  show: true,
+                  title: "Error",
+                  description: firebaseAuthErrors[errorCode] as string,
+                  action: {
+                    label: "OK",
+                    onAction: () =>
+                      updateModal({
+                        show: false,
+                        title: "",
+                        description: "",
+                        action: { label: "", onAction: () => {} },
+                      }),
+                  },
+                });
+              });
           }
         );
       }
@@ -129,17 +186,19 @@ export const RegisterEuLabel = () => {
   };
 
   useEffect(() => {
-    createQrCodeFile()
-      .then((file: File) => {
-        console.log("FILE", file);
-        fileToBase64(file).then((base64: any) => {
-          console.log("BASE64", base64);
-          setQrCodeFile(base64);
+    if (showReview) {
+      createQrCodeFile()
+        .then((file: File) => {
+          // console.log("FILE", file);
+          fileToBase64(file).then((base64: any) => {
+            // console.log("BASE64", base64);
+            setQrCodeFile(base64);
+          });
+        })
+        .catch((error) => {
+          console.error(error);
         });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    }
   }, [showReview]);
 
   return (
@@ -156,31 +215,6 @@ export const RegisterEuLabel = () => {
           onAccept={() => {
             handleRegistration();
             setShowReview(false);
-            sendEmail({
-              data: {
-                from: "it@blazarlabs.io",
-                to: user?.email,
-                subject: "Your new EU label has been created!",
-                text: `Congratulations, you have successfuly registered a new EU-Only Label.`,
-                html: generateEuLabelHtml(
-                  euLabelUrlComposer(singleEuLabel.referenceNumber),
-                  singleEuLabel.qrCodeUrl
-                ),
-              },
-            })
-              .then((result) => {
-                // Read result of the Cloud Function.
-                /** @type {any} */
-                const data = result.data;
-                const sanitizedMessage: any = data;
-                console.log(sanitizedMessage.message);
-              })
-              .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.log(firebaseAuthErrors[errorCode] as string);
-              });
-            router.replace("/home");
           }}
           onCancel={() => setShowReview(false)}
         />
@@ -198,10 +232,15 @@ export const RegisterEuLabel = () => {
         </Container>
       </Container>
       <div className="h-[1px] bg-on-surface-dark/50 w-full my-[24px]" />
+      <Container intent="flexRowLeft">
+        <Text intent="h5" variant="accent" className="mb-[32px] font-semibold">
+          General Information
+        </Text>
+      </Container>
       {/* First Row */}
       <form onSubmit={handleSubmit}>
         <Container intent="flexColCenter" gap="medium">
-          <Container intent="grid-4" gap="medium">
+          <Container intent="grid-3" gap="medium">
             <Container intent="flexColLeft" gap="xsmall">
               <Text intent="p1" variant="dim">
                 Reference Number
@@ -218,10 +257,9 @@ export const RegisterEuLabel = () => {
             </Container>
             <Container intent="flexColLeft" gap="xsmall">
               <Text intent="p1" variant="dim">
-                * GTIN (UPC)
+                GTIN (UPC)
               </Text>
               <input
-                required
                 type="text"
                 placeholder=""
                 value={singleEuLabel.upc}
@@ -235,10 +273,10 @@ export const RegisterEuLabel = () => {
                 className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
               />
             </Container>
-            <Container intent="flexColLeft" gap="xsmall" className="col-span-2">
-              <Container intent="flexRowLeft" gap="xsmall">
-                <Text intent="p1" variant="dim">
-                  Winery Image
+            <Container intent="flexColLeft" gap="xsmall" className="">
+              <Container intent="flexRowLeft" gap="small" className="w-full">
+                <Text intent="p1" variant="dim" className="min-w-fit">
+                  Wine Image
                 </Text>
                 <InfoTooltip
                   width={240}
@@ -283,13 +321,13 @@ export const RegisterEuLabel = () => {
           </Container>
 
           {/* Second Row */}
-          <Container intent="grid-4" gap="small" className="w-full">
+          <Container intent="grid-3" gap="small" className="w-full">
             <Container intent="flexColLeft" gap="xsmall" className="w-full">
               <Text intent="p1" variant="dim">
-                * Winery Name
+                Winery Name
               </Text>
               <input
-                disabled
+                readOnly
                 type="text"
                 placeholder=""
                 value={singleEuLabel.wineryName}
@@ -305,18 +343,18 @@ export const RegisterEuLabel = () => {
             </Container>
             <Container intent="flexColLeft" gap="xsmall" className="w-full">
               <Text intent="p1" variant="dim">
-                * Wine Name
+                * Wine Collection Name
               </Text>
               <input
                 required
                 type="text"
                 placeholder=""
-                value={singleEuLabel.wineName}
+                value={singleEuLabel.wineCollectionName}
                 onChange={(event: any) => {
-                  singleEuLabel.wineName = event.target.value;
+                  singleEuLabel.wineCollectionName = event.target.value;
                   updateSingleEuLabel({
                     ...(singleEuLabel as EuLabelInterface),
-                    wineName: singleEuLabel.wineName,
+                    wineCollectionName: singleEuLabel.wineCollectionName,
                   });
                 }}
                 className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
@@ -328,7 +366,7 @@ export const RegisterEuLabel = () => {
               </Text>
               <input
                 required
-                type="text"
+                type="number"
                 placeholder=""
                 value={singleEuLabel.harvestYear}
                 onChange={(event: any) => {
@@ -341,31 +379,10 @@ export const RegisterEuLabel = () => {
                 className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
               />
             </Container>
-            <Container intent="flexColLeft" gap="xsmall" className="w-full">
-              <Text intent="p1" variant="dim">
-                * Controlled Designation of Origin
-              </Text>
-              <input
-                required
-                type="text"
-                placeholder=""
-                value={singleEuLabel.controlledDesignationOfOrigin}
-                onChange={(event: any) => {
-                  singleEuLabel.controlledDesignationOfOrigin =
-                    event.target.value;
-                  updateSingleEuLabel({
-                    ...(singleEuLabel as EuLabelInterface),
-                    controlledDesignationOfOrigin:
-                      singleEuLabel.controlledDesignationOfOrigin,
-                  });
-                }}
-                className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
-              />
-            </Container>
           </Container>
 
           {/* Third Row */}
-          <Container intent="grid-4" gap="small" className="w-full">
+          <Container intent="grid-3" gap="small" className="w-full">
             <Container intent="flexColLeft" gap="xsmall" className="w-full">
               <Text intent="p1" variant="dim">
                 * Country
@@ -402,28 +419,7 @@ export const RegisterEuLabel = () => {
                 }}
               />
             </Container>
-            <Container intent="flexColLeft" gap="xsmall" className="w-full">
-              <Text intent="p1" variant="dim">
-                * Alcohol Level
-              </Text>
-              <Container intent="grid-2" gap="small" className="items-center">
-                <input
-                  required
-                  type="text"
-                  placeholder=""
-                  value={singleEuLabel.alcoholLevel}
-                  onChange={(event: any) => {
-                    singleEuLabel.alcoholLevel = event.target.value;
-                    updateSingleEuLabel({
-                      ...(singleEuLabel as EuLabelInterface),
-                      alcoholLevel: singleEuLabel.alcoholLevel,
-                    });
-                  }}
-                  className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
-                />
-                <Text>% vol</Text>
-              </Container>
-            </Container>
+
             <Container intent="flexColLeft" gap="xsmall" className="w-full">
               <Text intent="p1" variant="dim">
                 * Bottle Size
@@ -445,7 +441,7 @@ export const RegisterEuLabel = () => {
           </Container>
 
           {/* Fourth Row */}
-          <Container intent="grid-4" gap="small" className="w-full">
+          <Container intent="grid-3" gap="small" className="w-full">
             <Container intent="flexColLeft" gap="xsmall" className="w-full">
               <Text intent="p1" variant="dim">
                 * Colour of Wine
@@ -465,72 +461,113 @@ export const RegisterEuLabel = () => {
               />
             </Container>
             <Container intent="flexColLeft" gap="xsmall" className="w-full">
-              <Container intent="flexRowLeft" gap="xsmall">
-                <Text intent="p1" variant="dim">
-                  * Produced By
-                </Text>
-                <InfoTooltip text="Please update if the wine is produced by an outsourced vendor" />
-              </Container>
-              <input
-                required
-                type="text"
-                placeholder=""
-                value={
-                  singleEuLabel.producedBy.length === 0
-                    ? wineryGeneralInfo.name
-                    : singleEuLabel.producedBy
-                }
-                onChange={(event: any) => {
-                  singleEuLabel.producedBy = event.target.value;
-                  updateSingleEuLabel({
-                    ...(singleEuLabel as EuLabelInterface),
-                    producedBy: singleEuLabel.producedBy,
-                  });
-                }}
-                className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
-              />
-            </Container>
-            <Container intent="flexColLeft" gap="xsmall" className="w-full">
-              <Container intent="flexRowLeft" gap="xsmall">
-                <Text intent="p1" variant="dim">
-                  * Bottled By
-                </Text>
-                <InfoTooltip text="Please update if the wine is bottled by an outsourced vendor" />
-              </Container>
-              <input
-                required
-                type="text"
-                placeholder=""
-                value={
-                  singleEuLabel.bottledBy.length === 0
-                    ? singleEuLabel.wineryName
-                    : singleEuLabel.bottledBy
-                }
-                onChange={(event: any) => {
-                  singleEuLabel.bottledBy = event.target.value;
-                  updateSingleEuLabel({
-                    ...(singleEuLabel as EuLabelInterface),
-                    bottledBy: singleEuLabel.bottledBy,
-                  });
-                }}
-                className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
-              />
-            </Container>
-            <Container intent="flexColLeft" gap="xsmall" className="w-full">
               <Text intent="p1" variant="dim">
-                * Matured in Oak Barrels?
+                * Alcohol Level %
               </Text>
-              <DropDown
-                isRequired
-                items={["Yes", "No"]}
-                fullWidth
-                selectedValue={singleEuLabel.maturedInOakBarrel ? "Yes" : "No"}
-                onSelect={(data: string) => {
-                  singleEuLabel.maturedInOakBarrel =
-                    data === "Yes" ? true : false;
+              <Container intent="grid-3" gap="small" className="items-center">
+                <input
+                  required
+                  type="number"
+                  placeholder=""
+                  value={singleEuLabel.alcoholLevel}
+                  onChange={(event: any) => {
+                    singleEuLabel.alcoholLevel = event.target.value;
+                    updateSingleEuLabel({
+                      ...(singleEuLabel as EuLabelInterface),
+                      alcoholLevel: singleEuLabel.alcoholLevel,
+                    });
+                  }}
+                  className="w-full col-span-2 text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
+                />
+                <Text>% vol</Text>
+              </Container>
+            </Container>
+            <Container intent="flexColLeft" gap="xsmall" className="w-full">
+              <Container intent="flexRowLeft" gap="small">
+                <Text intent="p1" variant="dim" className="min-w-fit">
+                  Controlled Designation of Origin
+                </Text>
+                <InfoTooltip
+                  width={200}
+                  text="Are the grapes from a vineyard that is internationally acknowledged CDO?"
+                />
+              </Container>
+              <input
+                type="text"
+                placeholder=""
+                value={singleEuLabel.controlledDesignationOfOrigin}
+                onChange={(event: any) => {
+                  singleEuLabel.controlledDesignationOfOrigin =
+                    event.target.value;
                   updateSingleEuLabel({
                     ...(singleEuLabel as EuLabelInterface),
-                    maturedInOakBarrel: singleEuLabel.maturedInOakBarrel,
+                    controlledDesignationOfOrigin:
+                      singleEuLabel.controlledDesignationOfOrigin,
+                  });
+                }}
+                className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
+              />
+            </Container>
+          </Container>
+
+          <Container intent="flexRowLeft">
+            <Text
+              intent="h5"
+              variant="accent"
+              className="mb-[8px] font-semibold"
+            >
+              Ingredients
+            </Text>
+          </Container>
+          {/* Fith Row */}
+          <Container intent="grid-2" gap="small" className="w-full">
+            <Container intent="flexColLeft" gap="small" className="w-full">
+              <Container intent="flexRowLeft" gap="small">
+                <Text intent="p1" variant="dim" className="">
+                  * Grapes Varieties
+                </Text>
+                <InfoTooltip text="Add each grape variety and it's percentage in the wine" />
+              </Container>
+              <TextAndNumberInputCrud
+                placeholder=""
+                required={true}
+                initialItems={singleEuLabel.ingredients.grapes.list}
+                onItemsChange={(items: ItemWithPercentage[]) => {
+                  singleEuLabel.ingredients.grapes.list = items;
+                  updateSingleEuLabel({
+                    ...(singleEuLabel as EuLabelInterface),
+                    ingredients: {
+                      ...singleEuLabel.ingredients,
+                      grapes: {
+                        has: true,
+                        list: items,
+                      },
+                    },
+                  });
+                }}
+              />
+            </Container>
+            <Container intent="flexColLeft" gap="small" className="w-full">
+              <Text intent="p1" variant="dim" className="">
+                Acidity Regulators
+              </Text>
+              <TextInputCrud
+                label="Name"
+                placeholder="Malic Acid"
+                initialItems={singleEuLabel.ingredients.acidityRegulators.list}
+                onItemsChange={(items: string[]) => {
+                  singleEuLabel.ingredients.acidityRegulators.list = items;
+                  updateSingleEuLabel({
+                    ...(singleEuLabel as EuLabelInterface),
+                    ingredients: {
+                      ...singleEuLabel.ingredients,
+                      acidityRegulators: {
+                        allergens:
+                          singleEuLabel.ingredients.acidityRegulators.allergens,
+                        has: true,
+                        list: items,
+                      },
+                    },
                   });
                 }}
               />
@@ -538,248 +575,223 @@ export const RegisterEuLabel = () => {
           </Container>
 
           {/* Sixth Row */}
-          <div className="grid grid-cols-4 gap-[16px] w-full">
-            <Container
-              intent="flexColLeft"
-              gap="xsmall"
-              className="w-full col-span-3"
-            >
-              <Text intent="p1" variant="dim">
-                * Address of Producers
+          <Container intent="grid-2" gap="small" className="w-full">
+            <Container intent="flexColLeft" gap="small" className="w-full">
+              <Text intent="p1" variant="dim" className="">
+                Preservatives
               </Text>
-              <input
-                required
-                type="text"
-                placeholder=""
-                value={singleEuLabel.addressOfProducer}
-                onChange={(event: any) => {
-                  singleEuLabel.addressOfProducer = event.target.value;
+              <CheckBox
+                label="Sulphites"
+                checked={false}
+                onCheck={(state: boolean) => {
                   updateSingleEuLabel({
                     ...(singleEuLabel as EuLabelInterface),
-                    addressOfProducer: singleEuLabel.addressOfProducer,
+                    ingredients: {
+                      ...singleEuLabel.ingredients,
+                      preservatives: {
+                        has: singleEuLabel.ingredients.preservatives.has,
+                        list: singleEuLabel.ingredients.preservatives.list,
+                        allergens: {
+                          has: state,
+                          list: [
+                            ...singleEuLabel.ingredients.preservatives.allergens
+                              .list,
+                            "Sulphites (Allergen)",
+                          ],
+                        },
+                      },
+                    },
                   });
                 }}
-                className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
+              />
+              <TextInputCrud
+                label="Name"
+                placeholder="Sulphites"
+                initialItems={singleEuLabel.ingredients.preservatives.list}
+                onItemsChange={(items: string[]) => {
+                  updateSingleEuLabel({
+                    ...(singleEuLabel as EuLabelInterface),
+                    ingredients: {
+                      ...singleEuLabel.ingredients,
+                      preservatives: {
+                        allergens:
+                          singleEuLabel.ingredients.preservatives.allergens,
+                        has: true,
+                        list: items,
+                      },
+                    },
+                  });
+                }}
               />
             </Container>
-          </div>
-
-          {/* Seventh Row */}
-          <Container intent="grid-2" gap="small" className="w-full">
-            <Container intent="flexColLeft" gap="xsmall" className="w-full">
+            <Container intent="flexColLeft" gap="small" className="w-full">
               <Text intent="p1" variant="dim" className="">
-                * Ingredients
+                Fining Agents
               </Text>
-              <Container intent="flexColLeft" gap="xsmall">
-                <Container intent="flexRowCenter" className="h-[48px]">
-                  <CheckBox
-                    label="Grapes"
-                    checked={singleEuLabel.ingredients.grapes.has}
-                    onCheck={(state: boolean) => {
-                      singleEuLabel.ingredients.grapes.has = state;
-                      updateSingleEuLabel({
-                        ...(singleEuLabel as EuLabelInterface),
-                        ingredients: singleEuLabel.ingredients,
-                      });
-                    }}
-                  />
-                </Container>
-                <CheckInputText
-                  label="Acidity Regulators"
-                  checked={singleEuLabel.ingredients.acidityRegulators.has}
-                  value={singleEuLabel.ingredients.acidityRegulators.list[0]}
-                  placeholder={
-                    singleEuLabel.ingredients.acidityRegulators.has
-                      ? ""
-                      : "Malic Acid (D, L-/L-)"
-                  }
-                  onBoxChecked={(state: boolean) => {
-                    singleEuLabel.ingredients.acidityRegulators.has = state;
-                    updateSingleEuLabel({
-                      ...(singleEuLabel as EuLabelInterface),
-                      ingredients: singleEuLabel.ingredients,
-                    });
-                  }}
-                  onInputChange={(value: string) => {
-                    singleEuLabel.ingredients.acidityRegulators.list[0] = value;
-                    updateSingleEuLabel({
-                      ...(singleEuLabel as EuLabelInterface),
-                      ingredients: singleEuLabel.ingredients,
-                    });
-                  }}
-                />
-                <CheckInputText
-                  label="Antioxidants"
-                  checked={singleEuLabel.ingredients.antioxidants.has}
-                  value={singleEuLabel.ingredients.antioxidants.list[0]}
-                  placeholder={
-                    singleEuLabel.ingredients.antioxidants.has
-                      ? ""
-                      : "L-ascorbic acid"
-                  }
-                  onBoxChecked={(state: boolean) => {
-                    singleEuLabel.ingredients.antioxidants.has = state;
-                    updateSingleEuLabel({
-                      ...(singleEuLabel as EuLabelInterface),
-                      ingredients: singleEuLabel.ingredients,
-                    });
-                  }}
-                  onInputChange={(value: string) => {
-                    singleEuLabel.ingredients.antioxidants.list[0] = value;
-                    updateSingleEuLabel({
-                      ...(singleEuLabel as EuLabelInterface),
-                      ingredients: singleEuLabel.ingredients,
-                    });
-                  }}
-                />
-                <CheckInputText
-                  label="Preservative"
-                  checked={singleEuLabel.ingredients.preservatives.has}
-                  value={singleEuLabel.ingredients.preservatives.list[0]}
-                  placeholder={
-                    singleEuLabel.ingredients.preservatives.has
-                      ? ""
-                      : "Sulfites"
-                  }
-                  onBoxChecked={(state: boolean) => {
-                    singleEuLabel.ingredients.preservatives.has = state;
-                    updateSingleEuLabel({
-                      ...(singleEuLabel as EuLabelInterface),
-                      ingredients: singleEuLabel.ingredients,
-                    });
-                  }}
-                  onInputChange={(value: string) => {
-                    singleEuLabel.ingredients.preservatives.list[0] = value;
-                    updateSingleEuLabel({
-                      ...(singleEuLabel as EuLabelInterface),
-                      ingredients: singleEuLabel.ingredients,
-                    });
-                  }}
-                />
-                <CheckInputText
-                  label="Stabilizer"
-                  checked={singleEuLabel.ingredients.stabilizers.has}
-                  value={singleEuLabel.ingredients.stabilizers.list[0]}
-                  placeholder={
-                    singleEuLabel.ingredients.stabilizers.has
-                      ? ""
-                      : "Gum arabic"
-                  }
-                  onBoxChecked={(state: boolean) => {
-                    singleEuLabel.ingredients.stabilizers.has = state;
-                    updateSingleEuLabel({
-                      ...(singleEuLabel as EuLabelInterface),
-                      ingredients: singleEuLabel.ingredients,
-                    });
-                  }}
-                  onInputChange={(value: string) => {
-                    singleEuLabel.ingredients.stabilizers.list[0] = value;
-                    updateSingleEuLabel({
-                      ...(singleEuLabel as EuLabelInterface),
-                      ingredients: singleEuLabel.ingredients,
-                    });
-                  }}
-                />
-              </Container>
-            </Container>
-            <Container intent="flexColLeft" gap="xsmall" className="w-full">
-              <Text intent="p1" variant="dim">
-                * Alergens
-              </Text>
-              <Container intent="grid-3" gap="large" className="h-[48px]">
+              <Container intent="flexRowLeft" gap="small" className="max-w-fit">
                 <CheckBox
-                  label="Sulphites"
-                  checked={singleEuLabel.allergens.sulphites}
+                  label="Isinglass"
+                  checked={false}
                   onCheck={(state: boolean) => {
-                    singleEuLabel.allergens.sulphites = state;
                     updateSingleEuLabel({
                       ...(singleEuLabel as EuLabelInterface),
-                      allergens: singleEuLabel.allergens,
+                      ingredients: {
+                        ...singleEuLabel.ingredients,
+                        finingAgents: {
+                          has: singleEuLabel.ingredients.finingAgents.has,
+                          list: singleEuLabel.ingredients.finingAgents.list,
+                          allergens: {
+                            has: state,
+                            list: [
+                              ...singleEuLabel.ingredients.finingAgents
+                                .allergens.list,
+                              "Isinglass (Fish Allergen)",
+                            ],
+                          },
+                        },
+                      },
                     });
                   }}
                 />
                 <CheckBox
-                  label="Tanins"
-                  checked={singleEuLabel.allergens.tanins}
+                  label="Casein"
+                  checked={false}
                   onCheck={(state: boolean) => {
-                    singleEuLabel.allergens.tanins = state;
                     updateSingleEuLabel({
                       ...(singleEuLabel as EuLabelInterface),
-                      allergens: singleEuLabel.allergens,
-                    });
-                  }}
-                />
-                <CheckBox
-                  label="Histamines"
-                  checked={singleEuLabel.allergens.histamines}
-                  onCheck={(state: boolean) => {
-                    singleEuLabel.allergens.histamines = state;
-                    updateSingleEuLabel({
-                      ...(singleEuLabel as EuLabelInterface),
-                      allergens: singleEuLabel.allergens,
-                    });
-                  }}
-                />
-              </Container>
-              <Text intent="p2" variant="dim">
-                * Fining Agents
-              </Text>
-              <Container intent="grid-3" gap="large" className="h-[48px]">
-                <CheckBox
-                  label="Egg Whites"
-                  checked={singleEuLabel.allergens.finingAgents.eggWhites}
-                  onCheck={(state: boolean) => {
-                    singleEuLabel.allergens.finingAgents.eggWhites = state;
-                    updateSingleEuLabel({
-                      ...(singleEuLabel as EuLabelInterface),
-                      allergens: singleEuLabel.allergens,
-                    });
-                  }}
-                />
-                <CheckBox
-                  label="Milk Proteins"
-                  checked={singleEuLabel.allergens.finingAgents.milkProteins}
-                  onCheck={(state: boolean) => {
-                    singleEuLabel.allergens.finingAgents.milkProteins = state;
-                    updateSingleEuLabel({
-                      ...(singleEuLabel as EuLabelInterface),
-                      allergens: singleEuLabel.allergens,
-                    });
-                  }}
-                />
-                <CheckBox
-                  label="Gelatines"
-                  checked={singleEuLabel.allergens.finingAgents.gelatines}
-                  onCheck={(state: boolean) => {
-                    singleEuLabel.allergens.finingAgents.gelatines = state;
-                    updateSingleEuLabel({
-                      ...(singleEuLabel as EuLabelInterface),
-                      allergens: singleEuLabel.allergens,
+                      ingredients: {
+                        ...singleEuLabel.ingredients,
+                        finingAgents: {
+                          has: singleEuLabel.ingredients.finingAgents.has,
+                          list: singleEuLabel.ingredients.finingAgents.list,
+                          allergens: {
+                            has: state,
+                            list: [
+                              ...singleEuLabel.ingredients.finingAgents
+                                .allergens.list,
+                              "Casein (Milk Allergen)",
+                            ],
+                          },
+                        },
+                      },
                     });
                   }}
                 />
               </Container>
               <TextInputCrud
-                placeholder="Add Fining Agent"
-                initialItems={singleEuLabel.allergens.finingAgents.other}
+                label="Name"
+                placeholder="Potassium sorbate"
+                initialItems={singleEuLabel.ingredients.finingAgents.list}
                 onItemsChange={(items: string[]) => {
-                  singleEuLabel.allergens.finingAgents.other = items;
                   updateSingleEuLabel({
                     ...(singleEuLabel as EuLabelInterface),
-                    allergens: singleEuLabel.allergens,
+                    ingredients: {
+                      ...singleEuLabel.ingredients,
+                      finingAgents: {
+                        allergens:
+                          singleEuLabel.ingredients.finingAgents.allergens,
+                        has: true,
+                        list: items,
+                      },
+                    },
                   });
                 }}
+              />
+            </Container>
+          </Container>
+
+          {/* Seventh Row */}
+          <Container intent="grid-2" gap="small" className="w-full">
+            <Container intent="flexColLeft" gap="small" className="w-full">
+              <Container intent="flexColLeft" gap="small" className="w-full">
+                <Text intent="p1" variant="dim" className="">
+                  Stabilizers
+                </Text>
+                <TextInputCrud
+                  label="Name"
+                  placeholder="Arabic Gum"
+                  initialItems={singleEuLabel.ingredients.stabilizers.list}
+                  onItemsChange={(items: string[]) => {
+                    singleEuLabel.ingredients.stabilizers.list = items;
+                    updateSingleEuLabel({
+                      ...(singleEuLabel as EuLabelInterface),
+                      ingredients: {
+                        ...singleEuLabel.ingredients,
+                        stabilizers: {
+                          allergens:
+                            singleEuLabel.ingredients.stabilizers.allergens,
+                          has: true,
+                          list: items,
+                        },
+                      },
+                    });
+                  }}
+                />
+              </Container>
+            </Container>
+
+            <Container intent="flexColLeft" gap="small" className="w-full">
+              <Container intent="flexColLeft" gap="small" className="w-full">
+                <Text intent="p1" variant="dim" className="">
+                  Antioxidants
+                </Text>
+                <TextInputCrud
+                  label="Name"
+                  placeholder="Gallic Acid (GA)"
+                  initialItems={singleEuLabel.ingredients.antioxidants.list}
+                  onItemsChange={(items: string[]) => {
+                    singleEuLabel.ingredients.antioxidants.list = items;
+                    updateSingleEuLabel({
+                      ...(singleEuLabel as EuLabelInterface),
+                      ingredients: {
+                        ...singleEuLabel.ingredients,
+                        antioxidants: {
+                          allergens:
+                            singleEuLabel.ingredients.antioxidants.allergens,
+                          has: true,
+                          list: items,
+                        },
+                      },
+                    });
+                  }}
+                />
+              </Container>
+            </Container>
+          </Container>
+          <Container intent="grid-2" gap="small" className="w-full">
+            <Container intent="flexColLeft" gap="small" className="w-full">
+              <Container intent="flexRowLeft" gap="small">
+                <Text intent="p1" variant="dim" className="">
+                  * Sugars (g/100g)
+                </Text>
+                <InfoTooltip text="What is the amount of sugar per 100g of wine?" />
+              </Container>
+              <input
+                type="number"
+                required
+                placeholder=""
+                value={singleEuLabel.ingredients.sugars}
+                onChange={(event: any) => {
+                  singleEuLabel.ingredients.sugars = event.target.value;
+                  updateSingleEuLabel({
+                    ...(singleEuLabel as EuLabelInterface),
+                    ingredients: {
+                      ...singleEuLabel.ingredients,
+                      sugars: singleEuLabel.ingredients.sugars,
+                    },
+                  });
+                }}
+                className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
               />
             </Container>
           </Container>
         </Container>
 
         {/* Buttons */}
-        <Container intent="flexRowCenter" py="medium" gap="medium">
+        <Container intent="flexRowRight" py="medium" gap="medium">
           <Button
             intent="secondary"
             size="medium"
-            fullWidth
             onClick={() => router.back()}
           >
             Cancel
@@ -788,7 +800,6 @@ export const RegisterEuLabel = () => {
             type="submit"
             intent="primary"
             size="medium"
-            fullWidth
             onClick={() => {}}
           >
             {!isLoading ? (

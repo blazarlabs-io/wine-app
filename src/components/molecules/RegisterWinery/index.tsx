@@ -11,7 +11,7 @@ import {
 import { Icon } from "@iconify/react";
 import { useWinery } from "@/context/wineryContext";
 import { useAuth } from "@/context/authContext";
-import { WineryGeneralInfoInterface } from "@/typings/components";
+import { WineryGeneralInfoInterface } from "@/typings/winery";
 import {
   registerWineryGeneralInfoToDb,
   uploadLogoToStorage,

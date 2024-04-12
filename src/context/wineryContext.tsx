@@ -6,7 +6,7 @@ import {
   WineryGeneralInfoInterface,
   WinesInterface,
   EuLabelInterface,
-} from "@/typings/components";
+} from "@/typings/winery";
 
 export interface WineryContextInterface {
   formTitle: string;
@@ -33,7 +33,7 @@ export const contextInitialData: WineryContextInterface = {
     referenceNumber: "",
     upc: "",
     wineryName: "",
-    wineName: "",
+    wineCollectionName: "",
     harvestYear: "",
     controlledDesignationOfOrigin: "",
     country: "",
@@ -41,10 +41,6 @@ export const contextInitialData: WineryContextInterface = {
     bottleSize: "",
     typeOfWine: "",
     colourOfWine: "",
-    producedBy: "",
-    maturedInOakBarrel: false,
-    bottledBy: "",
-    addressOfProducer: "",
     qrCodeUrl: "",
     wineImageUrl: "",
     ingredients: {
@@ -53,32 +49,46 @@ export const contextInitialData: WineryContextInterface = {
         list: [],
       },
       acidityRegulators: {
+        allergens: {
+          has: false,
+          list: [],
+        },
         has: false,
         list: [],
       },
       antioxidants: {
+        allergens: {
+          has: false,
+          list: [],
+        },
         has: false,
         list: [],
       },
       preservatives: {
+        allergens: {
+          has: false,
+          list: [],
+        },
         has: false,
         list: [],
       },
       stabilizers: {
+        allergens: {
+          has: false,
+          list: [],
+        },
         has: false,
         list: [],
       },
-    },
-    allergens: {
-      sulphites: false,
-      tanins: false,
-      histamines: false,
       finingAgents: {
-        eggWhites: false,
-        milkProteins: false,
-        gelatines: false,
-        other: [],
+        allergens: {
+          has: false,
+          list: [],
+        },
+        has: false,
+        list: [],
       },
+      sugars: "",
     },
   },
   updateSingleEuLabel: (data: EuLabelInterface) => {},

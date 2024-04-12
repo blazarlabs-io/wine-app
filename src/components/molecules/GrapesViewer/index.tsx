@@ -1,19 +1,17 @@
 import { Container, Text } from "@/components";
+import { ItemWithPercentage } from "@/typings/winery";
 import { classNames } from "@/utils/classNames";
 
 export interface IngredientViewerProps {
   title: string;
+  ingredient: ItemWithPercentage[];
   variant?: "normal" | "surface";
-  ingredient: {
-    has: boolean;
-    list: string[];
-  };
 }
 
-export const IngredientViewer = ({
+export const GrapesViewer = ({
   title,
-  variant = "normal",
   ingredient,
+  variant = "normal",
 }: IngredientViewerProps) => {
   return (
     <Container
@@ -27,15 +25,19 @@ export const IngredientViewer = ({
       <Text intent="p2" variant="dim" className="">
         {title}
       </Text>
-      {ingredient !== undefined && ingredient.has ? (
+      {ingredient !== undefined ? (
         <Container intent="flexColLeft" gap="xsmall" className="max-w-fit">
-          {ingredient.list.map((item) => (
+          {ingredient.map((item) => (
             <div
-              key={item}
+              key={item.name}
               // className="border border-primary-light rounded-full px-[12px] py-[6px]"
+              className="flex items-center gap-[8px]"
             >
-              <Text intent="p2" variant="accent" key={item}>
-                {item}
+              <Text intent="p2" variant="accent">
+                {item.name}
+              </Text>
+              <Text intent="p2" variant="accent">
+                {item.percentage + "%"}
               </Text>
             </div>
           ))}

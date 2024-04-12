@@ -7,7 +7,6 @@ export { WineryStat } from "./core/Card/WineryStat";
 export { WineryGeneralInfo } from "./core/Card/WineryGeneralInfo";
 export { WineryLogo } from "./core/Logo/WineryLogo";
 export { Toast } from "./core/Overlays/Toast";
-export { Accordion } from "./core/Accordion";
 export { DropDown } from "./core/DropDown";
 export { CheckBox } from "./core/CheckBox";
 export { CheckInputText } from "./core/CheckInputText";
@@ -22,19 +21,25 @@ export { DropDownFilter } from "./core/Filter/DropDownFilter";
 export { SearchFilter } from "./core/Filter/SearchFilter";
 export { WineCard } from "./core/Card/WineCard";
 export { BounceLoader } from "./core/Loader/BounceLoader";
+export { WineryGeneralInfoPublic } from "./core/Card/WineryGeneralInfoPublic";
 
 // Molecular components
 export { RegisterWinery } from "./molecules/RegisterWinery";
 export { RegisterEuLabel } from "./molecules/RegisterEuLabel";
 export { TextInputCrud } from "./molecules/Crud/TextInputCrud";
-export { SimpleMapViewer } from "./molecules/MapViewer/SimpleMapViewer";
-export { LocationFinderMap } from "./molecules/MapViewer/LocationFinderMap";
+export { Map as SimpleMapViewer } from "./molecules/MapViewer/SimpleMapViewer/Map";
+export { Map as LocationFinderMap } from "./molecules/MapViewer/LocationFinderMap/Map";
 export { ReviewEuLabel } from "./molecules/ReviewEuLabel";
 export { IngredientViewer } from "./molecules/IngredientViewer";
 export { AllergenViewer } from "./molecules/AllergenViewer";
 export { EuLabelItem } from "./molecules/EuLabelItem";
 export { EuLabelGeneralViewer } from "./molecules/EuLabelGeneralViewer";
 export { EuLabelsAccordion } from "./molecules/EuLabelsAccordion";
+export { TextAndNumberInputCrud } from "./molecules/Crud/TextAndNumberInputCrud";
+export { GrapesViewer } from "./molecules/GrapesViewer";
+export { GrapesViewerTable } from "./molecules/GrapesViewerTable";
+export { IngredientViewerTable } from "./molecules/IngredientViewerTable";
+export { NutritionTable } from "./molecules/NutritionTable";
 
 // Layout components
 export { BaseLayout } from "./layouts/Base";
@@ -45,6 +50,10 @@ export { ExplorerLayout } from "./layouts/Explorer";
 export { HeroSection } from "./sections/Home/HeroSection";
 export { WineryHeaderSection } from "./sections/Dashboard/WineryHeaderSection";
 export { WinesListSection } from "./sections/Dashboard/WinesListSection";
+export { WineHeadSection } from "./sections/Wine/HeadSection";
+export { WineGeneralInformationSection } from "./sections/Wine/GeneralInformationSection";
+export { WineIngredientsSection } from "./sections/Wine/IngredientsSection";
+export { WineFooterSection } from "./sections/Wine/FooterSection";
 
 // Pages
 export { HomePage } from "./pages/HomePage";
@@ -54,3 +63,4 @@ export { ProtectedPage } from "./pages/ProtectedPage";
 export { GenerateEuLabelPage } from "./pages/GenerateEuLabelPage";
 export { RegisterWineryPage } from "./pages/RegisterWineryPage";
 export { ExplorePage } from "./pages/ExplorePage";
+export { WinePage } from "./pages/WinePage";

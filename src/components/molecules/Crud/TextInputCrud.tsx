@@ -2,32 +2,52 @@
 import { Button, Container, Text } from "@/components";
 import { useState } from "react";
 import { Icon } from "@iconify/react";
+import { classNames } from "@/utils/classNames";
+import { set } from "firebase/database";
 
 export interface TextInputCrudProps {
+  label?: string;
   placeholder: string;
   initialItems: string[];
   onItemsChange: (items: string[]) => void;
 }
 
 export const TextInputCrud = ({
+  label,
   placeholder,
   initialItems,
   onItemsChange,
 }: TextInputCrudProps) => {
   const [items, setItems] = useState<string[] | null>(initialItems);
   const [currentItem, setCurrentItem] = useState<string>("");
+  const [placeholderVisible, setPlaceholderVisible] = useState<boolean>(true);
   return (
     <Container intent="flexColLeft" gap="small">
-      <Container intent="grid-2" className="max-w-fit">
-        <input
-          type="text"
-          placeholder={placeholder}
-          value={currentItem}
-          onChange={(event: any) => {
-            setCurrentItem(event.target.value);
-          }}
-          className="placeholder:text-on-surface-dark/50 text-sm text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px] min-w-[168px]"
-        />
+      <Container intent="grid-4" className="w-full">
+        <Container intent="flexColLeft" gap="xsmall" className="col-span-3">
+          {label && (
+            <Text intent="p2" variant="dim">
+              {label}
+            </Text>
+          )}
+          <input
+            type="text"
+            placeholder={placeholderVisible ? placeholder : ""}
+            value={currentItem}
+            onFocus={(event: any) => {
+              setPlaceholderVisible(false);
+            }}
+            onBlur={(event: any) => {
+              if (currentItem === "") {
+                setPlaceholderVisible(true);
+              }
+            }}
+            onChange={(event: any) => {
+              setCurrentItem(event.target.value);
+            }}
+            className="w-full placeholder:text-on-surface-dark/50 text-sm text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
+          />
+        </Container>
         <Button
           intent="unstyled"
           disabled={!currentItem}
@@ -42,8 +62,12 @@ export const TextInputCrud = ({
             setItems(its);
             onItemsChange(its);
             setCurrentItem("");
+            setPlaceholderVisible(true);
           }}
-          className="text-[16px] flex items-center gap-[4px] px-[16px] max-w-fit text-primary-light hover:text-primary transition-all duration-200 ease-in-out"
+          className={classNames(
+            "text-[16px] flex items-center gap-[4px] px-[16px] max-w-fit text-primary-light hover:text-primary transition-all duration-200 ease-in-out",
+            label && "mt-[32px]"
+          )}
         >
           <Icon
             icon="material-symbols:add"

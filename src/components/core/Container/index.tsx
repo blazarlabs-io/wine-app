@@ -1,3 +1,9 @@
+import {
+  ContainerGapType,
+  ContainerPxType,
+  ContainerPyType,
+  ContainrIntentType,
+} from "@/typings/components";
 import { cva, type VariantProps } from "class-variance-authority";
 
 const container = cva("container", {
@@ -86,53 +92,10 @@ export interface ContainerProps
     VariantProps<typeof container> {
   id?: string;
   key?: string;
-  intent:
-    | "unstyled"
-    | "flexColCenter"
-    | "flexColTop"
-    | "flexColLeft"
-    | "flexRowLeft"
-    | "flexRowRight"
-    | "flexRowCenter"
-    | "flexRowWrap"
-    | "flexRowBetween"
-    | "flexColBetween"
-    | "grid-1"
-    | "grid-2"
-    | "grid-3"
-    | "grid-4"
-    | "grid-5"
-    | "grid-6"
-    | "grid-7"
-    | "grid-8";
-
-  px?:
-    | "none"
-    | "xsmall"
-    | "small"
-    | "medium"
-    | "large"
-    | "xlarge"
-    | "2xlarge"
-    | "3xlarge";
-  py?:
-    | "none"
-    | "xsmall"
-    | "small"
-    | "medium"
-    | "large"
-    | "xlarge"
-    | "2xlarge"
-    | "3xlarge";
-  gap?:
-    | "none"
-    | "xsmall"
-    | "small"
-    | "medium"
-    | "large"
-    | "xlarge"
-    | "2xlarge"
-    | "3xlarge";
+  intent: ContainrIntentType;
+  px?: ContainerPxType;
+  py?: ContainerPyType;
+  gap?: ContainerGapType;
   props?: any;
 }
 export const Container = ({
