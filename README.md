@@ -1,3 +1,3 @@
 # Wine App
 
-By Blazarlabs
+By Blazarlabs.io
