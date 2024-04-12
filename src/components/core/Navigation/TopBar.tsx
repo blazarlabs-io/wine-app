@@ -16,6 +16,13 @@ export interface TopBarProps {
   className?: string;
 }
 
+export interface MenuItemInterface {
+  label: string;
+  key: string;
+  onClick: () => void;
+  disabled: boolean;
+}
+
 export const TopBar = ({ className }: TopBarProps) => {
   const router = useRouter();
   const { user } = useAuth();
@@ -23,18 +30,30 @@ export const TopBar = ({ className }: TopBarProps) => {
 
   const [showMobileMenu, setShowMobileMenu] = useState<boolean>(false);
 
-  const items = [
-    { label: "Home", key: "home", onClick: () => router.push("/home") },
+  const menuItems: MenuItemInterface[] = [
+    {
+      label: "Home",
+      key: "home",
+      onClick: () => router.push("/home"),
+      disabled: false,
+    },
     {
       label: "Explore",
       key: "explore",
       onClick: () => router.push("/explore"),
+      disabled: false,
     },
-    { label: "About", key: "about", onClick: () => router.push("/about") },
+    {
+      label: "About",
+      key: "about",
+      onClick: () => router.push("/about"),
+      disabled: true,
+    },
     {
       label: "Contacts",
       key: "contacts",
       onClick: () => router.push("/contacts"),
+      disabled: true,
     },
   ];
 
@@ -52,7 +71,7 @@ export const TopBar = ({ className }: TopBarProps) => {
         <>
           <MobileMenu
             show={showMobileMenu}
-            items={items}
+            items={menuItems}
             onClose={() => {
               setShowMobileMenu(false);
             }}
@@ -112,24 +131,18 @@ export const TopBar = ({ className }: TopBarProps) => {
             />
           </Container>
           <Container intent="flexRowCenter" gap="large" className="">
-            <button
-              onClick={() => router.push("/home")}
-              className="max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out"
-            >
-              Home
-            </button>
-            <button
-              onClick={() => router.push("/explore")}
-              className="max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out"
-            >
-              Explore
-            </button>
-            <button className="max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out">
-              About
-            </button>
-            <button className="max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out">
-              Contacts
-            </button>
+            {menuItems.map((item: MenuItemInterface) => (
+              <button
+                key={item.key}
+                disabled={item.disabled}
+                onClick={() => {
+                  item.onClick();
+                }}
+                className="disabled:text-status-disabled disabled:cursor-not-allowed max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out"
+              >
+                {item.label}
+              </button>
+            ))}
           </Container>
           <Container intent="flexRowRight" gap="medium">
             <Button
@@ -153,7 +166,7 @@ export const TopBar = ({ className }: TopBarProps) => {
 
 export interface MobileMenuProps {
   show: boolean;
-  items: any[];
+  items: MenuItemInterface[];
   onClose: () => void;
 }
 
@@ -187,10 +200,15 @@ export const MobileMenu = ({ show, items, onClose }: MobileMenuProps) => {
                 className="text-on-surface"
               />
             </Button>
-            {items.map((item, index) => (
+            {items.map((item: MenuItemInterface) => (
               <button
                 key={item.key}
-                className="text-2xl max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out"
+                disabled={item.disabled}
+                onClick={() => {
+                  item.onClick();
+                  onClose();
+                }}
+                className="disabled:text-status-disabled disabled:cursor-not-allowed text-2xl max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out"
               >
                 {item.label}
               </button>
