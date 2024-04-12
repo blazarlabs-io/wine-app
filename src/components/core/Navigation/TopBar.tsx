@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-key */
 "use client";
 
 import Image from "next/image";
@@ -25,24 +24,18 @@ export const TopBar = ({ className }: TopBarProps) => {
   const [showMobileMenu, setShowMobileMenu] = useState<boolean>(false);
 
   const items = [
-    <button
-      onClick={() => router.push("/home")}
-      className="text-2xl max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out"
-    >
-      Home
-    </button>,
-    <button
-      onClick={() => router.push("/explore")}
-      className="text-2xl max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out"
-    >
-      Explore
-    </button>,
-    <button className="text-2xl max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out">
-      About
-    </button>,
-    <button className="text-2xl max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out">
-      Contacts
-    </button>,
+    { label: "Home", key: "home", onClick: () => router.push("/home") },
+    {
+      label: "Explore",
+      key: "explore",
+      onClick: () => router.push("/explore"),
+    },
+    { label: "About", key: "about", onClick: () => router.push("/about") },
+    {
+      label: "Contacts",
+      key: "contacts",
+      onClick: () => router.push("/contacts"),
+    },
   ];
 
   const handleLogOut = async () => {
@@ -195,7 +188,12 @@ export const MobileMenu = ({ show, items, onClose }: MobileMenuProps) => {
               />
             </Button>
             {items.map((item, index) => (
-              <div key={index}>{item}</div>
+              <button
+                key={item.key}
+                className="text-2xl max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out"
+              >
+                {item.label}
+              </button>
             ))}
           </Container>
         </motion.div>
