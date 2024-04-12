@@ -7,6 +7,8 @@ import {
   WineIngredientsSection,
   GeneralLoaderOverlay,
   WineFooterSection,
+  WineImage,
+  NutritionTable,
 } from "@/components";
 import { EuLabelInterface } from "@/typings/winery";
 import Image from "next/image";
@@ -21,64 +23,27 @@ export interface WinePagePropsInterface {
 export const WinePage = ({ euLabel }: WinePagePropsInterface) => {
   const { responsiveSize } = useResponsive();
 
-  useEffect(() => {
-    console.log(responsiveSize);
-  }, [responsiveSize]);
   return (
     <>
       {euLabel ? (
-        <Container
-          intent="flexColLeft"
-          className="rounded-lg min-w-full min-h-full "
+        <div
+          className={classNames(
+            "flex flex-col items-center justify-center gap-[48px] w-full z-[-2] mb-[32px] max-w-[800px]"
+          )}
         >
-          <Container
-            intent={responsiveSize === "mobile" ? "flexColTop" : "grid-5"}
-            // gap={responsiveSize === "latptop" ? "large" : "small"}
-            className={classNames(
-              "min-w-full z-[-2]",
-              responsiveSize === "desktop" && "bg-surface-light"
-            )}
-          >
-            <div
-              style={{
-                minWidth: "100%",
-                minHeight: responsiveSize === "desktop" ? 300 : 400,
-                position: "relative",
-                zIndex: -1,
-                marginTop: responsiveSize === "desktop" ? 32 : 0,
-              }}
-              className=""
-            >
-              <Image
-                src={euLabel?.wineImageUrl || "/wine-placeholder.png"}
-                alt=""
-                fill={true}
-                style={{
-                  objectFit: "cover",
-                  objectPosition: "center",
-                }}
-              />
-            </div>
-
-            <Container
-              intent="flexColTop"
-              gap="medium"
-              className={classNames(
-                "bg-surface-light min-w-full",
-                responsiveSize === "mobile" && "rounded-t-[24px] mt-[-32px]",
-                responsiveSize === "desktop" &&
-                  "col-span-4 min-w-full pt-[48px]"
-              )}
-            >
-              <WineHeadSection euLabel={euLabel as EuLabelInterface} />
-              <WineGeneralInformationSection
-                item={euLabel as EuLabelInterface}
-              />
-              <WineIngredientsSection item={euLabel as EuLabelInterface} />
-              <WineFooterSection euLabel={euLabel as EuLabelInterface} />
-            </Container>
-          </Container>
-        </Container>
+          <WineImage imageUrl={euLabel?.wineImageUrl} />
+          <WineHeadSection euLabel={euLabel as EuLabelInterface} />
+          <WineGeneralInformationSection item={euLabel as EuLabelInterface} />
+          <WineIngredientsSection item={euLabel as EuLabelInterface} />
+          <NutritionTable
+            items={{
+              alcoholLevel: euLabel.alcoholLevel,
+              sugars: euLabel.ingredients.sugars,
+              bottleSize: euLabel.bottleSize,
+            }}
+          />
+          <WineFooterSection euLabel={euLabel as EuLabelInterface} />
+        </div>
       ) : (
         <GeneralLoaderOverlay />
       )}

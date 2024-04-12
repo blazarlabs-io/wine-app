@@ -22,6 +22,7 @@ export { SearchFilter } from "./core/Filter/SearchFilter";
 export { WineCard } from "./core/Card/WineCard";
 export { BounceLoader } from "./core/Loader/BounceLoader";
 export { WineryGeneralInfoPublic } from "./core/Card/WineryGeneralInfoPublic";
+export { WineImage } from "./core/Image/WineImage";
 
 // Molecular components
 export { RegisterWinery } from "./molecules/RegisterWinery";
