@@ -3,6 +3,7 @@
 import { Container, Text, Button } from "@/components";
 import { classNames } from "@/utils/classNames";
 import { useRouter } from "next/navigation";
+import { useResponsive } from "@/hooks/useResponsive";
 
 export interface HeroSectionProps {
   className?: string;
@@ -10,28 +11,46 @@ export interface HeroSectionProps {
 
 export const HeroSection = ({ className }: HeroSectionProps) => {
   const router = useRouter();
+  const { responsiveSize } = useResponsive();
 
   return (
     <Container
-      px="3xlarge"
-      py="large"
+      px={responsiveSize === "mobile" ? "medium" : "3xlarge"}
+      py={responsiveSize === "mobile" ? "small" : "large"}
       intent="flexColLeft"
       gap="medium"
-      className={classNames(className, "h-full mt-[112px]")}
+      className={classNames(
+        className,
+        "h-full",
+        responsiveSize === "mobile" ? "mt-[48px]" : "mt-[112px]"
+      )}
     >
-      <Container intent="flexColLeft" gap="small" className="max-w-[440px]">
-        <Text intent="h1" className="font-bold kaushan">
+      <Container
+        intent="flexColLeft"
+        gap={responsiveSize === "mobile" ? "medium" : "small"}
+        className="max-w-[440px]"
+      >
+        <Text
+          intent={responsiveSize === "mobile" ? "h2" : "h1"}
+          className="font-bold kaushan"
+        >
           The <span className="text-primary">Wine Portal</span> delivered by EE
           Cardano HUB
         </Text>
-        <Text intent="p1" variant="dim">
+        <Text
+          intent={responsiveSize === "mobile" ? "h5" : "p1"}
+          variant={responsiveSize === "mobile" ? "normal" : "dim"}
+        >
           QR code supply chain tracking, for transparency, connection and EU
           Regulations
         </Text>
       </Container>
-      <Container intent="flexRowLeft">
+      <Container
+        intent={responsiveSize === "mobile" ? "flexColCenter" : "flexRowLeft"}
+      >
         <Button
           intent="primary"
+          fullWidth={responsiveSize === "mobile"}
           size="large"
           onClick={() => router.push("/explore")}
         >

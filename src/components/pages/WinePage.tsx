@@ -11,9 +11,6 @@ import {
   NutritionTable,
 } from "@/components";
 import { EuLabelInterface } from "@/typings/winery";
-import Image from "next/image";
-import { useResponsive } from "@/hooks/useResponsive";
-import { useEffect, useState } from "react";
 import { classNames } from "@/utils/classNames";
 
 export interface WinePagePropsInterface {
@@ -21,8 +18,6 @@ export interface WinePagePropsInterface {
 }
 
 export const WinePage = ({ euLabel }: WinePagePropsInterface) => {
-  const { responsiveSize } = useResponsive();
-
   return (
     <>
       {euLabel ? (

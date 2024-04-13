@@ -1,12 +1,20 @@
 "use client";
 
-import { Container } from "../core/Container";
 import { Login } from "../molecules/Login";
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/authContext";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export const LoginPage = () => {
-  const { authLoading } = useAuth();
+  const { authLoading, user } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user) {
+      router.push("/home");
+    }
+  }, [user]);
 
   return (
     <>

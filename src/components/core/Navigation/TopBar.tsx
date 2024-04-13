@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Container } from "../Container";
 import { Button } from "../Button";
 import { classNames } from "@/utils/classNames";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/context/authContext";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase/client";
@@ -24,6 +24,7 @@ export interface MenuItemInterface {
 }
 
 export const TopBar = ({ className }: TopBarProps) => {
+  const pathname = usePathname();
   const router = useRouter();
   const { user } = useAuth();
   const { responsiveSize } = useResponsive();
@@ -34,7 +35,7 @@ export const TopBar = ({ className }: TopBarProps) => {
     {
       label: "Home",
       key: "home",
-      onClick: () => router.push("/home"),
+      onClick: () => router.push("/"),
       disabled: false,
     },
     {
@@ -57,19 +58,11 @@ export const TopBar = ({ className }: TopBarProps) => {
     },
   ];
 
-  const handleLogOut = async () => {
-    signOut(auth)
-      .then(async () => {
-        redirect("/");
-      })
-      .catch((error) => {});
-  };
-
   return (
     <>
       {responsiveSize === "mobile" ? (
         <>
-          <MobileMenu
+          <MobileMenuOverlay
             show={showMobileMenu}
             items={menuItems}
             onClose={() => {
@@ -145,18 +138,7 @@ export const TopBar = ({ className }: TopBarProps) => {
             ))}
           </Container>
           <Container intent="flexRowRight" gap="medium">
-            <Button
-              onClick={() => {
-                if (!user) {
-                  router.push("/login");
-                } else {
-                  handleLogOut();
-                }
-              }}
-              intent="text"
-            >
-              {!user ? "Log in as winery owner" : "Log out"}
-            </Button>
+            <LoginButton />
           </Container>
         </Container>
       )}
@@ -170,7 +152,11 @@ export interface MobileMenuProps {
   onClose: () => void;
 }
 
-export const MobileMenu = ({ show, items, onClose }: MobileMenuProps) => {
+export const MobileMenuOverlay = ({
+  show,
+  items,
+  onClose,
+}: MobileMenuProps) => {
   return (
     <AnimatePresence>
       {show && (
@@ -213,9 +199,66 @@ export const MobileMenu = ({ show, items, onClose }: MobileMenuProps) => {
                 {item.label}
               </button>
             ))}
+            <LoginButton />
           </Container>
         </motion.div>
       )}
     </AnimatePresence>
+  );
+};
+
+export const LoginButton = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const { user } = useAuth();
+  const { responsiveSize } = useResponsive();
+
+  const handleLogOut = async () => {
+    signOut(auth)
+      .then(async () => {})
+      .catch((error) => {});
+  };
+  return (
+    <Button
+      onClick={() => {
+        if (!user) {
+          router.push("/login");
+        } else {
+          if (
+            pathname !== "/" &&
+            pathname !== "/explore" &&
+            !pathname.startsWith("/wine")
+          ) {
+            handleLogOut();
+          } else {
+            router.push("/home");
+          }
+        }
+      }}
+      intent="text"
+      className={classNames(
+        responsiveSize === "mobile" ? "text-2xl font-normal" : "text-base"
+      )}
+    >
+      {!user ? (
+        "Log in as winery owner"
+      ) : pathname !== "/" &&
+        pathname !== "/explore" &&
+        !pathname.startsWith("/wine") ? (
+        "Log out"
+      ) : (
+        <Container intent="flexRowLeft" gap="xsmall">
+          <Icon
+            icon="ant-design:dashboard-outlined"
+            width={responsiveSize === "mobile" ? "24" : "20"}
+            height={responsiveSize === "mobile" ? "24" : "20"}
+            className={classNames(
+              responsiveSize === "mobile" ? "mt-[-8px]" : "mt-[-4px]"
+            )}
+          />
+          Go to Dashboard
+        </Container>
+      )}
+    </Button>
   );
 };

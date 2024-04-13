@@ -24,6 +24,7 @@ export const WineImage = ({ imageUrl }: WineImageProps) => {
         >
           <Image
             src={imageUrl || "/wine-placeholder.png"}
+            blurDataURL="/wine-blur.png"
             alt=""
             fill={true}
             style={{

@@ -188,3 +188,50 @@ export const getWineByRefNumber = async (
     }
   });
 };
+
+export const getWineByUpcCode = async (
+  upc: string,
+  callback: (label: EuLabelInterface | null) => void
+) => {
+  const wineries = query(collection(db, "wineries"));
+  const querySnapshot = await getDocs(wineries);
+  querySnapshot.forEach((doc) => {
+    if (doc.data().euLabels) {
+      doc.data().euLabels.forEach((label: EuLabelInterface) => {
+        if (label.upc === upc) {
+          // console.log(doc.id, " => ", label);
+          callback(label);
+        } else {
+          // callback(null);
+        }
+      });
+    } else {
+      // callback(null);
+    }
+  });
+};
+
+export const getDocsInCollection = async (collectionName: string) => {
+  const result = collection(db, collectionName);
+  const querySnapshot = await getDocs(result);
+  const items: any[] = [];
+  querySnapshot.forEach((doc) => {
+    items.push(doc.data());
+  });
+  return items;
+};
+
+export const getAllEuLabelWines = async () => {
+  const wineries = query(collection(db, "wineries"));
+  const querySnapshot = await getDocs(wineries);
+
+  const items: EuLabelInterface[] = [];
+  await querySnapshot.forEach((doc) => {
+    if (doc.data().euLabels.length > 0) {
+      doc.data().euLabels.forEach((label: EuLabelInterface) => {
+        items.push(label);
+      });
+    }
+  });
+  return items;
+};
