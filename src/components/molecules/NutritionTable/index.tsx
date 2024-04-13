@@ -1,6 +1,7 @@
 "use client";
 
 import { Container, EuLabelItem, Text } from "@/components/";
+import { useResponsive } from "@/hooks/useResponsive";
 import { kcal, kj } from "@/utils/nutritionCalculator";
 import { Icon } from "@iconify/react";
 
@@ -13,19 +14,20 @@ export interface NutritionTableProps {
 }
 
 export const NutritionTable = ({ items }: NutritionTableProps) => {
+  const { responsiveSize } = useResponsive();
   return (
     <Container
-      intent="flexColCenter"
-      px="medium"
+      intent={"flexColCenter"}
+      px={responsiveSize === "mobile" ? "medium" : "none"}
       py="medium"
-      className="w-full"
+      className="min-w-full"
     >
       <Container
         intent="flexColLeft"
         px="small"
         py="small"
         gap="xsmall"
-        className="bg-surface-dark/30 w-full rounded-md border-[1.5px] border-on-surface-dark/40"
+        className="bg-surface-dark/30 w-full max-w-[480px] rounded-md border-[1.5px] border-on-surface-dark/40"
       >
         <Container intent="flexColLeft" gap="xsmall" className="w-full">
           <Container intent="flexRowCenter" gap="xsmall" className="w-full">

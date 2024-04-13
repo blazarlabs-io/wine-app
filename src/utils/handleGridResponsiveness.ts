@@ -7,14 +7,10 @@ export const handleGridResponsiveness = (
 ): GridResponsivenessInterface => {
   switch (size) {
     case "mobile":
-      return "grid-1";
-    case "tablet":
-      return "grid-2";
-    case "laptop":
-      return "grid-3";
+      return "flexColTop";
     case "desktop":
-      return "grid-4";
+      return "flexRowWrap";
     default:
-      return "grid-2";
+      return "grid-1";
   }
 };

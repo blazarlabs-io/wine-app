@@ -6,6 +6,7 @@ export interface DropdownFilterProps {
   items: string[];
   selectedValue: string;
   onSelect: (item: string) => void;
+  disabled?: boolean;
 }
 
 export const DropDownFilter = ({
@@ -13,6 +14,7 @@ export const DropDownFilter = ({
   items,
   selectedValue,
   onSelect,
+  disabled = false,
 }: DropdownFilterProps) => {
   return (
     <Container intent="flexColCenter" gap="xsmall">
@@ -20,9 +22,12 @@ export const DropDownFilter = ({
         <Text intent="p2" variant="dim">
           {label}
         </Text>
-        <Button intent="text">Reset</Button>
+        <Button disabled={disabled} intent="text">
+          Reset
+        </Button>
       </Container>
       <DropDown
+        disabled={disabled}
         fullWidth
         items={items}
         selectedValue={selectedValue}

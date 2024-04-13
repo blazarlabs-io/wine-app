@@ -1,23 +1,15 @@
 "use client";
 
-import { Container, Text, DropDownFilter, SearchFilter } from "@/components";
+import {
+  Container,
+  Text,
+  DropDownFilter,
+  SearchFilter,
+  FilterBox,
+} from "@/components";
+import { useFilters } from "@/context/filtersContext";
 
 export const SideBarFilter = () => {
-  return (
-    <Container intent="flexColLeft" className="h-full w-[196px]" gap="medium">
-      <DropDownFilter
-        label="Search by winery"
-        items={["Winery 1", "Winery 2"]}
-        selectedValue={""}
-        onSelect={(item: string) => {}}
-      />
-      <DropDownFilter
-        label="Search by wine type"
-        items={["Wine 1", "Wine 2"]}
-        selectedValue={""}
-        onSelect={(item: string) => {}}
-      />
-      <SearchFilter label="Search UPC code" />
-    </Container>
-  );
+  const { mobileFilters } = useFilters();
+  return <>{!mobileFilters && <FilterBox />}</>;
 };

@@ -59,6 +59,44 @@ export const WineGeneralInformationSection = ({
           </Container>
         </div>
       )}
+      {responsiveSize === "desktop" && (
+        <div className="flex flex-col items-center justify-center w-full gap-[24px]">
+          <Container intent="flexRowCenter" gap="xsmall" className="w-full">
+            <Icon
+              icon="mdi:information-slab-circle-outline"
+              width="20"
+              height="20"
+              className="text-primary-light mt-[-4px]"
+            />
+            <Text intent="h6" variant="dim" className="font-semibold uppercase">
+              General Information
+            </Text>
+          </Container>
+          <Container intent="grid-2" gap="medium" className="w-full">
+            <EuLabelItem
+              title="Harvest Year"
+              value={item.harvestYear}
+              variant="surface"
+            />
+            <EuLabelItem
+              title="Colour of Wine"
+              value={item.colourOfWine}
+              variant="surface"
+            />
+            <EuLabelItem
+              title="Bottle Size"
+              value={item.bottleSize}
+              variant="surface"
+            />
+            {/* <EuLabelItem title="UPC" value={item.upc} variant="surface" /> */}
+            <EuLabelItem
+              title="Controlled Designation of Origin"
+              value={item.controlledDesignationOfOrigin}
+              variant="surface"
+            />
+          </Container>
+        </div>
+      )}
     </>
   );
 };

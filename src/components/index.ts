@@ -15,13 +15,15 @@ export { AuthSpinnerLoader } from "./core/Loader/AuthSpinnerLoader";
 export { GeneralLoaderOverlay } from "./core/Loader/GeneralLoaderOverlay";
 export { SpinnerLoader } from "./core/Loader/SpinnerLoader";
 export { InfoTooltip } from "./core/Helper/InfoTooltip";
-export { ExploreModeSelect } from "./core/Navigation/ExploreModeSelect";
+export { ExploreModeSelect } from "./core/Filter/FilterBar";
 export { SideBarFilter } from "./core/Filter/SideBarFilter";
 export { DropDownFilter } from "./core/Filter/DropDownFilter";
 export { SearchFilter } from "./core/Filter/SearchFilter";
 export { WineCard } from "./core/Card/WineCard";
 export { BounceLoader } from "./core/Loader/BounceLoader";
 export { WineryGeneralInfoPublic } from "./core/Card/WineryGeneralInfoPublic";
+export { WineImage } from "./core/Image/WineImage";
+export { FilterBox } from "./core/Filter/FilterBox";
 
 // Molecular components
 export { RegisterWinery } from "./molecules/RegisterWinery";

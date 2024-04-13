@@ -15,14 +15,36 @@ export const WineFooterSection = ({ euLabel }: WineFooterSectionProps) => {
     <>
       {responsiveSize === "mobile" && (
         <>
-          <NutritionTable
-            items={{
-              alcoholLevel: euLabel.alcoholLevel,
-              sugars: euLabel.ingredients.sugars,
-              bottleSize: euLabel.bottleSize,
-            }}
-          />
           <Container intent="flexRowCenter" px="medium" className="w-full">
+            <div>
+              <EuLabelItem title="UPC" value={euLabel.upc} variant="surface" />
+            </div>
+          </Container>
+
+          <Container
+            intent="flexColCenter"
+            py="xsmall"
+            px="xsmall"
+            gap="large"
+            className="bg-surface max-w-[440px]"
+          >
+            <Image
+              src={"/wine-moderation.png"}
+              alt=""
+              width="288"
+              height="80"
+              style={{
+                objectFit: "cover",
+                objectPosition: "center",
+              }}
+            />
+            <Image src={euLabel?.qrCodeUrl} width={88} height={88} alt="" />
+          </Container>
+        </>
+      )}
+      {responsiveSize === "desktop" && (
+        <>
+          <Container intent="flexRowCenter" className="w-full">
             <div>
               <EuLabelItem title="UPC" value={euLabel.upc} variant="surface" />
             </div>
@@ -34,7 +56,7 @@ export const WineFooterSection = ({ euLabel }: WineFooterSectionProps) => {
               py="xsmall"
               px="xsmall"
               gap="medium"
-              className="bg-surface-dark"
+              className="bg-surface max-w-[400px]"
             >
               <Image src={euLabel?.qrCodeUrl} width={88} height={88} alt="" />
 

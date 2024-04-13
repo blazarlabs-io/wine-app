@@ -8,6 +8,7 @@ export interface DropDownProps {
   isRequired?: boolean;
   onSelect: (value: string) => void;
   className?: string;
+  disabled?: boolean;
 }
 
 export const DropDown = ({
@@ -17,6 +18,7 @@ export const DropDown = ({
   isRequired = false,
   onSelect,
   className,
+  disabled = false,
 }: DropDownProps) => {
   const handleChange = (event: any) => {
     onSelect(event.target.value);
@@ -32,13 +34,14 @@ export const DropDown = ({
       )}
     >
       <select
+        disabled={disabled}
         defaultValue={"DEFAULT"}
         value={selectedValue ? selectedValue : "DEFAULT"}
         onChange={handleChange}
         required={isRequired ? true : false}
         className={classNames(
           className,
-          "w-full h-full px-[8px] bg-surface-dark border-none rounded-md text-on-surface cursor-pointer"
+          "w-full h-full px-[8px] bg-surface-dark border-none rounded-md text-on-surface disabled:text-on-surface/40 cursor-pointer"
         )}
       >
         <option value="DEFAULT" disabled selected>

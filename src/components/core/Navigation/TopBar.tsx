@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Container } from "../Container";
 import { Button } from "../Button";
 import { classNames } from "@/utils/classNames";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/context/authContext";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase/client";
@@ -16,43 +16,55 @@ export interface TopBarProps {
   className?: string;
 }
 
+export interface MenuItemInterface {
+  label: string;
+  key: string;
+  onClick: () => void;
+  disabled: boolean;
+}
+
 export const TopBar = ({ className }: TopBarProps) => {
+  const pathname = usePathname();
   const router = useRouter();
   const { user } = useAuth();
   const { responsiveSize } = useResponsive();
 
   const [showMobileMenu, setShowMobileMenu] = useState<boolean>(false);
 
-  const items = [
-    { label: "Home", key: "home", onClick: () => router.push("/home") },
+  const menuItems: MenuItemInterface[] = [
+    {
+      label: "Home",
+      key: "home",
+      onClick: () => router.push("/"),
+      disabled: false,
+    },
     {
       label: "Explore",
       key: "explore",
       onClick: () => router.push("/explore"),
+      disabled: false,
     },
-    { label: "About", key: "about", onClick: () => router.push("/about") },
+    {
+      label: "About",
+      key: "about",
+      onClick: () => router.push("/about"),
+      disabled: true,
+    },
     {
       label: "Contacts",
       key: "contacts",
       onClick: () => router.push("/contacts"),
+      disabled: true,
     },
   ];
-
-  const handleLogOut = async () => {
-    signOut(auth)
-      .then(async () => {
-        redirect("/");
-      })
-      .catch((error) => {});
-  };
 
   return (
     <>
       {responsiveSize === "mobile" ? (
         <>
-          <MobileMenu
+          <MobileMenuOverlay
             show={showMobileMenu}
-            items={items}
+            items={menuItems}
             onClose={() => {
               setShowMobileMenu(false);
             }}
@@ -112,38 +124,21 @@ export const TopBar = ({ className }: TopBarProps) => {
             />
           </Container>
           <Container intent="flexRowCenter" gap="large" className="">
-            <button
-              onClick={() => router.push("/home")}
-              className="max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out"
-            >
-              Home
-            </button>
-            <button
-              onClick={() => router.push("/explore")}
-              className="max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out"
-            >
-              Explore
-            </button>
-            <button className="max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out">
-              About
-            </button>
-            <button className="max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out">
-              Contacts
-            </button>
+            {menuItems.map((item: MenuItemInterface) => (
+              <button
+                key={item.key}
+                disabled={item.disabled}
+                onClick={() => {
+                  item.onClick();
+                }}
+                className="disabled:text-status-disabled disabled:cursor-not-allowed max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out"
+              >
+                {item.label}
+              </button>
+            ))}
           </Container>
           <Container intent="flexRowRight" gap="medium">
-            <Button
-              onClick={() => {
-                if (!user) {
-                  router.push("/login");
-                } else {
-                  handleLogOut();
-                }
-              }}
-              intent="text"
-            >
-              {!user ? "Log in as winery owner" : "Log out"}
-            </Button>
+            <LoginButton />
           </Container>
         </Container>
       )}
@@ -153,11 +148,15 @@ export const TopBar = ({ className }: TopBarProps) => {
 
 export interface MobileMenuProps {
   show: boolean;
-  items: any[];
+  items: MenuItemInterface[];
   onClose: () => void;
 }
 
-export const MobileMenu = ({ show, items, onClose }: MobileMenuProps) => {
+export const MobileMenuOverlay = ({
+  show,
+  items,
+  onClose,
+}: MobileMenuProps) => {
   return (
     <AnimatePresence>
       {show && (
@@ -187,17 +186,79 @@ export const MobileMenu = ({ show, items, onClose }: MobileMenuProps) => {
                 className="text-on-surface"
               />
             </Button>
-            {items.map((item, index) => (
+            {items.map((item: MenuItemInterface) => (
               <button
                 key={item.key}
-                className="text-2xl max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out"
+                disabled={item.disabled}
+                onClick={() => {
+                  item.onClick();
+                  onClose();
+                }}
+                className="disabled:text-status-disabled disabled:cursor-not-allowed text-2xl max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out"
               >
                 {item.label}
               </button>
             ))}
+            <LoginButton />
           </Container>
         </motion.div>
       )}
     </AnimatePresence>
+  );
+};
+
+export const LoginButton = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const { user } = useAuth();
+  const { responsiveSize } = useResponsive();
+
+  const handleLogOut = async () => {
+    signOut(auth)
+      .then(async () => {})
+      .catch((error) => {});
+  };
+  return (
+    <Button
+      onClick={() => {
+        if (!user) {
+          router.push("/login");
+        } else {
+          if (
+            pathname !== "/" &&
+            pathname !== "/explore" &&
+            !pathname.startsWith("/wine")
+          ) {
+            handleLogOut();
+          } else {
+            router.push("/home");
+          }
+        }
+      }}
+      intent="text"
+      className={classNames(
+        responsiveSize === "mobile" ? "text-2xl font-normal" : "text-base"
+      )}
+    >
+      {!user ? (
+        "Log in as winery owner"
+      ) : pathname !== "/" &&
+        pathname !== "/explore" &&
+        !pathname.startsWith("/wine") ? (
+        "Log out"
+      ) : (
+        <Container intent="flexRowLeft" gap="xsmall">
+          <Icon
+            icon="ant-design:dashboard-outlined"
+            width={responsiveSize === "mobile" ? "24" : "20"}
+            height={responsiveSize === "mobile" ? "24" : "20"}
+            className={classNames(
+              responsiveSize === "mobile" ? "mt-[-8px]" : "mt-[-4px]"
+            )}
+          />
+          Go to Dashboard
+        </Container>
+      )}
+    </Button>
   );
 };

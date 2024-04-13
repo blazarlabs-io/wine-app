@@ -13,7 +13,11 @@ export const useResponsive = () => {
     height: undefined,
   });
 
-  const [responsiveSize, setResponsiveSize] = useState<string>("");
+  const [responsiveSize, setResponsiveSize] = useState<string>(
+    windowSize.width !== undefined && windowSize.width < 640
+      ? "mobile"
+      : "desktop"
+  );
 
   useEffect(() => {
     // only execute all the code below in client side
