@@ -12,6 +12,7 @@ export interface WineryContextInterface {
   formTitle: string;
   formDescription: string;
   isEditing: boolean;
+  euLabelToEdit: EuLabelInterface | null;
   showRegisterWinery: boolean;
   exists: boolean;
   singleEuLabel: EuLabelInterface;
@@ -20,6 +21,7 @@ export interface WineryContextInterface {
   updateFormTitle: (value: string) => void;
   updateIsEditing: (value: boolean) => void;
   updateShowRegisterWinery: (value: boolean) => void;
+  updateEuLabelToEdit: (data: EuLabelInterface) => void;
 }
 
 export const contextInitialData: WineryContextInterface = {
@@ -27,6 +29,7 @@ export const contextInitialData: WineryContextInterface = {
   formDescription:
     "Please fill in the form to register your winery. All fields marked with * are mandatory.",
   isEditing: false,
+  euLabelToEdit: null,
   showRegisterWinery: false,
   exists: false,
   singleEuLabel: {
@@ -96,6 +99,7 @@ export const contextInitialData: WineryContextInterface = {
   updateIsEditing: (value: boolean) => {},
   updateFormDescription: (value: string) => {},
   updateShowRegisterWinery: (value: boolean) => {},
+  updateEuLabelToEdit: (data: EuLabelInterface) => {},
 };
 
 const WineryContext = createContext(contextInitialData);
@@ -123,6 +127,9 @@ export const WineryProvider = ({
   const [isEditing, setIsEditing] = useState<boolean>(
     contextInitialData.isEditing
   );
+  const [euLabelToEdit, setEuLabelToEdit] = useState<EuLabelInterface | null>(
+    contextInitialData.euLabelToEdit
+  );
   const [showRegisterWinery, setShowRegisterWinery] = useState<boolean>(false);
 
   const [singleEuLabel, setSingleEuLabel] = useState<EuLabelInterface>(
@@ -145,6 +152,10 @@ export const WineryProvider = ({
     setShowRegisterWinery(value);
   };
 
+  const updateEuLabelToEdit = (data: EuLabelInterface) => {
+    setEuLabelToEdit(data);
+  };
+
   const updateWinery = (data: WineryDataInterface) => {
     setExists(data.exists);
   };
@@ -159,6 +170,7 @@ export const WineryProvider = ({
     formTitle,
     formDescription,
     isEditing,
+    euLabelToEdit,
     showRegisterWinery,
     exists,
     singleEuLabel,
@@ -167,6 +179,7 @@ export const WineryProvider = ({
     updateIsEditing,
     updateFormDescription,
     updateShowRegisterWinery,
+    updateEuLabelToEdit,
   };
 
   return (

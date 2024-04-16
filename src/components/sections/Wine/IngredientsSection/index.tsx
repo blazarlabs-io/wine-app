@@ -74,8 +74,8 @@ export const WineIngredientsSection = ({ item }: IngredientsSectionProps) => {
         </div>
       )}
       {responsiveSize === "desktop" && (
-        <div className="flex flex-col items-center justify-center w-full gap-[24px]">
-          <Container intent="flexRowCenter" gap="xsmall" className="w-full">
+        <div className="flex flex-col items-cemter justify-center w-full gap-[24px]">
+          <Container intent="flexRowLeft" gap="xsmall" className="w-full">
             <Icon
               icon="fluent-emoji-high-contrast:grapes"
               width="20"

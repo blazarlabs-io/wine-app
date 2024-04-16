@@ -63,7 +63,7 @@ export const ReviewEuLabel = ({
             Cancel
           </Button>
           <Button intent="primary" fullWidth size="medium" onClick={onAccept}>
-            Confirm
+            Save
           </Button>
         </Container>
       </Container>

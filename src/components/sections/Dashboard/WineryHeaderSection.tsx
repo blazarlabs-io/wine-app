@@ -17,7 +17,9 @@ export const WineryHeaderSection = () => {
     },
     {
       title: "Vineyards Surface",
-      value: (wineryGeneralInfo && wineryGeneralInfo.vineyardsSurface) || "0",
+      value:
+        (wineryGeneralInfo && wineryGeneralInfo.vineyardsSurface) + " Ha" ||
+        "0 Ha",
       icon: "material-symbols:landscape-outline",
       updatedAt: (wineryGeneralInfo && wineryGeneralInfo.lastUpdated) || "",
     },

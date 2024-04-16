@@ -18,7 +18,7 @@ export interface RealtimeDbContextInterface {
   updateWineryGeneralInfo: (data: WineryGeneralInfoInterface) => void;
   updateTier: (tier: string) => void;
   updateLevel: (level: string) => void;
-  updateWineryEuLabels: (data: EuLabelInterface[]) => void;
+  regiterWineryEuLabels: (data: EuLabelInterface[]) => void;
 }
 
 const contextInitialData: RealtimeDbContextInterface = {
@@ -49,7 +49,7 @@ const contextInitialData: RealtimeDbContextInterface = {
   updateWineryGeneralInfo: () => {},
   updateTier: () => {},
   updateLevel: () => {},
-  updateWineryEuLabels: () => {},
+  regiterWineryEuLabels: () => {},
 };
 
 const RealtimeDbContext = createContext(contextInitialData);
@@ -88,7 +88,7 @@ export const RealtimeDbProvider = ({
 
   const updateLevel = (level: string) => setLevel(level);
 
-  const updateWineryEuLabels = (data: EuLabelInterface[]) => {
+  const regiterWineryEuLabels = (data: EuLabelInterface[]) => {
     setWineryEuLabels(data);
   };
 
@@ -112,7 +112,7 @@ export const RealtimeDbProvider = ({
         }
 
         updateWineryGeneralInfo(generalInfo);
-        updateWineryEuLabels(wineryData.euLabels as EuLabelInterface[]);
+        regiterWineryEuLabels(wineryData.euLabels as EuLabelInterface[]);
         setTier(wineryData.tier as string);
         setLevel(wineryData.level as string);
       }
@@ -131,7 +131,7 @@ export const RealtimeDbProvider = ({
     updateWineryGeneralInfo,
     updateTier,
     updateLevel,
-    updateWineryEuLabels,
+    regiterWineryEuLabels,
   };
 
   return (

@@ -17,7 +17,7 @@ export const NutritionTable = ({ items }: NutritionTableProps) => {
   const { responsiveSize } = useResponsive();
   return (
     <Container
-      intent={"flexColCenter"}
+      intent={responsiveSize === "mobile" ? "flexColCenter" : "flexColLeft"}
       px={responsiveSize === "mobile" ? "medium" : "none"}
       py="medium"
       className="min-w-full"
@@ -27,7 +27,7 @@ export const NutritionTable = ({ items }: NutritionTableProps) => {
         px="small"
         py="small"
         gap="xsmall"
-        className="bg-surface-dark/30 w-full max-w-[480px] rounded-md border-[1.5px] border-on-surface-dark/40"
+        className="bg-surface-dark/30 w-full max-w-[400px] rounded-md border-[1.5px] border-on-surface-dark/40"
       >
         <Container intent="flexColLeft" gap="xsmall" className="w-full">
           <Container intent="flexRowCenter" gap="xsmall" className="w-full">

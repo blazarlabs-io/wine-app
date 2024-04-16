@@ -3,7 +3,7 @@
 import {
   EuLabelsAccordion,
   Container,
-  RegisterEuLabel,
+  EuLabelForm,
   EuLabelGeneralViewer,
 } from "@/components";
 import { useRealtimeDb } from "@/context/realtimeDbContext";

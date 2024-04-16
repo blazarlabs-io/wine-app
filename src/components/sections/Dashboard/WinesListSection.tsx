@@ -5,13 +5,23 @@ import { useWinery } from "@/context/wineryContext";
 import { useRouter } from "next/navigation";
 import { useAppState } from "@/context/appStateContext";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
+import { EuLabelInterface } from "@/typings/winery";
+import { useForms } from "@/context/FormsContext";
+import { euLabelInitData } from "@/data/euLablelInitData";
 
 export const WinesListSection = () => {
-  const { updateFormTitle, updateFormDescription } = useWinery();
+  const {
+    updateFormTitle,
+    updateFormDescription,
+    updateIsEditing,
+    updateEuLabelToEdit,
+  } = useWinery();
   const router = useRouter();
   const { updateAppLoading } = useAppState();
 
   const { wineryEuLabels } = useRealtimeDb();
+
+  const { euLabelForm, updateEuLabelForm } = useForms();
 
   return (
     <>
@@ -27,10 +37,13 @@ export const WinesListSection = () => {
               intent="primary"
               size="medium"
               onClick={() => {
-                updateFormTitle("Register EU Label");
-                updateFormDescription(
-                  "Register a new EU label for your wine. All fields marked with * are mandatory."
-                );
+                updateEuLabelForm({
+                  title: "Create EU Label",
+                  description:
+                    "Create a new EU label for your wine. All fields marked with * are mandatory.",
+                  isEditing: false,
+                  formData: euLabelInitData,
+                });
                 router.push("/generate-eu-label");
               }}
               className="flex items-center gap-[8px]"
@@ -52,7 +65,20 @@ export const WinesListSection = () => {
             </Button>
           </Container>
           <div className="min-w-full">
-            <EuLabelsAccordion data={wineryEuLabels} />
+            <EuLabelsAccordion
+              data={wineryEuLabels}
+              onEdit={(item: EuLabelInterface) => {
+                updateEuLabelForm({
+                  title: "Edit EU Label",
+                  description:
+                    "Edit the EU label for your wine. All fields marked with * are mandatory.",
+                  isEditing: true,
+                  formData: item,
+                });
+
+                router.push("/generate-eu-label");
+              }}
+            />
           </div>
         </Container>
       ) : (
@@ -87,11 +113,13 @@ export const WinesListSection = () => {
               size="medium"
               className="flex items-center gap-[8px]"
               onClick={() => {
-                updateAppLoading(true);
-                updateFormTitle("Register EU Label");
-                updateFormDescription(
-                  "Register a new EU label for your wine. All fields marked with * are mandatory."
-                );
+                updateEuLabelForm({
+                  title: "Create EU Label",
+                  description:
+                    "Create a new EU label for your wine. All fields marked with * are mandatory.",
+                  isEditing: false,
+                  formData: euLabelInitData,
+                });
                 router.push("/generate-eu-label");
               }}
             >
