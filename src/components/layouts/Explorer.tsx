@@ -27,8 +27,8 @@ export const ExplorerLayout = ({ children }: BaseLayoutProps) => {
         gap="large"
         className="flex items-start justify-start min-w-full"
       >
-        <SideBarFilter />
-        <Container intent="flexColTop" className="w-full">
+        {/* <SideBarFilter /> */}
+        <Container intent="flexColTop" className="min-w-full">
           {children}
         </Container>
       </Container>

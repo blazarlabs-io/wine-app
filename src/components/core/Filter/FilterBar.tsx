@@ -8,17 +8,23 @@ export interface ExploreModeSelectProps {}
 
 export const ExploreModeSelect = ({}: ExploreModeSelectProps) => {
   const { responsiveSize } = useResponsive();
-  const { mobileFilters, updateShowFilters, filters, updateFilters } =
-    useFilters();
+  const {
+    mobileFilters,
+    updateShowFilters,
+    filters,
+    updateFilters,
+    filtersMessage,
+  } = useFilters();
   return (
     <>
       <Container
         py="small"
         px={responsiveSize === "mobile" ? "small" : "none"}
-        intent={responsiveSize === "mobile" ? "flexRowBetween" : "flexRowRight"}
+        intent={"flexRowBetween"}
         className="min-w-full"
       >
-        {mobileFilters && (
+        {/* {mobileFilters && ( */}
+        <Container intent="flexRowLeft" gap="small">
           <Button
             intent="text"
             className="flex items-center justify-start gap-[8px]"
@@ -34,7 +40,14 @@ export const ExploreModeSelect = ({}: ExploreModeSelectProps) => {
             />
             Filters
           </Button>
-        )}
+
+          {!mobileFilters && (
+            <Text intent="p2" variant="dim">
+              {filtersMessage}
+            </Text>
+          )}
+        </Container>
+        {/* )} */}
         <Container intent="grid-2" gap="small" className="max-w-[240px]">
           <Container intent="flexRowRight">
             <Text className="text-on-surface/40">Exploring</Text>

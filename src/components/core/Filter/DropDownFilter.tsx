@@ -22,9 +22,6 @@ export const DropDownFilter = ({
         <Text intent="p2" variant="dim">
           {label}
         </Text>
-        <Button disabled={disabled} intent="text">
-          Reset
-        </Button>
       </Container>
       <DropDown
         disabled={disabled}

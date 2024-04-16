@@ -3,6 +3,7 @@ export type ContainrIntentType =
   | "flexColCenter"
   | "flexColTop"
   | "flexColLeft"
+  | "flexColRight"
   | "flexRowLeft"
   | "flexRowRight"
   | "flexRowCenter"

@@ -9,7 +9,6 @@ import {
   InfoTooltip,
 } from "@/components";
 import { Icon } from "@iconify/react";
-import { useWinery } from "@/context/wineryContext";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -25,8 +24,6 @@ export const WineryGeneralInfoPublic = ({
 }: WineryGeneralInfoPublicProps) => {
   const [showMap, setShowMap] = useState<boolean>(false);
   const router = useRouter();
-  const { updateFormTitle, updateFormDescription, updateIsEditing } =
-    useWinery();
   const { wineryGeneralInfo, level, tier } = useRealtimeDb();
 
   return (

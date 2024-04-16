@@ -9,12 +9,13 @@ import {
   InfoTooltip,
 } from "@/components";
 import { Icon } from "@iconify/react";
-import { useWinery } from "@/context/wineryContext";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
 import { classNames } from "@/utils/classNames";
+import { useForms } from "@/context/FormsContext";
+import { useModal } from "@/context/modalContext";
 
 export interface WineryGeneralInfoProps {
   fullWidth?: boolean;
@@ -25,9 +26,9 @@ export const WineryGeneralInfo = ({
 }: WineryGeneralInfoProps) => {
   const [showMap, setShowMap] = useState<boolean>(false);
   const router = useRouter();
-  const { updateFormTitle, updateFormDescription, updateIsEditing } =
-    useWinery();
   const { wineryGeneralInfo, level, tier } = useRealtimeDb();
+  const { wineryForm, updateWineryForm } = useForms();
+  const { updateModal } = useModal();
 
   return (
     <>
@@ -91,14 +92,15 @@ export const WineryGeneralInfo = ({
           <Button
             intent="unstyled"
             onClick={() => {
-              updateFormTitle("Edit Winery Details");
-              updateFormDescription(
-                "Please fill in the form to edit your winery details. All fields marked with * are mandatory."
-              );
-              // updateShowRegisterWinery(true);
+              updateWineryForm({
+                title: "Edit Winery Details",
+                description:
+                  "Please fill in the form to edit your winery details. All fields marked with * are mandatory.",
+                isEditing: true,
+                formData: wineryGeneralInfo,
+              });
 
-              updateIsEditing(true);
-              router.push("/register-winery");
+              router.push("/winery-form");
             }}
             className="min-w-fit p-0 text-primary-light font-semibold hover:text-primary transition-all duration-300 ease-in-out"
           >
@@ -111,20 +113,25 @@ export const WineryGeneralInfo = ({
             </Container>
           </Button>
           <Container intent="flexRowLeft" gap="xsmall" className="w-full">
-            <div>
+            <div className="">
               <Icon
                 icon="material-symbols:verified-outline"
                 className="w-[20px] h-[20px] text-secondary"
               />
             </div>
             <div className="min-w-fit">
-              <Text>{`Tier ${tier}`}</Text>
+              <Text className="capitalized">{`Tier ${
+                tier.slice(0, 1).toUpperCase() + tier.slice(1)
+              }`}</Text>
             </div>
             <div>
-              <InfoTooltip text="Tier" />
+              <InfoTooltip
+                width={280}
+                text="The tier and associated level (metal) indicate the service tier and subscription level associated with your account."
+              />
             </div>
           </Container>
-          <Container intent="flexRowCenter" gap="xsmall" className="w-full">
+          <Container intent="flexRowLeft" gap="xsmall" className="w-full">
             <div>
               <Icon
                 icon="mage:gem-stone"
@@ -132,10 +139,15 @@ export const WineryGeneralInfo = ({
               />
             </div>
             <div>
-              <Text>{level}</Text>
+              <Text className="capitalized">
+                {level.slice(0, 1).toUpperCase() + level.slice(1)}
+              </Text>
             </div>
             <div>
-              <InfoTooltip text="Level" />
+              <InfoTooltip
+                width={280}
+                text="The tier and associated level (metal) indicate the service tier and subscription level associated with your account."
+              />
             </div>
           </Container>
         </Container>
@@ -160,7 +172,7 @@ export const WineryGeneralInfo = ({
               {(wineryGeneralInfo && wineryGeneralInfo.name) || "Winery Name"}
             </Text>
             <Text intent="p1" variant="dim" className="text-on-surface">
-              {`Founded on ${
+              {`Founded in ${
                 (wineryGeneralInfo && wineryGeneralInfo.foundedOn) || "N/A"
               }`}
             </Text>
@@ -169,7 +181,33 @@ export const WineryGeneralInfo = ({
         <Button
           intent="unstyled"
           onClick={() => {
-            setShowMap(true);
+            if (
+              wineryGeneralInfo.wineryHeadquarters.latitude.length === 0 ||
+              wineryGeneralInfo.wineryHeadquarters.longitude.length === 0
+            ) {
+              updateModal({
+                title: "Location not available",
+                description:
+                  "The location of the winery is not available. Please edit your Winery details to add the location.",
+                show: true,
+                action: {
+                  label: "Close",
+                  onAction: () => {
+                    updateModal({
+                      show: false,
+                      title: "",
+                      description: "",
+                      action: {
+                        label: "",
+                        onAction: () => {},
+                      },
+                    });
+                  },
+                },
+              });
+            } else {
+              setShowMap(true);
+            }
           }}
           className="min-w-fit p-0 text-primary-light font-semibold hover:text-primary transition-all duration-300 ease-in-out"
         >

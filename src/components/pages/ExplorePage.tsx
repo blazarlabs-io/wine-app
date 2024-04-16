@@ -21,14 +21,7 @@ import { classNames } from "@/utils/classNames";
 
 export const ExplorePage = () => {
   const { responsiveSize } = useResponsive();
-  const {
-    showFilters,
-    updateFilters,
-    updateShowFilters,
-    filtersLoading,
-    filteredWines,
-    allWines,
-  } = useFilters();
+  const { showFilters, filtersLoading, filteredWines, allWines } = useFilters();
 
   const [winesToShow, setWinesToShow] = useState<EuLabelInterface[]>([]);
 
@@ -44,7 +37,7 @@ export const ExplorePage = () => {
     <Container
       intent={handleGridResponsiveness(responsiveSize)}
       gap={"medium"}
-      className="mb-[48px]"
+      className="mb-[48px] min-w-full"
     >
       {showFilters && (
         <div className="fixed top-0 left-0 z-[800] bg-surface/80 backdrop-blur-sm w-screen h-screen flex items-center justify-center">

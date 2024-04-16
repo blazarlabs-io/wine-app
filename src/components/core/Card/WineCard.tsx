@@ -39,7 +39,7 @@ export const WineCard = ({
         intent="flexColTop"
         className={classNames(
           "w-full bg-surface-light rounded-md shadow-lg transition-transform hover:scale-[103%] duration-150 ease-in-out",
-          responsiveSize === "mobile" ? "max-w-[400px] " : "max-w-[364px] "
+          responsiveSize === "mobile" ? "max-w-[400px] " : "max-w-[340px] "
         )}
         gap="medium"
       >
@@ -107,12 +107,12 @@ export const WineCard = ({
                 height={16}
                 className="text-primary-light"
               />
-              <Text intent="p1" variant="dim">
+              <Text intent="p1" variant="dim" className="">
                 Country
               </Text>
             </Container>
-            <Container intent="flexRowRight">
-              <Text>{country}</Text>
+            <Container intent="flexRowRight" className="max-w-[142px]">
+              <Text className="truncate">{country}</Text>
             </Container>
           </Container>
           <Container intent="flexRowBetween" gap="xsmall" className="w-full">

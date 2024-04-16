@@ -80,12 +80,17 @@ export const TopBar = ({ className }: TopBarProps) => {
             )}
           >
             <Container intent="flexRowLeft" className="w-full">
-              <Image
-                src="/logo-by-eehub.svg"
-                alt="Logo"
-                width={164}
-                height={56}
-              />
+              <button
+                onClick={() => router.replace("/")}
+                className="cursor-pointer"
+              >
+                <Image
+                  src="/logo-by-eehub.svg"
+                  alt="Logo"
+                  width={164}
+                  height={56}
+                />
+              </button>
             </Container>
             <Container intent="flexRowRight" className="w-full">
               <Button
@@ -116,12 +121,17 @@ export const TopBar = ({ className }: TopBarProps) => {
           )}
         >
           <Container intent="flexRowLeft" className="w-full">
-            <Image
-              src="/logo-by-eehub.svg"
-              alt="Logo"
-              width={224}
-              height={56}
-            />
+            <button
+              onClick={() => router.replace("/")}
+              className="cursor-pointer"
+            >
+              <Image
+                src="/logo-by-eehub.svg"
+                alt="Logo"
+                width={224}
+                height={56}
+              />
+            </button>
           </Container>
           <Container intent="flexRowCenter" gap="large" className="">
             {menuItems.map((item: MenuItemInterface) => (
@@ -138,6 +148,24 @@ export const TopBar = ({ className }: TopBarProps) => {
             ))}
           </Container>
           <Container intent="flexRowRight" gap="medium">
+            {user && pathname !== "/home" && (
+              <Button
+                onClick={() => {
+                  router.push("/home");
+                }}
+                intent="primary"
+                size="small"
+                className="flex items-center gap-[8px] justify-center"
+              >
+                <Icon
+                  icon="ant-design:dashboard-outlined"
+                  width="20"
+                  height="20"
+                  className="mt-[-4px]"
+                />
+                Go to Dashboard
+              </Button>
+            )}
             <LoginButton />
           </Container>
         </Container>
@@ -157,6 +185,8 @@ export const MobileMenuOverlay = ({
   items,
   onClose,
 }: MobileMenuProps) => {
+  const { user } = useAuth();
+
   return (
     <AnimatePresence>
       {show && (
@@ -199,6 +229,7 @@ export const MobileMenuOverlay = ({
                 {item.label}
               </button>
             ))}
+
             <LoginButton />
           </Container>
         </motion.div>
@@ -209,7 +240,6 @@ export const MobileMenuOverlay = ({
 
 export const LoginButton = () => {
   const router = useRouter();
-  const pathname = usePathname();
   const { user } = useAuth();
   const { responsiveSize } = useResponsive();
 
@@ -224,15 +254,7 @@ export const LoginButton = () => {
         if (!user) {
           router.push("/login");
         } else {
-          if (
-            pathname !== "/" &&
-            pathname !== "/explore" &&
-            !pathname.startsWith("/wine")
-          ) {
-            handleLogOut();
-          } else {
-            router.push("/home");
-          }
+          handleLogOut();
         }
       }}
       intent="text"
@@ -240,25 +262,63 @@ export const LoginButton = () => {
         responsiveSize === "mobile" ? "text-2xl font-normal" : "text-base"
       )}
     >
-      {!user ? (
-        "Log in as winery owner"
-      ) : pathname !== "/" &&
-        pathname !== "/explore" &&
-        !pathname.startsWith("/wine") ? (
-        "Log out"
-      ) : (
-        <Container intent="flexRowLeft" gap="xsmall">
-          <Icon
-            icon="ant-design:dashboard-outlined"
-            width={responsiveSize === "mobile" ? "24" : "20"}
-            height={responsiveSize === "mobile" ? "24" : "20"}
-            className={classNames(
-              responsiveSize === "mobile" ? "mt-[-8px]" : "mt-[-4px]"
-            )}
-          />
-          Go to Dashboard
-        </Container>
-      )}
+      {user ? "Log out" : "Log in as winery owner"}
     </Button>
   );
 };
+
+// export const LoginButton = () => {
+//   const router = useRouter();
+//   const pathname = usePathname();
+//   const { user } = useAuth();
+//   const { responsiveSize } = useResponsive();
+
+//   const handleLogOut = async () => {
+//     signOut(auth)
+//       .then(async () => {})
+//       .catch((error) => {});
+//   };
+//   return (
+//     <Button
+//       onClick={() => {
+//         if (!user) {
+//           router.push("/login");
+//         } else {
+//           if (
+//             pathname !== "/" &&
+//             pathname !== "/explore" &&
+//             !pathname.startsWith("/wine")
+//           ) {
+//             handleLogOut();
+//           } else {
+//             router.push("/home");
+//           }
+//         }
+//       }}
+//       intent="text"
+//       className={classNames(
+//         responsiveSize === "mobile" ? "text-2xl font-normal" : "text-base"
+//       )}
+//     >
+//       {!user ? (
+//         "Log in as winery owner"
+//       ) : pathname !== "/" &&
+//         pathname !== "/explore" &&
+//         !pathname.startsWith("/wine") ? (
+//         "Log out"
+//       ) : (
+//         <Container intent="flexRowLeft" gap="xsmall">
+//           <Icon
+//             icon="ant-design:dashboard-outlined"
+//             width={responsiveSize === "mobile" ? "24" : "20"}
+//             height={responsiveSize === "mobile" ? "24" : "20"}
+//             className={classNames(
+//               responsiveSize === "mobile" ? "mt-[-8px]" : "mt-[-4px]"
+//             )}
+//           />
+//           Go to Dashboard
+//         </Container>
+//       )}
+//     </Button>
+//   );
+// };

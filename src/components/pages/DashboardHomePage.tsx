@@ -1,25 +1,20 @@
 "use client";
 
-import {
-  Container,
-  RegisterWinery,
-  WineryHeaderSection,
-  WinesListSection,
-} from "@/components";
-import { motion } from "framer-motion";
-import { useWinery } from "@/context/wineryContext";
-import { useEffect } from "react";
+import { Container, WineryHeaderSection, WinesListSection } from "@/components";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/context/authContext";
 import { getWineryDataDb } from "@/utils/firestore";
 import { useRouter } from "next/navigation";
 import { useAppState } from "@/context/appStateContext";
+import { useForms } from "@/context/FormsContext";
+import { useRealtimeDb } from "@/context/realtimeDbContext";
 
 export const DashboardHomePage = () => {
   const { user } = useAuth();
   const { updateAppLoading } = useAppState();
   const router = useRouter();
-  const { showRegisterWinery, updateShowRegisterWinery, updateIsEditing } =
-    useWinery();
+  const { wineryGeneralInfo } = useRealtimeDb();
+  const { updateWineryForm } = useForms();
 
   useEffect(() => {
     getWineryDataDb(user?.uid as string).then((data) => {
@@ -28,10 +23,15 @@ export const DashboardHomePage = () => {
         data?.generalInfo === undefined ||
         Object.keys(data?.generalInfo).length === 0
       ) {
-        updateShowRegisterWinery(true);
-        updateIsEditing(false);
+        updateWineryForm({
+          title: "Register Winery Details",
+          description:
+            "Please fill in the form to register your winery details. All fields marked with * are mandatory.",
+          isEditing: true,
+          formData: wineryGeneralInfo,
+        });
+        router.push("/winery-form");
         updateAppLoading(false);
-        router.push("/register-winery");
       } else {
         updateAppLoading(false);
       }
@@ -40,30 +40,6 @@ export const DashboardHomePage = () => {
 
   return (
     <>
-      {showRegisterWinery && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.1 }}
-          exit={{ opacity: 0 }}
-          className="fixed z-50 flex flex-col items-center justify-center top-0 left-0 w-full h-full bg-surface/90 backdrop-blur-sm"
-        >
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            exit={{ scale: 0 }}
-            transition={{
-              delay: 0.1,
-              duration: 0.25,
-              type: "spring",
-              stiffness: 260,
-              damping: 20,
-            }}
-          >
-            <RegisterWinery />
-          </motion.div>
-        </motion.div>
-      )}
       <Container intent="flexColTop" className="min-w-full h-full">
         <WineryHeaderSection />
         <WinesListSection />

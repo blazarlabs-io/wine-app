@@ -26,7 +26,7 @@ export { WineImage } from "./core/Image/WineImage";
 export { FilterBox } from "./core/Filter/FilterBox";
 
 // Molecular components
-export { RegisterWinery } from "./molecules/RegisterWinery";
+export { WineryForm } from "./molecules/WineryForm";
 export { EuLabelForm } from "./molecules/EuLabelForm";
 export { TextInputCrud } from "./molecules/Crud/TextInputCrud";
 export { Map as SimpleMapViewer } from "./molecules/MapViewer/SimpleMapViewer/Map";
@@ -62,8 +62,7 @@ export { HomePage } from "./pages/HomePage";
 export { LoginPage } from "./pages/LoginPage";
 export { DashboardHomePage } from "./pages/DashboardHomePage";
 export { ProtectedPage } from "./pages/ProtectedPage";
-export { GenerateEuLabelPage } from "./pages/GenerateEuLabelPage";
-export { RegisterWineryPage } from "./pages/RegisterWineryPage";
+export { EuLabelFormPage } from "./pages/EuLabelFormPage";
 export { ExplorePage } from "./pages/ExplorePage";
 export { WinePage } from "./pages/WinePage";
-export { UpdateEuLabelPage } from "./pages/UpdateEuLabelPage";
+export { WineryFormPage } from "./pages/WineryFormPage";

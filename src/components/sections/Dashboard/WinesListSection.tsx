@@ -1,27 +1,41 @@
 "use client";
 import { Container, Button, Text, EuLabelsAccordion } from "@/components";
 import { Icon } from "@iconify/react";
-import { useWinery } from "@/context/wineryContext";
 import { useRouter } from "next/navigation";
-import { useAppState } from "@/context/appStateContext";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
 import { EuLabelInterface } from "@/typings/winery";
 import { useForms } from "@/context/FormsContext";
 import { euLabelInitData } from "@/data/euLablelInitData";
+import { useModal } from "@/context/modalContext";
 
 export const WinesListSection = () => {
-  const {
-    updateFormTitle,
-    updateFormDescription,
-    updateIsEditing,
-    updateEuLabelToEdit,
-  } = useWinery();
   const router = useRouter();
-  const { updateAppLoading } = useAppState();
+  const { wineryEuLabels, allowedEuLabels } = useRealtimeDb();
+  const { updateEuLabelForm } = useForms();
+  const { updateModal } = useModal();
 
-  const { wineryEuLabels } = useRealtimeDb();
-
-  const { euLabelForm, updateEuLabelForm } = useForms();
+  const handleMaxEuLabelsReached = () => {
+    updateModal({
+      title: "Error",
+      description:
+        "You have reached the maximum number of EU labels allowed. Please contact our team's representative and upgrade your plan to add more EU labels.",
+      show: true,
+      action: {
+        label: "Close",
+        onAction: () => {
+          updateModal({
+            title: "",
+            description: "",
+            show: false,
+            action: {
+              label: "",
+              onAction: () => {},
+            },
+          });
+        },
+      },
+    });
+  };
 
   return (
     <>
@@ -37,18 +51,26 @@ export const WinesListSection = () => {
               intent="primary"
               size="medium"
               onClick={() => {
-                updateEuLabelForm({
-                  title: "Create EU Label",
-                  description:
-                    "Create a new EU label for your wine. All fields marked with * are mandatory.",
-                  isEditing: false,
-                  formData: euLabelInitData,
-                });
-                router.push("/generate-eu-label");
+                console.log(wineryEuLabels.length, allowedEuLabels);
+                if (wineryEuLabels.length < allowedEuLabels) {
+                  updateEuLabelForm({
+                    title: "Create EU Label",
+                    description:
+                      "Create a new EU label for your wine. All fields marked with * are mandatory.",
+                    isEditing: false,
+                    formData: euLabelInitData,
+                  });
+                  router.push("/eu-label-form");
+                } else {
+                  handleMaxEuLabelsReached();
+                }
               }}
               className="flex items-center gap-[8px]"
             >
-              <Icon icon="bi:qr-code" className="h-[20px] w-[20px] mt-[-4px]" />
+              <Icon
+                icon="carbon:add-filled"
+                className="h-[20px] w-[20px] mt-[-4px]"
+              />
               Add wine for EU Label only
             </Button>
             <Button
@@ -76,7 +98,7 @@ export const WinesListSection = () => {
                   formData: item,
                 });
 
-                router.push("/generate-eu-label");
+                router.push("/eu-label-form");
               }}
             />
           </div>
@@ -88,8 +110,38 @@ export const WinesListSection = () => {
           className="min-w-full h-full min-h-[400px]"
         >
           <Container intent="flexColTop" gap="xsmall">
+            <Text intent="h4" variant="normal" className="font-normal">
+              Register wine for EU label only
+            </Text>
+            <Button
+              intent="primary"
+              size="medium"
+              className="flex items-center gap-[8px]"
+              onClick={() => {
+                if (wineryEuLabels.length < allowedEuLabels) {
+                  updateEuLabelForm({
+                    title: "Create EU Label",
+                    description:
+                      "Create a new EU label for your wine. All fields marked with * are mandatory.",
+                    isEditing: false,
+                    formData: euLabelInitData,
+                  });
+                  router.push("/eu-label-form");
+                } else {
+                  handleMaxEuLabelsReached();
+                }
+              }}
+            >
+              <Icon
+                icon="carbon:add-filled"
+                className="h-[20px] w-[20px] mt-[-4px]"
+              />
+              Add wine
+            </Button>
+          </Container>
+          <Container intent="flexColTop" gap="xsmall">
             <Text intent="h4" variant="dim" className="font-normal">
-              Add wine for supply chain tracking
+              Register wine for supply chain tracking
             </Text>
             <Button
               intent="primary"
@@ -102,29 +154,6 @@ export const WinesListSection = () => {
                 className="h-[20px] w-[20px] mt-[-4px]"
               />
               Add Wine
-            </Button>
-          </Container>
-          <Container intent="flexColTop" gap="xsmall">
-            <Text intent="h4" variant="normal" className="font-normal">
-              Add wine for EU Label only
-            </Text>
-            <Button
-              intent="primary"
-              size="medium"
-              className="flex items-center gap-[8px]"
-              onClick={() => {
-                updateEuLabelForm({
-                  title: "Create EU Label",
-                  description:
-                    "Create a new EU label for your wine. All fields marked with * are mandatory.",
-                  isEditing: false,
-                  formData: euLabelInitData,
-                });
-                router.push("/generate-eu-label");
-              }}
-            >
-              <Icon icon="bi:qr-code" className="h-[20px] w-[20px] mt-[-4px]" />
-              Generate EU Label
             </Button>
           </Container>
         </Container>

@@ -8,6 +8,8 @@ import {
   BounceLoader,
   Text,
   GrapesViewer,
+  GrapesViewerTable,
+  IngredientViewerTable,
 } from "@/components";
 import { EuLabelInterface } from "@/typings/winery";
 import { useResponsive } from "@/hooks/useResponsive";
@@ -31,15 +33,7 @@ export const EuLabelGeneralViewer = ({
                   General Information
                 </Text>
               </Container>
-              <Container intent="grid-5" gap="large" className="">
-                <EuLabelItem
-                  title="Reference Number"
-                  variant="surface"
-                  value={item.referenceNumber}
-                />
-                <EuLabelItem title="UPC" value={item.upc} variant="surface" />
-              </Container>
-              <Container intent="grid-5" gap="large">
+              <Container intent="grid-4" gap="large">
                 <EuLabelItem
                   title="Wine Name"
                   variant="surface"
@@ -55,16 +49,9 @@ export const EuLabelGeneralViewer = ({
                   value={item.country}
                   variant="surface"
                 />
-                <div className="col-span-2">
-                  <EuLabelItem
-                    title="Controlled Designation of Origin"
-                    value={item.controlledDesignationOfOrigin}
-                    variant="surface"
-                  />
-                </div>
               </Container>
 
-              <Container intent="grid-5" gap="large">
+              <Container intent="grid-4" gap="large">
                 <EuLabelItem
                   title="Type of Wine"
                   value={item.typeOfWine}
@@ -86,46 +73,63 @@ export const EuLabelGeneralViewer = ({
                   variant="surface"
                 />
               </Container>
+
+              <Container intent="grid-4" gap="large">
+                <EuLabelItem title="UPC" value={item.upc} variant="surface" />
+                <EuLabelItem
+                  title="Controlled Designation of Origin"
+                  value={item.controlledDesignationOfOrigin}
+                  variant="surface"
+                />
+              </Container>
+
               {/* Ingredients */}
               <Container intent="flexColLeft" className="max-w-fit">
                 <Text intent="h6" variant="accent" className="font-semibold">
                   Ingredients
                 </Text>
               </Container>
-              <Container intent="grid-5" gap="large" className="">
-                <GrapesViewer
+              <Container intent="grid-4" gap="large" className="">
+                <GrapesViewerTable
                   title="Grapes Varieties"
                   variant="surface"
                   ingredient={item.ingredients.grapes.list}
                 />
-                <IngredientViewer
+                <IngredientViewerTable
                   title="Acidity Regulators"
                   variant="surface"
                   ingredient={item.ingredients.acidityRegulators}
                 />
-                <IngredientViewer
+                <IngredientViewerTable
                   title="Antioxidants"
                   variant="surface"
                   ingredient={item.ingredients.antioxidants}
                 />
               </Container>
-              <Container intent="grid-5" gap="large">
-                <IngredientViewer
+              <Container intent="grid-4" gap="large">
+                <IngredientViewerTable
                   title="Preservatives"
                   variant="surface"
                   ingredient={item.ingredients.preservatives}
                 />
-                <IngredientViewer
+                <IngredientViewerTable
                   title="Stabilizers"
                   variant="surface"
                   ingredient={item.ingredients.stabilizers}
                 />
+                <IngredientViewerTable
+                  title="Fining Agents"
+                  variant="surface"
+                  ingredient={item.ingredients.finingAgents}
+                />
+              </Container>
+              <Container intent="grid-4" gap="large">
                 <Container
                   intent="flexColLeft"
                   gap="small"
-                  className="bg-surface-dark rounded-md p-[16px] w-full"
+                  className="bg-surface-dark/30 rounded-md p-[16px] w-full"
                 >
-                  <Text intent="p2" variant="dim" className="">
+                  <Text intent="p1" variant="dim" className="font-semibold">
                     Sugars (g/100g)
                   </Text>
                   <Text intent="p1">{item.ingredients.sugars + " g/100g"}</Text>

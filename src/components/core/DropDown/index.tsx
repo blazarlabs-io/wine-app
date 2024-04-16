@@ -1,5 +1,6 @@
 import { Container } from "@/components";
 import { classNames } from "@/utils/classNames";
+import { shuffleChars } from "@/utils/shuffleChars";
 
 export interface DropDownProps {
   items: string[];
@@ -47,8 +48,12 @@ export const DropDown = ({
         <option value="DEFAULT" disabled selected>
           Select option...
         </option>
-        {items.map((item) => (
-          <option className="capitalize" key={item} value={item}>
+        {items.map((item, index) => (
+          <option
+            className="capitalize"
+            key={shuffleChars(item + "-" + index)}
+            value={item}
+          >
             {item}
           </option>
         ))}

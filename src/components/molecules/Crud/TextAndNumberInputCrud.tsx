@@ -40,9 +40,9 @@ export const TextAndNumberInputCrud = ({
 
   return (
     <>
-      <Container intent="grid-4" gap="small" className="w-full">
+      <Container intent="grid-4" gap="xsmall" className="w-full">
         <Container intent="flexColLeft" gap="xsmall" className="col-span-2">
-          <Text intent="p2" variant="dim">
+          <Text intent="p2" variant="dim" className="font-semibold">
             Name
           </Text>
           <input
@@ -62,7 +62,7 @@ export const TextAndNumberInputCrud = ({
         </Container>
 
         <Container intent="flexColLeft" gap="xsmall" className="w-full">
-          <Text intent="p2" variant="dim">
+          <Text intent="p2" variant="dim" className="font-semibold">
             Percentage %
           </Text>
           <input
@@ -99,11 +99,11 @@ export const TextAndNumberInputCrud = ({
             };
             setCurrentItem(newItem as ItemWithPercentage);
           }}
-          className="mt-[32px] text-[16px] flex items-center gap-[4px] text-primary-light hover:text-primary transition-all duration-200 ease-in-out"
+          className="border-[1.5px] border-primary-light mt-[32px] text-[16px] flex items-center justify-center max-w-fit px-[12px] gap-[4px] text-primary-light hover:text-primary transition-all duration-200 ease-in-out"
         >
           <Icon
             icon="material-symbols:add"
-            className="mt-[-5px] h-[16px] w-[16px]"
+            className="mt-[-4px] h-[16px] w-[16px]"
           />
           Add
         </Button>

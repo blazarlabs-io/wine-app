@@ -28,12 +28,12 @@ export const WineryStat = ({ data }: WineryStatProps) => {
             icon={data.icon}
             className="min-w-[20px] min-h-[20px] text-primary-light"
           />
-          <Text intent="p2" variant="dim">
+          <Text intent="h6" variant="dim" className="font-semibold">
             {data.title}
           </Text>
         </Container>
       </Container>
-      <Container intent="flexRowLeft" gap="xsmall" className="h-full">
+      {/* <Container intent="flexRowLeft" gap="xsmall" className="h-full">
         <Icon
           icon="material-symbols:update"
           color="#cccccc"
@@ -45,7 +45,7 @@ export const WineryStat = ({ data }: WineryStatProps) => {
         <Text intent="p2" variant="dim" className="truncate">
           {data.updatedAt}
         </Text>
-      </Container>
+      </Container> */}
     </Container>
   );
 };

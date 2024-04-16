@@ -7,9 +7,9 @@ import {
   InfoTooltip,
   LocationFinderMap,
   TextInputCrud,
+  SpinnerLoader,
 } from "@/components";
 import { Icon } from "@iconify/react";
-import { useWinery } from "@/context/wineryContext";
 import { useAuth } from "@/context/authContext";
 import { WineryGeneralInfoInterface } from "@/typings/winery";
 import {
@@ -17,33 +17,33 @@ import {
   uploadLogoToStorage,
 } from "@/utils/firestore";
 import { useRef, useState } from "react";
-import { validateFileSizeInMegabytes } from "@/utils/validateFileSizeInMegabytes";
+import { validateFileSizeAndType } from "@/utils/validateFileSizeAndType";
 import { useModal } from "@/context/modalContext";
 import { useRouter } from "next/navigation";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
+import { useForms } from "@/context/FormsContext";
+import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css";
+import { set } from "firebase/database";
 
-export const RegisterWinery = () => {
+export const WineryForm = () => {
   const { user } = useAuth();
   const router = useRouter();
   const { updateModal } = useModal();
-  const {
-    formTitle,
-    formDescription,
-    updateShowRegisterWinery,
-    updateIsEditing,
-    isEditing,
-  } = useWinery();
+
+  const { wineryForm, updateWineryForm } = useForms();
 
   const { wineryGeneralInfo, updateWineryGeneralInfo } = useRealtimeDb();
 
   const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [imageUploading, setImageUploading] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showLocationMap, setShowLocationMap] = useState<boolean>(false);
 
   const inputFileRef = useRef<any>(null);
 
   const handleCancel = () => {
-    if (!isEditing) {
+    if (!wineryForm.isEditing) {
       updateModal({
         show: true,
         title: "Error",
@@ -60,25 +60,33 @@ export const RegisterWinery = () => {
         },
       });
     } else {
-      updateIsEditing(false);
       router.back();
     }
   };
 
   const handleRegistration = () => {
     setIsLoading(true);
-    uploadLogoToStorage(user?.uid as string, logoFile as File, (url) => {
-      wineryGeneralInfo.logo = url;
+    setImageUploading(true);
 
-      // UPDATE TO DATABASE
+    const newGeneralInfo: WineryGeneralInfoInterface = wineryGeneralInfo;
+    updateWineryGeneralInfo(newGeneralInfo);
+
+    // UPDATE TO DATABASE
+    registerWineryGeneralInfoToDb(user?.uid as string, newGeneralInfo);
+    setIsLoading(false);
+    router.replace("/home");
+  };
+
+  const handleUploadLogo = (logo: File) => {
+    setImageUploading(true);
+    uploadLogoToStorage(user?.uid as string, logo as File, (url: string) => {
+      setImageUploading(false);
+      wineryGeneralInfo.logo = url;
+      wineryGeneralInfo.lastUpdated = new Date().toISOString();
+
       const newGeneralInfo: WineryGeneralInfoInterface = wineryGeneralInfo;
       updateWineryGeneralInfo(newGeneralInfo);
-
-      registerWineryGeneralInfoToDb(user?.uid as string, newGeneralInfo);
-      setIsLoading(false);
-      router.replace("/home");
-      updateShowRegisterWinery(false);
-      updateIsEditing(false);
+      setImageUploading(false);
     });
   };
 
@@ -94,7 +102,7 @@ export const RegisterWinery = () => {
     >
       <Container
         intent="flexColTop"
-        className="bg-surface min-w-[720px] relative max-w-[720px] overflow-y-auto"
+        className="bg-surface min-w-[720px] relative max-w-[720px] overflow-y-auto overflow-hidden"
       >
         {showLocationMap && (
           <div className="rounded-lg w-full h-full absolute top-[50%] -translate-y-[50%] left-[50%] -translate-x-[50%] z-10 bg-surface/80 backdrop-blur-sm">
@@ -137,13 +145,13 @@ export const RegisterWinery = () => {
                   icon="game-icons:cellar-barrels"
                   className="w-[56px] h-[56px] text-primary-light"
                 />
-                <Text intent="h2">{formTitle}</Text>
+                <Text intent="h2">{wineryForm.title}</Text>
               </Container>
-              <Text variant="dim">{formDescription}</Text>
+              <Text variant="dim">{wineryForm.description}</Text>
             </Container>
             <Container intent="grid-2" gap="medium">
               <Container intent="flexColLeft" gap="xsmall">
-                <Text intent="p1" variant="dim">
+                <Text intent="p1" variant="dim" className="font-semibold">
                   * Winery Name
                 </Text>
                 <input
@@ -163,10 +171,10 @@ export const RegisterWinery = () => {
               </Container>
               <Container intent="flexColLeft" gap="xsmall">
                 <Container intent="flexRowLeft" gap="xsmall">
-                  <Text intent="p1" variant="dim">
-                    Founded On
+                  <Text intent="p1" variant="dim" className="font-semibold">
+                    Founded In
                   </Text>
-                  <InfoTooltip text="What year was your winery founded?" />
+                  <InfoTooltip text="The year your winery was founded." />
                 </Container>
                 <input
                   type="number"
@@ -186,10 +194,18 @@ export const RegisterWinery = () => {
             <Container intent="grid-2" gap="medium">
               <Container intent="flexColLeft" gap="xsmall">
                 <Container intent="flexRowLeft" gap="xsmall">
-                  <Text intent="p1" variant="dim">
+                  <Text intent="p1" variant="dim" className="font-semibold">
                     Winery Logo
                   </Text>
-                  <InfoTooltip text="Winery logo image up to 2Mb file size." />
+                  <InfoTooltip text="The image must be in *.jpg, *.jpeg or *.png format and up to 2MB file size." />
+                  {imageUploading && (
+                    <div className="flex items-center justify-start gap-[8px] max-w-fit">
+                      <Text intent="p2" variant="dim" className="font-semibold">
+                        Uploading
+                      </Text>
+                      <SpinnerLoader color="#ddd" />
+                    </div>
+                  )}
                 </Container>
                 <input
                   ref={inputFileRef}
@@ -198,7 +214,7 @@ export const RegisterWinery = () => {
                   multiple={false}
                   title=""
                   onChange={(event: any) => {
-                    const validFile = validateFileSizeInMegabytes(
+                    const validFile = validateFileSizeAndType(
                       event.target.files[0],
                       2
                     );
@@ -207,7 +223,8 @@ export const RegisterWinery = () => {
                       updateModal({
                         show: true,
                         title: "Error",
-                        description: "File size should be less than 2MB",
+                        description:
+                          "File size should be less than 2MB and image types accepted are jpg, jpeg and png.",
                         action: {
                           label: "OK",
                           onAction: () =>
@@ -221,17 +238,18 @@ export const RegisterWinery = () => {
                       });
                     } else {
                       setLogoFile(event.target.files[0]);
+                      handleUploadLogo(event.target.files[0]);
                     }
                   }}
-                  className="text-primary-light file:border-2 file:border-primary-light file:px-[36px] file:py-[10px] file:rounded-lg file:bg-transparent file:text-primary-light file:font-semibold transition-all duration-300 ease-in-out"
+                  className="file:mr-[8px] text-primary-light file:border-2 file:border-primary-light file:px-[36px] file:py-[10px] file:rounded-lg file:bg-transparent file:text-primary-light file:font-semibold transition-all duration-300 ease-in-out"
                 />
               </Container>
               <Container intent="flexColLeft" gap="xsmall">
                 <Container intent="flexRowLeft" gap="xsmall">
-                  <Text intent="p1" variant="dim">
+                  <Text intent="p1" variant="dim" className="font-semibold">
                     Wine Collections
                   </Text>
-                  <InfoTooltip text="How many wine collections has the winery ever created (approximately)" />
+                  <InfoTooltip text="The number of wine collections your winery has produced last year." />
                 </Container>
                 <input
                   type="number"
@@ -251,14 +269,14 @@ export const RegisterWinery = () => {
             <Container intent="grid-2" gap="medium">
               <Container intent="flexColLeft" gap="xsmall">
                 <Container intent="flexRowLeft" gap="xsmall">
-                  <Text intent="p1" variant="dim">
+                  <Text intent="p1" variant="dim" className="font-semibold">
                     Wineyards Surface
                   </Text>
-                  <InfoTooltip text="What is the overall owned vineyards surface in hectares?" />
+                  <InfoTooltip text="The overall vineyards surface (in Ha) owned by your winery." />
                 </Container>
                 <Container
                   intent="grid-2"
-                  gap="medium"
+                  gap="xsmall"
                   className="items-center"
                 >
                   <input
@@ -281,14 +299,14 @@ export const RegisterWinery = () => {
               </Container>
               <Container intent="flexColLeft" gap="xsmall">
                 <Container intent="flexRowLeft" gap="xsmall">
-                  <Text intent="p1" variant="dim">
+                  <Text intent="p1" variant="dim" className="font-semibold">
                     No. of Bottles Produced
                   </Text>
-                  <InfoTooltip text="Quantity of bottles produced last year?" />
+                  <InfoTooltip text="Number of bottles produced last year by your winery." />
                 </Container>
                 <Container
                   intent="grid-2"
-                  gap="medium"
+                  gap="xsmall"
                   className="items-center"
                 >
                   <input
@@ -304,7 +322,7 @@ export const RegisterWinery = () => {
                     }}
                     className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
                   />
-                  <Text intent="p1" variant="dim">
+                  <Text intent="p1" variant="dim" className="font-semibold">
                     Bottles
                   </Text>
                 </Container>
@@ -313,10 +331,10 @@ export const RegisterWinery = () => {
             <Container intent="grid-2" gap="medium">
               <Container intent="flexColLeft" gap="xsmall">
                 <Container intent="flexRowLeft" gap="xsmall">
-                  <Text intent="p1" variant="dim">
+                  <Text intent="p1" variant="dim" className="font-semibold">
                     Grape Varieties
                   </Text>
-                  <InfoTooltip text="Quantity of grape varieties grown." />
+                  <InfoTooltip text="Number of different grape varieties grown on your vineyards." />
                 </Container>
                 <input
                   type="number"
@@ -332,12 +350,12 @@ export const RegisterWinery = () => {
                   className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
                 />
               </Container>
-              <Container intent="flexColLeft" gap="xsmall">
+              <Container intent="flexColLeft" gap="small" className="w-full">
                 <Container intent="flexRowLeft" gap="xsmall">
-                  <Text intent="p1" variant="dim">
+                  <Text intent="p1" variant="dim" className="font-semibold">
                     Winery Certifications
                   </Text>
-                  <InfoTooltip text="Include the name of any certification your winery has." />
+                  <InfoTooltip text="Add the name of any certifications your winery has." />
                 </Container>
                 <TextInputCrud
                   initialItems={wineryGeneralInfo.certifications}
@@ -354,14 +372,14 @@ export const RegisterWinery = () => {
             </Container>
 
             <Container intent="flexRowLeft" gap="xsmall">
-              <Text intent="p1" variant="dim">
+              <Text intent="p1" variant="dim" className="font-semibold">
                 Winery Headquarters
               </Text>
               <InfoTooltip text="Enter the Latitude and Longitude of your winery location or find it in the map." />
             </Container>
-            <Container intent="grid-2" gap="medium">
+            <Container intent="grid-2" gap="medium" className="font-semibold">
               <Container intent="flexColLeft" gap="xsmall">
-                <Text intent="p2" variant="dim">
+                <Text intent="p1" variant="dim">
                   Latitude
                 </Text>
                 <input
@@ -383,7 +401,7 @@ export const RegisterWinery = () => {
                 />
               </Container>
               <Container intent="flexColLeft" gap="xsmall">
-                <Text intent="p2" variant="dim">
+                <Text intent="p1" variant="dim" className="font-semibold">
                   Longitude
                 </Text>
                 <input
@@ -418,14 +436,14 @@ export const RegisterWinery = () => {
               Find on map
             </Button>
             <Container intent="flexRowLeft" gap="xsmall">
-              <Text intent="p1" variant="dim">
+              <Text intent="p1" variant="dim" className="font-semibold">
                 Winery Representative
               </Text>
               <InfoTooltip text="Enter following information of your winery's representative." />
             </Container>
-            <Container intent="grid-3" gap="medium">
+            <Container intent="grid-2" gap="medium">
               <Container intent="flexColLeft" gap="xsmall">
-                <Text intent="p2" variant="dim">
+                <Text intent="p1" variant="dim" className="font-semibold">
                   Name
                 </Text>
                 <input
@@ -447,7 +465,7 @@ export const RegisterWinery = () => {
                 />
               </Container>
               <Container intent="flexColLeft" gap="xsmall">
-                <Text intent="p2" variant="dim">
+                <Text intent="p1" variant="dim" className="font-semibold">
                   Email
                 </Text>
                 <input
@@ -468,33 +486,48 @@ export const RegisterWinery = () => {
                   className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
                 />
               </Container>
+            </Container>
+            <Container intent="grid-2" gap="medium">
               <Container intent="flexColLeft" gap="xsmall" className="w-full">
-                <Container intent="flexRowLeft" gap="xsmall" className="w-full">
-                  <Text intent="p1" variant="dim" className="w-full">
+                <Container intent="flexRowLeft" gap="xsmall" className="">
+                  <Text intent="p1" variant="dim" className="font-semibold">
                     Phone
                   </Text>
-                  <InfoTooltip text="Please provide the representative phone with the area code. Don't use + or ()." />
+                  <InfoTooltip text="Please provide the representative phone with the area code starting with +" />
                 </Container>
-
-                <input
-                  type="tel"
-                  id="phone"
-                  pattern="[0-9]{10,14}"
-                  value={wineryGeneralInfo.wineryRepresentative.phone}
-                  placeholder=""
-                  onChange={(event: any) => {
-                    const newGeneralInfo = {
-                      ...wineryGeneralInfo,
-                      wineryRepresentative: {
-                        name: wineryGeneralInfo.wineryRepresentative.name,
-                        email: wineryGeneralInfo.wineryRepresentative.email,
-                        phone: event.target.value,
-                      },
-                    };
-                    updateWineryGeneralInfo(newGeneralInfo);
-                  }}
-                  className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
-                />
+                <div className="flex items-center justify-center gap-[8px] w-full">
+                  <PhoneInput
+                    name="phoneNumber"
+                    type="text"
+                    country={"us"}
+                    enableAreaCodes={true}
+                    areaCodes={{ us: ["332"] }}
+                    inputProps={{
+                      name: "phone",
+                      country: "us",
+                      required: true,
+                      autoFocus: true,
+                    }}
+                    value={wineryGeneralInfo.wineryRepresentative.phone}
+                    onChange={(event: any) => {
+                      console.log("event", event);
+                      const newGeneralInfo = {
+                        ...wineryGeneralInfo,
+                        wineryRepresentative: {
+                          name: wineryGeneralInfo.wineryRepresentative.name,
+                          email: wineryGeneralInfo.wineryRepresentative.email,
+                          phone: event === undefined ? "" : event,
+                        },
+                      };
+                      updateWineryGeneralInfo(newGeneralInfo);
+                    }}
+                    inputStyle={{
+                      width: "100%",
+                      height: "48px",
+                    }}
+                    className="w-full text-on-surface px-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
+                  />
+                </div>
               </Container>
             </Container>
 
@@ -519,7 +552,7 @@ export const RegisterWinery = () => {
                 onClick={() => {}}
               >
                 {!isLoading ? (
-                  <>{isEditing ? "Update" : "Register"}</>
+                  <>{"save"}</>
                 ) : (
                   <Container intent="flexRowCenter">
                     <Icon

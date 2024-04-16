@@ -51,7 +51,7 @@ export const WineFooterSection = ({ euLabel }: WineFooterSectionProps) => {
       {responsiveSize === "desktop" && (
         <>
           {euLabel.upc.length > 0 && (
-            <Container intent="flexRowLeft" px="medium" className="w-full">
+            <Container intent="flexRowLeft" className="w-full">
               <div>
                 <EuLabelItem
                   title="UPC"

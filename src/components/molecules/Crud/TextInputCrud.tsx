@@ -23,10 +23,10 @@ export const TextInputCrud = ({
   const [placeholderVisible, setPlaceholderVisible] = useState<boolean>(true);
   return (
     <Container intent="flexColLeft" gap="small">
-      <Container intent="grid-4" className="w-full">
+      <Container intent="grid-4" gap="xsmall" className="w-full">
         <Container intent="flexColLeft" gap="xsmall" className="col-span-3">
           {label && (
-            <Text intent="p2" variant="dim">
+            <Text intent="p2" variant="dim" className="font-semibold">
               {label}
             </Text>
           )}
@@ -65,13 +65,13 @@ export const TextInputCrud = ({
             setPlaceholderVisible(true);
           }}
           className={classNames(
-            "text-[16px] flex items-center gap-[4px] px-[16px] max-w-fit text-primary-light hover:text-primary transition-all duration-200 ease-in-out",
+            "border-[1.5px] border-primary-light  text-[16px] flex items-center justify-center max-w-fit px-[12px] gap-[4px] text-primary-light hover:text-primary transition-all duration-200 ease-in-out",
             label && "mt-[32px]"
           )}
         >
           <Icon
             icon="material-symbols:add"
-            className="mt-[-5px] h-[16px] w-[16px]"
+            className="mt-[-4px] h-[16px] w-[16px]"
           />
           Add
         </Button>

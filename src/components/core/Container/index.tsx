@@ -13,6 +13,7 @@ const container = cva("container", {
       flexColCenter: ["flex", "flex-col", "items-center", "justify-center"],
       flexColTop: ["flex", "flex-col", "items-center", "justify-start"],
       flexColLeft: ["flex", "flex-col", "items-start", "justify-start"],
+      flexColRight: ["flex", "flex-col", "items-end", "justify-start"],
       flexRowLeft: ["flex", "flex-row", "items-center", "justify-start"],
       flexRowRight: [
         "flex",
@@ -37,13 +38,7 @@ const container = cva("container", {
         "justify-between",
         "w-full",
       ],
-      flexColBetween: [
-        "flex",
-        "flex-col",
-        "items-start",
-        "justify-between",
-        "w-full",
-      ],
+      flexColBetween: ["flex", "flex-col", "justify-between", "w-full"],
       "grid-1": ["grid", "grid-cols-1", "w-full", "justify-center"],
       "grid-2": ["grid", "grid-cols-2", "w-full", "justify-center"],
       "grid-3": ["grid", "grid-cols-3", "w-full", "justify-center"],

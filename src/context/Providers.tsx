@@ -1,6 +1,5 @@
 import { AuthProvider } from "./authContext";
 import { ToastProvider } from "./toastContext";
-import { WineryProvider } from "./wineryContext";
 import { ModalProvider } from "./modalContext";
 import { AppStateProvider } from "./appStateContext";
 import { RealtimeDbProvider } from "./realtimeDbContext";
@@ -16,15 +15,13 @@ export const Providers = ({ children }: ProvidersProps) => {
     <AppStateProvider>
       <AuthProvider>
         <RealtimeDbProvider>
-          <WineryProvider>
-            <FormsProvider>
-              <FiltersProvider>
-                <ToastProvider>
-                  <ModalProvider>{children}</ModalProvider>
-                </ToastProvider>
-              </FiltersProvider>
-            </FormsProvider>
-          </WineryProvider>
+          <FormsProvider>
+            <FiltersProvider>
+              <ToastProvider>
+                <ModalProvider>{children}</ModalProvider>
+              </ToastProvider>
+            </FiltersProvider>
+          </FormsProvider>
         </RealtimeDbProvider>
       </AuthProvider>
     </AppStateProvider>

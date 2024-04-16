@@ -15,7 +15,7 @@ export const SpinnerLoader = ({
   color = "#212121",
 }: AuthSpinnerLoaderProps) => {
   return (
-    <Container intent="flexRowCenter">
+    <Container intent="flexRowCenter" className="max-w-fit">
       <Icon
         icon="eos-icons:loading"
         color={color}

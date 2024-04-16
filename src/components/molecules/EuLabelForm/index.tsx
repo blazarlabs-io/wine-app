@@ -10,6 +10,7 @@ import {
   InfoTooltip,
   TextAndNumberInputCrud,
   CheckBox,
+  SpinnerLoader,
 } from "@/components";
 import { Icon } from "@iconify/react";
 import {
@@ -35,7 +36,7 @@ import {
 import { useAuth } from "@/context/authContext";
 import { euLabelUrlComposer } from "@/utils/euLabelUrlComposer";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
-import { validateFileSizeInMegabytes } from "@/utils/validateFileSizeInMegabytes";
+import { validateFileSizeAndType } from "@/utils/validateFileSizeAndType";
 import { useModal } from "@/context/modalContext";
 import { httpsCallable } from "firebase/functions";
 import { functions } from "@/lib/firebase/client";
@@ -62,6 +63,7 @@ export const EuLabelForm = () => {
   const { updateToast } = useToast();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [imageUploading, setImageUploading] = useState<boolean>(false);
   const [showReview, setShowReview] = useState<boolean>(false);
   const [qrCodeFile, setQrCodeFile] = useState<string | null>(null);
 
@@ -207,6 +209,7 @@ export const EuLabelForm = () => {
   };
 
   const handleWineImageUpload = (wineImageFile: File) => {
+    setImageUploading(true);
     uploadWineImageToStorage(
       user?.uid as string,
       wineImageFile as File,
@@ -219,6 +222,7 @@ export const EuLabelForm = () => {
             wineImageUrl: url,
           },
         });
+        setImageUploading(false);
       }
     );
   };
@@ -278,7 +282,7 @@ export const EuLabelForm = () => {
         <Container intent="flexColCenter" gap="medium">
           <Container intent="grid-3" gap="medium">
             <Container intent="flexColLeft" gap="xsmall">
-              <Text intent="p1" variant="dim">
+              <Text intent="p1" variant="dim" className="font-semibold">
                 GTIN (UPC)
               </Text>
               <input
@@ -299,23 +303,39 @@ export const EuLabelForm = () => {
               />
             </Container>
             <Container intent="flexColLeft" gap="xsmall" className="">
-              <Container intent="flexRowLeft" gap="small" className="w-full">
-                <Text intent="p1" variant="dim" className="min-w-fit">
+              <Container
+                intent="flexRowLeft"
+                gap="xsmall"
+                className="max-w-fit"
+              >
+                <Text
+                  intent="p1"
+                  variant="dim"
+                  className="font-semibold min-w-fit"
+                >
                   Wine Image
                 </Text>
                 <InfoTooltip
                   width={240}
                   text="For optimal display, please upload a photo of your wine bottle against a single-color background. Ensure the bottle is vertical, occupies 80-90% of the photo's height, and is free from unnecessary elements. High or studio lighting is preferred. You can change this photo later if needed."
                 />
+                {imageUploading && (
+                  <div className="flex items-center justify-start gap-[8px] max-w-fit">
+                    <Text intent="p2" variant="dim" className="font-semibold">
+                      Uploading
+                    </Text>
+                    <SpinnerLoader color="#ddd" />
+                  </div>
+                )}
               </Container>
               <input
+                id="files"
                 ref={inputFileRef}
                 type="file"
                 accept="image/*"
                 multiple={false}
-                title=""
                 onChange={(event: any) => {
-                  const validFile = validateFileSizeInMegabytes(
+                  const validFile = validateFileSizeAndType(
                     event.target.files[0],
                     2
                   );
@@ -324,7 +344,8 @@ export const EuLabelForm = () => {
                     updateModal({
                       show: true,
                       title: "Error",
-                      description: "File size should be less than 2MB",
+                      description:
+                        "File size should be less than 2MB and image types accepted are jpeg and png.",
                       action: {
                         label: "OK",
                         onAction: () =>
@@ -340,7 +361,7 @@ export const EuLabelForm = () => {
                     handleWineImageUpload(event.target.files[0]);
                   }
                 }}
-                className="text-primary-light file:border-2 file:border-primary-light file:px-[36px] file:py-[10px] file:rounded-lg file:bg-transparent file:text-primary-light file:font-semibold transition-all duration-300 ease-in-out"
+                className="file:mr-[8px] text-primary-light file:border-2 file:border-primary-light file:px-[36px] file:py-[10px] file:rounded-lg file:bg-transparent file:text-primary-light file:font-semibold transition-all duration-300 ease-in-out"
               />
             </Container>
           </Container>
@@ -348,7 +369,7 @@ export const EuLabelForm = () => {
           {/* Second Row */}
           <Container intent="grid-3" gap="small" className="w-full">
             <Container intent="flexColLeft" gap="xsmall" className="w-full">
-              <Text intent="p1" variant="dim">
+              <Text intent="p1" variant="dim" className="font-semibold">
                 Winery Name
               </Text>
               <input
@@ -361,7 +382,7 @@ export const EuLabelForm = () => {
               />
             </Container>
             <Container intent="flexColLeft" gap="xsmall" className="w-full">
-              <Text intent="p1" variant="dim">
+              <Text intent="p1" variant="dim" className="font-semibold">
                 * Wine Collection Name
               </Text>
               <input
@@ -384,7 +405,7 @@ export const EuLabelForm = () => {
               />
             </Container>
             <Container intent="flexColLeft" gap="xsmall" className="w-full">
-              <Text intent="p1" variant="dim">
+              <Text intent="p1" variant="dim" className="font-semibold">
                 * Harvest Year
               </Text>
               <input
@@ -410,7 +431,7 @@ export const EuLabelForm = () => {
           {/* Third Row */}
           <Container intent="grid-3" gap="small" className="w-full">
             <Container intent="flexColLeft" gap="xsmall" className="w-full">
-              <Text intent="p1" variant="dim">
+              <Text intent="p1" variant="dim" className="font-semibold">
                 * Country
               </Text>
               <DropDown
@@ -431,7 +452,7 @@ export const EuLabelForm = () => {
               />
             </Container>
             <Container intent="flexColLeft" gap="xsmall" className="w-full">
-              <Text intent="p1" variant="dim">
+              <Text intent="p1" variant="dim" className="font-semibold">
                 * Type of Wine
               </Text>
               <DropDown
@@ -453,7 +474,7 @@ export const EuLabelForm = () => {
             </Container>
 
             <Container intent="flexColLeft" gap="xsmall" className="w-full">
-              <Text intent="p1" variant="dim">
+              <Text intent="p1" variant="dim" className="font-semibold">
                 * Bottle Size
               </Text>
               <DropDown
@@ -478,8 +499,8 @@ export const EuLabelForm = () => {
           {/* Fourth Row */}
           <Container intent="grid-3" gap="small" className="w-full">
             <Container intent="flexColLeft" gap="xsmall" className="w-full">
-              <Text intent="p1" variant="dim">
-                * Colour of Wine
+              <Text intent="p1" variant="dim" className="font-semibold">
+                * Wine Color
               </Text>
               <DropDown
                 items={colourOfWineList}
@@ -498,11 +519,13 @@ export const EuLabelForm = () => {
                 }}
               />
             </Container>
-            <Container intent="flexColLeft" gap="xsmall" className="w-full">
-              <Text intent="p1" variant="dim">
-                * Alcohol Level %
-              </Text>
-              <Container intent="grid-3" gap="small" className="items-center">
+            <Container intent="flexColLeft" gap="xsmall">
+              <Container intent="flexRowLeft" gap="xsmall">
+                <Text intent="p1" variant="dim" className="font-semibold">
+                  * Alcohol Level %
+                </Text>
+              </Container>
+              <Container intent="grid-2" gap="xsmall" className="items-center">
                 <input
                   required
                   type="number"
@@ -518,14 +541,18 @@ export const EuLabelForm = () => {
                       },
                     });
                   }}
-                  className="w-full col-span-2 text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
+                  className="text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
                 />
                 <Text>% vol</Text>
               </Container>
             </Container>
             <Container intent="flexColLeft" gap="xsmall" className="w-full">
-              <Container intent="flexRowLeft" gap="small">
-                <Text intent="p1" variant="dim" className="min-w-fit">
+              <Container intent="flexRowLeft" gap="xsmall">
+                <Text
+                  intent="p1"
+                  variant="dim"
+                  className="font-semibold min-w-fit"
+                >
                   Controlled Designation of Origin
                 </Text>
                 <InfoTooltip
@@ -566,11 +593,11 @@ export const EuLabelForm = () => {
           {/* Fith Row */}
           <Container intent="grid-2" gap="small" className="w-full">
             <Container intent="flexColLeft" gap="small" className="w-full">
-              <Container intent="flexRowLeft" gap="small">
-                <Text intent="p1" variant="dim" className="">
+              <Container intent="flexRowLeft" gap="xsmall">
+                <Text intent="p1" variant="dim" className="font-semibold">
                   * Grapes Varieties
                 </Text>
-                <InfoTooltip text="Add each grape variety and it's percentage in the wine" />
+                <InfoTooltip text="Add each grape variety and its percentage in the wine" />
               </Container>
               <TextAndNumberInputCrud
                 placeholder=""
@@ -595,12 +622,12 @@ export const EuLabelForm = () => {
               />
             </Container>
             <Container intent="flexColLeft" gap="small" className="w-full">
-              <Text intent="p1" variant="dim" className="">
+              <Text intent="p1" variant="dim" className="font-semibold">
                 Acidity Regulators
               </Text>
               <TextInputCrud
                 label="Name"
-                placeholder="Malic Acid"
+                placeholder="e.g. Malic Acid"
                 initialItems={
                   euLabelForm.formData.ingredients.acidityRegulators.list
                 }
@@ -631,12 +658,14 @@ export const EuLabelForm = () => {
           {/* Sixth Row */}
           <Container intent="grid-2" gap="small" className="w-full">
             <Container intent="flexColLeft" gap="small" className="w-full">
-              <Text intent="p1" variant="dim" className="">
+              <Text intent="p1" variant="dim" className="font-semibold">
                 Preservatives
               </Text>
               <CheckBox
                 label="Sulphites"
-                checked={false}
+                checked={
+                  euLabelForm.formData.ingredients.preservatives.allergens.has
+                }
                 onCheck={(state: boolean) => {
                   updateEuLabelForm({
                     ...euLabelForm,
@@ -665,7 +694,7 @@ export const EuLabelForm = () => {
               />
               <TextInputCrud
                 label="Name"
-                placeholder="Sulphites"
+                placeholder="e.g. Sulphites"
                 initialItems={
                   euLabelForm.formData.ingredients.preservatives.list
                 }
@@ -690,13 +719,15 @@ export const EuLabelForm = () => {
               />
             </Container>
             <Container intent="flexColLeft" gap="small" className="w-full">
-              <Text intent="p1" variant="dim" className="">
+              <Text intent="p1" variant="dim" className="font-semibold">
                 Fining Agents
               </Text>
               <Container intent="flexRowLeft" gap="small" className="max-w-fit">
                 <CheckBox
                   label="Isinglass"
-                  checked={false}
+                  checked={euLabelForm.formData.ingredients.finingAgents.allergens.list.includes(
+                    "Isinglass (Fish Allergen)"
+                  )}
                   onCheck={(state: boolean) => {
                     updateEuLabelForm({
                       ...euLabelForm,
@@ -725,7 +756,9 @@ export const EuLabelForm = () => {
                 />
                 <CheckBox
                   label="Casein"
-                  checked={false}
+                  checked={euLabelForm.formData.ingredients.finingAgents.allergens.list.includes(
+                    "Casein (Milk Allergen)"
+                  )}
                   onCheck={(state: boolean) => {
                     updateEuLabelForm({
                       ...euLabelForm,
@@ -755,7 +788,7 @@ export const EuLabelForm = () => {
               </Container>
               <TextInputCrud
                 label="Name"
-                placeholder="Potassium sorbate"
+                placeholder="e.g. Potassium sorbate"
                 initialItems={
                   euLabelForm.formData.ingredients.finingAgents.list
                 }
@@ -785,12 +818,12 @@ export const EuLabelForm = () => {
           <Container intent="grid-2" gap="small" className="w-full">
             <Container intent="flexColLeft" gap="small" className="w-full">
               <Container intent="flexColLeft" gap="small" className="w-full">
-                <Text intent="p1" variant="dim" className="">
+                <Text intent="p1" variant="dim" className="font-semibold">
                   Stabilizers
                 </Text>
                 <TextInputCrud
                   label="Name"
-                  placeholder="Arabic Gum"
+                  placeholder="e.g. Arabic Gum"
                   initialItems={
                     euLabelForm.formData.ingredients.stabilizers.list
                   }
@@ -818,12 +851,12 @@ export const EuLabelForm = () => {
 
             <Container intent="flexColLeft" gap="small" className="w-full">
               <Container intent="flexColLeft" gap="small" className="w-full">
-                <Text intent="p1" variant="dim" className="">
+                <Text intent="p1" variant="dim" className="font-semibold">
                   Antioxidants
                 </Text>
                 <TextInputCrud
                   label="Name"
-                  placeholder="Gallic Acid (GA)"
+                  placeholder="e.g. Gallic Acid (GA)"
                   initialItems={
                     euLabelForm.formData.ingredients.antioxidants.list
                   }
@@ -852,7 +885,7 @@ export const EuLabelForm = () => {
           <Container intent="grid-2" gap="small" className="w-full">
             <Container intent="flexColLeft" gap="small" className="w-full">
               <Container intent="flexRowLeft" gap="small">
-                <Text intent="p1" variant="dim" className="">
+                <Text intent="p1" variant="dim" className="font-semibold">
                   * Sugars (g/100g)
                 </Text>
                 <InfoTooltip text="What is the amount of sugar per 100g of wine?" />

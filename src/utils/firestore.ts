@@ -255,3 +255,75 @@ export const getAllEuLabelWines = async () => {
   });
   return items;
 };
+
+export const getWineryLevelDb = async (tier: string) => {
+  try {
+    const docRef = doc(db, "utils", "systemVariables");
+    const docSnap = await getDoc(docRef);
+    const data = docSnap.data();
+    const level = data?.level[tier];
+    console.log(tier, data);
+    return level;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+};
+
+export const getAllWineryNames = async () => {
+  const wineries = query(collection(db, "wineries"));
+  const querySnapshot = await getDocs(wineries);
+  const items: string[] = [];
+  querySnapshot.forEach((doc) => {
+    items.push(doc.data().generalInfo.name);
+  });
+  return items;
+};
+
+export const getEuLabelWinesByWineryName = async (wineryName: string) => {
+  const wineries = query(
+    collection(db, "wineries"),
+    where("generalInfo.name", "==", wineryName)
+  );
+  const querySnapshot = await getDocs(wineries);
+  const items: EuLabelInterface[] = [];
+  querySnapshot.forEach((doc) => {
+    if (doc.data().euLabels.length > 0) {
+      doc.data().euLabels.forEach((label: EuLabelInterface) => {
+        items.push(label);
+      });
+    }
+  });
+  return items;
+};
+
+export const getEuLabelWinesByWineType = async (wineType: string) => {
+  const wineries = query(collection(db, "wineries"));
+  const querySnapshot = await getDocs(wineries);
+  const items: EuLabelInterface[] = [];
+  querySnapshot.forEach((doc) => {
+    if (doc.data().euLabels.length > 0) {
+      doc.data().euLabels.forEach((label: EuLabelInterface) => {
+        if (
+          label.typeOfWine.toLocaleLowerCase() === wineType.toLocaleLowerCase()
+        ) {
+          console.log("found", label.typeOfWine);
+          items.push(label);
+        }
+      });
+    }
+  });
+  return items;
+};
+
+export const getWineTypes = async () => {
+  try {
+    const docRef = doc(db, "utils", "systemVariables");
+    const docSnap = await getDoc(docRef);
+    const data = docSnap.data();
+    return data?.wineTypes;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+};
