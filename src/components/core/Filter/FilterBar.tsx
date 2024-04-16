@@ -8,8 +8,13 @@ export interface ExploreModeSelectProps {}
 
 export const ExploreModeSelect = ({}: ExploreModeSelectProps) => {
   const { responsiveSize } = useResponsive();
-  const { mobileFilters, updateShowFilters, filters, updateFilters } =
-    useFilters();
+  const {
+    mobileFilters,
+    updateShowFilters,
+    filters,
+    updateFilters,
+    filtersMessage,
+  } = useFilters();
   return (
     <>
       <Container
@@ -19,21 +24,29 @@ export const ExploreModeSelect = ({}: ExploreModeSelectProps) => {
         className="min-w-full"
       >
         {/* {mobileFilters && ( */}
-        <Button
-          intent="text"
-          className="flex items-center justify-start gap-[8px]"
-          onClick={() => {
-            updateShowFilters(true);
-          }}
-        >
-          <Icon
-            icon="lucide:filter"
-            width="20"
-            height="20"
-            className="text-primary-light"
-          />
-          Filters
-        </Button>
+        <Container intent="flexRowLeft" gap="small">
+          <Button
+            intent="text"
+            className="flex items-center justify-start gap-[8px]"
+            onClick={() => {
+              updateShowFilters(true);
+            }}
+          >
+            <Icon
+              icon="lucide:filter"
+              width="20"
+              height="20"
+              className="text-primary-light"
+            />
+            Filters
+          </Button>
+
+          {!mobileFilters && (
+            <Text intent="p2" variant="dim">
+              {filtersMessage}
+            </Text>
+          )}
+        </Container>
         {/* )} */}
         <Container intent="grid-2" gap="small" className="max-w-[240px]">
           <Container intent="flexRowRight">

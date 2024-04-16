@@ -30,8 +30,10 @@ export interface FiltersContextInterface {
   filteredWines: EuLabelInterface[];
   allWines: EuLabelInterface[];
   filtersLoading: boolean;
+  filtersMessage: string;
   updateShowFilters: (value: boolean) => void;
   updateFilters: (filts: FiltersInterface) => void;
+  updateFiltersMessage: (message: string) => void;
 }
 
 const contextInitialData: FiltersContextInterface = {
@@ -51,8 +53,10 @@ const contextInitialData: FiltersContextInterface = {
   allWines: [],
   filteredWines: [],
   filtersLoading: false,
+  filtersMessage: "",
   updateShowFilters: () => {},
   updateFilters: () => {},
+  updateFiltersMessage: () => {},
 };
 
 const FiltersContext = createContext(contextInitialData);
@@ -88,6 +92,7 @@ export const FiltersProvider = ({
   const [filteredWines, setFilteredWines] = useState<EuLabelInterface[]>([]);
   const [allWines, setAllWines] = useState<EuLabelInterface[]>([]);
   const [filtersLoading, setFiltersLoading] = useState<boolean>(false);
+  const [filtersMessage, setFiltersMessage] = useState<string>("");
 
   const updateShowFilters = (value: boolean) => {
     setShowFilters(value);
@@ -96,6 +101,10 @@ export const FiltersProvider = ({
   const updateFilters = (filts: FiltersInterface) => {
     setFiltersLoading(true);
     setFilters(filts);
+  };
+
+  const updateFiltersMessage = (message: string) => {
+    setFiltersMessage(message);
   };
 
   useEffect(() => {
@@ -110,7 +119,7 @@ export const FiltersProvider = ({
     if (filters.byWinery.result && !filters.byWineType.result) {
       console.log("FITERING BY WINERY");
       getEuLabelWinesByWineryName(filters.byWinery.result)
-        .then((wines) => {
+        .then((wines: EuLabelInterface[]) => {
           setFilteredWines(wines);
           setFiltersLoading(false);
         })
@@ -125,21 +134,6 @@ export const FiltersProvider = ({
           setFiltersLoading(false);
         })
         .catch((error) => {});
-      return;
-    }
-    if (filters.byWinery.result && filters.byWineType.result) {
-      console.log("FITERING BY WINERY AND WINE TYPE");
-      getEuLabelWinesByWineryName(filters.byWinery.result)
-        .then((wines) => {
-          getEuLabelWinesByWineType(filters.byWineType.result)
-            .then((moreWines) => {
-              setFilteredWines([...wines, ...moreWines]);
-              setFiltersLoading(false);
-            })
-            .catch((error) => {});
-        })
-        .catch((error) => {});
-
       return;
     }
 
@@ -180,8 +174,10 @@ export const FiltersProvider = ({
     filteredWines,
     allWines,
     filtersLoading,
+    filtersMessage,
     updateShowFilters,
     updateFilters,
+    updateFiltersMessage,
   };
 
   return (

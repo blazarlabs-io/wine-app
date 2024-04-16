@@ -107,12 +107,12 @@ export const WineCard = ({
                 height={16}
                 className="text-primary-light"
               />
-              <Text intent="p1" variant="dim">
+              <Text intent="p1" variant="dim" className="">
                 Country
               </Text>
             </Container>
-            <Container intent="flexRowRight">
-              <Text>{country}</Text>
+            <Container intent="flexRowRight" className="max-w-[142px]">
+              <Text className="truncate">{country}</Text>
             </Container>
           </Container>
           <Container intent="flexRowBetween" gap="xsmall" className="w-full">

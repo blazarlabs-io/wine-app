@@ -6,7 +6,6 @@ export interface DropdownFilterProps {
   items: string[];
   selectedValue: string;
   onSelect: (item: string) => void;
-  onReset: () => void;
   disabled?: boolean;
 }
 
@@ -15,7 +14,6 @@ export const DropDownFilter = ({
   items,
   selectedValue,
   onSelect,
-  onReset,
   disabled = false,
 }: DropdownFilterProps) => {
   return (
@@ -24,9 +22,6 @@ export const DropDownFilter = ({
         <Text intent="p2" variant="dim">
           {label}
         </Text>
-        <Button disabled={disabled} intent="text" onClick={() => onReset()}>
-          Reset
-        </Button>
       </Container>
       <DropDown
         disabled={disabled}
