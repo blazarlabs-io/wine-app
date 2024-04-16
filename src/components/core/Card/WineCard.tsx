@@ -39,7 +39,7 @@ export const WineCard = ({
         intent="flexColTop"
         className={classNames(
           "w-full bg-surface-light rounded-md shadow-lg transition-transform hover:scale-[103%] duration-150 ease-in-out",
-          responsiveSize === "mobile" ? "max-w-[400px] " : "max-w-[364px] "
+          responsiveSize === "mobile" ? "max-w-[400px] " : "max-w-[340px] "
         )}
         gap="medium"
       >

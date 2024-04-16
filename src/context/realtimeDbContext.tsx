@@ -9,12 +9,15 @@ import {
 import { Unsubscribe, doc, onSnapshot } from "firebase/firestore";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./authContext";
+import { wineryInitialData } from "@/data/wineryInitialData";
+import { getWineryLevelDb } from "@/utils/firestore";
 
 export interface RealtimeDbContextInterface {
   wineryGeneralInfo: WineryGeneralInfoInterface;
   tier: string;
   level: string;
   wineryEuLabels: EuLabelInterface[];
+  allowedEuLabels: number;
   updateWineryGeneralInfo: (data: WineryGeneralInfoInterface) => void;
   updateTier: (tier: string) => void;
   updateLevel: (level: string) => void;
@@ -22,30 +25,11 @@ export interface RealtimeDbContextInterface {
 }
 
 const contextInitialData: RealtimeDbContextInterface = {
-  wineryGeneralInfo: {
-    name: "",
-    foundedOn: "",
-    logo: "",
-    collections: "",
-    noOfProducedWines: "",
-    vineyardsSurface: "",
-    noOfBottlesProducedPerYear: "",
-    grapeVarieties: "",
-    lastUpdated: "",
-    certifications: [],
-    wineryHeadquarters: {
-      latitude: "",
-      longitude: "",
-    },
-    wineryRepresentative: {
-      name: "",
-      email: "",
-      phone: "",
-    },
-  },
+  wineryGeneralInfo: wineryInitialData,
   tier: "",
   level: "",
   wineryEuLabels: [],
+  allowedEuLabels: 0,
   updateWineryGeneralInfo: () => {},
   updateTier: () => {},
   updateLevel: () => {},
@@ -75,6 +59,10 @@ export const RealtimeDbProvider = ({
 
   const [tier, setTier] = useState(contextInitialData.tier);
   const [level, setLevel] = useState(contextInitialData.level);
+
+  const [allowedEuLabels, setAllowedEuLabels] = useState(
+    contextInitialData.allowedEuLabels
+  );
 
   const [wineryEuLabels, setWineryEuLabels] = useState(
     contextInitialData.wineryEuLabels
@@ -123,11 +111,21 @@ export const RealtimeDbProvider = ({
     };
   }, [user]);
 
+  useEffect(() => {
+    if (level) {
+      getWineryLevelDb(level as string).then((data) => {
+        console.log(data);
+        setAllowedEuLabels(data.euLabels as number);
+      });
+    }
+  }, [level]);
+
   const value = {
     wineryGeneralInfo,
     tier,
     level,
     wineryEuLabels,
+    allowedEuLabels,
     updateWineryGeneralInfo,
     updateTier,
     updateLevel,

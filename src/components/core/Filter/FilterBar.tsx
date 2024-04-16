@@ -15,26 +15,26 @@ export const ExploreModeSelect = ({}: ExploreModeSelectProps) => {
       <Container
         py="small"
         px={responsiveSize === "mobile" ? "small" : "none"}
-        intent={responsiveSize === "mobile" ? "flexRowBetween" : "flexRowRight"}
+        intent={"flexRowBetween"}
         className="min-w-full"
       >
-        {mobileFilters && (
-          <Button
-            intent="text"
-            className="flex items-center justify-start gap-[8px]"
-            onClick={() => {
-              updateShowFilters(true);
-            }}
-          >
-            <Icon
-              icon="lucide:filter"
-              width="20"
-              height="20"
-              className="text-primary-light"
-            />
-            Filters
-          </Button>
-        )}
+        {/* {mobileFilters && ( */}
+        <Button
+          intent="text"
+          className="flex items-center justify-start gap-[8px]"
+          onClick={() => {
+            updateShowFilters(true);
+          }}
+        >
+          <Icon
+            icon="lucide:filter"
+            width="20"
+            height="20"
+            className="text-primary-light"
+          />
+          Filters
+        </Button>
+        {/* )} */}
         <Container intent="grid-2" gap="small" className="max-w-[240px]">
           <Container intent="flexRowRight">
             <Text className="text-on-surface/40">Exploring</Text>

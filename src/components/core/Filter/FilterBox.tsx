@@ -15,10 +15,14 @@ import { useResponsive } from "@/hooks/useResponsive";
 
 export const FilterBox = () => {
   const { responsiveSize } = useResponsive();
-  const { showFilters, updateFilters, updateShowFilters } = useFilters();
+  const { filters, updateFilters, updateShowFilters } = useFilters();
   const [upcFilterValue, setUpcFilterValue] = useState<string[]>([]);
-  const [wineTypeFilterValue, setWineTypeFilterValue] = useState<string>("");
-  const [wineryFilterValue, setWineryFilterValue] = useState<string>("");
+  const [wineTypeFilterValue, setWineTypeFilterValue] = useState<string | null>(
+    null
+  );
+  const [wineryFilterValue, setWineryFilterValue] = useState<string | null>(
+    null
+  );
 
   return (
     <Container
@@ -27,7 +31,7 @@ export const FilterBox = () => {
       py="medium"
       gap="medium"
       className={classNames(
-        "bg-surface-light rounded-lg",
+        "bg-surface-light rounded-lg min-h-[460px]",
         responsiveSize === "mobile" ? "max-w-[320px]" : "max-w-[240px]"
       )}
     >
@@ -44,18 +48,28 @@ export const FilterBox = () => {
       </Container>
       <Container intent="flexColLeft" className="h-full w-full" gap="medium">
         <DropDownFilter
-          disabled={true}
+          disabled={false}
           label="Search by winery"
-          items={["Winery 1", "Winery 2"]}
-          selectedValue={""}
-          onSelect={(item: string) => {}}
+          items={filters.byWinery.list}
+          selectedValue={wineryFilterValue || ""}
+          onSelect={(item: string) => {
+            setWineryFilterValue(item);
+          }}
+          onReset={() => {
+            setWineryFilterValue(null);
+          }}
         />
         <DropDownFilter
-          disabled={true}
+          disabled={false}
           label="Search by wine type"
-          items={["Wine 1", "Wine 2"]}
-          selectedValue={""}
-          onSelect={(item: string) => {}}
+          items={filters.byWineType.list}
+          selectedValue={wineTypeFilterValue || ""}
+          onSelect={(item: string) => {
+            setWineTypeFilterValue(item);
+          }}
+          onReset={() => {
+            setWineTypeFilterValue(null);
+          }}
         />
         <SearchFilter
           disabled={true}
@@ -85,8 +99,14 @@ export const FilterBox = () => {
           onClick={() => {
             updateFilters({
               byUpc: upcFilterValue,
-              byWineType: wineTypeFilterValue,
-              byWinery: wineryFilterValue,
+              byWineType: {
+                list: filters.byWineType.list,
+                result: wineTypeFilterValue,
+              },
+              byWinery: {
+                list: filters.byWinery.list,
+                result: wineryFilterValue,
+              },
             });
             updateShowFilters(false);
           }}

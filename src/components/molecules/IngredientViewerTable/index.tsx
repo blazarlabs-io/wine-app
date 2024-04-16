@@ -2,6 +2,7 @@
 
 import { Container, Text } from "@/components";
 import { classNames } from "@/utils/classNames";
+import { useEffect } from "react";
 
 export interface IngredientViewerTableProps {
   title: string;
@@ -21,6 +22,9 @@ export const IngredientViewerTable = ({
   variant = "normal",
   ingredient,
 }: IngredientViewerTableProps) => {
+  useEffect(() => {
+    ingredient.allergens.has && console.log(ingredient.allergens.list);
+  }, [ingredient]);
   return (
     <Container
       intent="flexColLeft"
@@ -36,10 +40,10 @@ export const IngredientViewerTable = ({
         {title}
       </Text>
 
-      {ingredient !== undefined && ingredient.has ? (
+      {ingredient && ingredient !== undefined && (
         <Container intent="flexColLeft" gap="xsmall" className="max-w-fit">
           <>
-            {ingredient.allergens?.has && (
+            {ingredient.allergens.has && (
               <>
                 {ingredient.allergens.list.map((item) => (
                   <div
@@ -67,10 +71,9 @@ export const IngredientViewerTable = ({
                 </Text>
               </div>
             ))}
+            {!ingredient.has && !ingredient.allergens.has && <Text>No</Text>}
           </>
         </Container>
-      ) : (
-        <Text>No</Text>
       )}
     </Container>
   );

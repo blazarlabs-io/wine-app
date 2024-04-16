@@ -9,12 +9,12 @@ import {
   InfoTooltip,
 } from "@/components";
 import { Icon } from "@iconify/react";
-import { useWinery } from "@/context/wineryContext";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
 import { classNames } from "@/utils/classNames";
+import { useForms } from "@/context/FormsContext";
 
 export interface WineryGeneralInfoProps {
   fullWidth?: boolean;
@@ -25,9 +25,8 @@ export const WineryGeneralInfo = ({
 }: WineryGeneralInfoProps) => {
   const [showMap, setShowMap] = useState<boolean>(false);
   const router = useRouter();
-  const { updateFormTitle, updateFormDescription, updateIsEditing } =
-    useWinery();
   const { wineryGeneralInfo, level, tier } = useRealtimeDb();
+  const { wineryForm, updateWineryForm } = useForms();
 
   return (
     <>
@@ -91,14 +90,15 @@ export const WineryGeneralInfo = ({
           <Button
             intent="unstyled"
             onClick={() => {
-              updateFormTitle("Edit Winery Details");
-              updateFormDescription(
-                "Please fill in the form to edit your winery details. All fields marked with * are mandatory."
-              );
-              // updateShowRegisterWinery(true);
+              updateWineryForm({
+                title: "Edit Winery Details",
+                description:
+                  "Please fill in the form to edit your winery details. All fields marked with * are mandatory.",
+                isEditing: true,
+                formData: wineryGeneralInfo,
+              });
 
-              updateIsEditing(true);
-              router.push("/register-winery");
+              router.push("/winery-form");
             }}
             className="min-w-fit p-0 text-primary-light font-semibold hover:text-primary transition-all duration-300 ease-in-out"
           >

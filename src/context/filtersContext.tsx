@@ -3,11 +3,24 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useResponsive } from "@/hooks/useResponsive";
 import { EuLabelInterface } from "@/typings/winery";
-import { getAllEuLabelWines, getWineByUpcCode } from "@/utils/firestore";
+import {
+  getAllEuLabelWines,
+  getAllWineryNames,
+  getEuLabelWinesByWineType,
+  getEuLabelWinesByWineryName,
+  getWineByUpcCode,
+  getWineTypes,
+} from "@/utils/firestore";
 
 export interface FiltersInterface {
-  byWinery: any;
-  byWineType: any;
+  byWinery: {
+    list: string[];
+    result: any;
+  };
+  byWineType: {
+    list: string[];
+    result: any;
+  };
   byUpc: string[] | null;
 }
 export interface FiltersContextInterface {
@@ -25,8 +38,14 @@ const contextInitialData: FiltersContextInterface = {
   mobileFilters: false,
   showFilters: false,
   filters: {
-    byWinery: null,
-    byWineType: null,
+    byWinery: {
+      list: [],
+      result: null,
+    },
+    byWineType: {
+      list: [],
+      result: null,
+    },
     byUpc: null,
   },
   allWines: [],
@@ -56,8 +75,14 @@ export const FiltersProvider = ({
   const [mobileFilters, setMobileFilters] = useState<boolean>(false);
   const [showFilters, setShowFilters] = useState<boolean>(false);
   const [filters, setFilters] = useState<FiltersInterface>({
-    byWinery: null,
-    byWineType: null,
+    byWinery: {
+      list: [],
+      result: null,
+    },
+    byWineType: {
+      list: [],
+      result: null,
+    },
     byUpc: null,
   });
   const [filteredWines, setFilteredWines] = useState<EuLabelInterface[]>([]);
@@ -82,26 +107,67 @@ export const FiltersProvider = ({
   }, [responsiveSize]);
 
   useEffect(() => {
-    console.log("Use state filter context", filters);
-    if (filters.byUpc) {
-      filters?.byUpc?.map((upc: string) => {
-        getWineByUpcCode(upc, (wine: EuLabelInterface | null) => {
-          if (wine) {
-            setFilteredWines((filteredWines) => [...filteredWines, wine]);
-            setFiltersLoading(false);
-          } else {
-            setFiltersLoading(false);
-          }
-        });
-      });
-    } else {
-      console.log("No filters");
-      setFilteredWines([]);
-      setFiltersLoading(false);
+    if (filters.byWinery.result && !filters.byWineType.result) {
+      console.log("FITERING BY WINERY");
+      getEuLabelWinesByWineryName(filters.byWinery.result)
+        .then((wines) => {
+          setFilteredWines(wines);
+          setFiltersLoading(false);
+        })
+        .catch((error) => {});
+      return;
     }
+    if (filters.byWineType.result && !filters.byWinery.result) {
+      console.log("FITERING BY WINE TYPE");
+      getEuLabelWinesByWineType(filters.byWineType.result)
+        .then((wines) => {
+          setFilteredWines(wines);
+          setFiltersLoading(false);
+        })
+        .catch((error) => {});
+      return;
+    }
+    if (filters.byWinery.result && filters.byWineType.result) {
+      console.log("FITERING BY WINERY AND WINE TYPE");
+      getEuLabelWinesByWineryName(filters.byWinery.result)
+        .then((wines) => {
+          getEuLabelWinesByWineType(filters.byWineType.result)
+            .then((moreWines) => {
+              setFilteredWines([...wines, ...moreWines]);
+              setFiltersLoading(false);
+            })
+            .catch((error) => {});
+        })
+        .catch((error) => {});
+
+      return;
+    }
+
+    setFilteredWines(allWines);
+    setFiltersLoading(false);
   }, [filters]);
 
   useEffect(() => {
+    getAllWineryNames().then((wineries) => {
+      setFilters((filters) => ({
+        ...filters,
+        byWinery: {
+          list: wineries,
+          result: null,
+        },
+      }));
+    });
+    getWineTypes()
+      .then((wineTypes) => {
+        setFilters((filters) => ({
+          ...filters,
+          byWineType: {
+            list: wineTypes,
+            result: null,
+          },
+        }));
+      })
+      .catch((error) => {});
     getAllEuLabelWines().then((wines) => {
       setAllWines(wines);
     });

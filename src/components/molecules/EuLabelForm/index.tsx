@@ -35,7 +35,7 @@ import {
 import { useAuth } from "@/context/authContext";
 import { euLabelUrlComposer } from "@/utils/euLabelUrlComposer";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
-import { validateFileSizeInMegabytes } from "@/utils/validateFileSizeInMegabytes";
+import { validateFileSizeAndType } from "@/utils/validateFileSizeAndType";
 import { useModal } from "@/context/modalContext";
 import { httpsCallable } from "firebase/functions";
 import { functions } from "@/lib/firebase/client";
@@ -315,7 +315,7 @@ export const EuLabelForm = () => {
                 multiple={false}
                 title=""
                 onChange={(event: any) => {
-                  const validFile = validateFileSizeInMegabytes(
+                  const validFile = validateFileSizeAndType(
                     event.target.files[0],
                     2
                   );
@@ -324,7 +324,8 @@ export const EuLabelForm = () => {
                     updateModal({
                       show: true,
                       title: "Error",
-                      description: "File size should be less than 2MB",
+                      description:
+                        "File size should be less than 2MB and image types accepted are jpeg and png.",
                       action: {
                         label: "OK",
                         onAction: () =>
@@ -636,7 +637,9 @@ export const EuLabelForm = () => {
               </Text>
               <CheckBox
                 label="Sulphites"
-                checked={false}
+                checked={
+                  euLabelForm.formData.ingredients.preservatives.allergens.has
+                }
                 onCheck={(state: boolean) => {
                   updateEuLabelForm({
                     ...euLabelForm,
@@ -696,7 +699,9 @@ export const EuLabelForm = () => {
               <Container intent="flexRowLeft" gap="small" className="max-w-fit">
                 <CheckBox
                   label="Isinglass"
-                  checked={false}
+                  checked={euLabelForm.formData.ingredients.finingAgents.allergens.list.includes(
+                    "Isinglass (Fish Allergen)"
+                  )}
                   onCheck={(state: boolean) => {
                     updateEuLabelForm({
                       ...euLabelForm,
@@ -725,7 +730,9 @@ export const EuLabelForm = () => {
                 />
                 <CheckBox
                   label="Casein"
-                  checked={false}
+                  checked={euLabelForm.formData.ingredients.finingAgents.allergens.list.includes(
+                    "Casein (Milk Allergen)"
+                  )}
                   onCheck={(state: boolean) => {
                     updateEuLabelForm({
                       ...euLabelForm,

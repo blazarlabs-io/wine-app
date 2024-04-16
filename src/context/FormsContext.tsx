@@ -1,14 +1,19 @@
 "use client";
 
 import { euLabelInitData } from "@/data/euLablelInitData";
-import { EuLabelInterface, WineryDataInterface } from "@/typings/winery";
+import { wineryInitialData } from "@/data/wineryInitialData";
+import {
+  EuLabelInterface,
+  WineryDataInterface,
+  WineryGeneralInfoInterface,
+} from "@/typings/winery";
 import { createContext, useContext, useState } from "react";
 
 export interface WineryFormInterface {
   title: string;
   description: string;
   isEditing: boolean;
-  formData: WineryDataInterface | null;
+  formData: WineryGeneralInfoInterface;
 }
 
 export interface EuLabelFormInterface {
@@ -30,7 +35,7 @@ const contextInitialData: FormsContextInterface = {
     title: "",
     description: "",
     isEditing: false,
-    formData: null,
+    formData: wineryInitialData,
   },
   euLabelForm: {
     title: "",

@@ -1,5 +1,5 @@
 import { EuLabelForm } from "@/components";
 
-export const GenerateEuLabelPage = () => {
+export const EuLabelFormPage = () => {
   return <EuLabelForm />;
 };

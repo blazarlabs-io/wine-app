@@ -9,7 +9,6 @@ import {
   TextInputCrud,
 } from "@/components";
 import { Icon } from "@iconify/react";
-import { useWinery } from "@/context/wineryContext";
 import { useAuth } from "@/context/authContext";
 import { WineryGeneralInfoInterface } from "@/typings/winery";
 import {
@@ -17,22 +16,18 @@ import {
   uploadLogoToStorage,
 } from "@/utils/firestore";
 import { useRef, useState } from "react";
-import { validateFileSizeInMegabytes } from "@/utils/validateFileSizeInMegabytes";
+import { validateFileSizeAndType } from "@/utils/validateFileSizeAndType";
 import { useModal } from "@/context/modalContext";
 import { useRouter } from "next/navigation";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
+import { useForms } from "@/context/FormsContext";
 
-export const RegisterWinery = () => {
+export const WineryForm = () => {
   const { user } = useAuth();
   const router = useRouter();
   const { updateModal } = useModal();
-  const {
-    formTitle,
-    formDescription,
-    updateShowRegisterWinery,
-    updateIsEditing,
-    isEditing,
-  } = useWinery();
+
+  const { wineryForm, updateWineryForm } = useForms();
 
   const { wineryGeneralInfo, updateWineryGeneralInfo } = useRealtimeDb();
 
@@ -43,7 +38,7 @@ export const RegisterWinery = () => {
   const inputFileRef = useRef<any>(null);
 
   const handleCancel = () => {
-    if (!isEditing) {
+    if (!wineryForm.isEditing) {
       updateModal({
         show: true,
         title: "Error",
@@ -60,7 +55,6 @@ export const RegisterWinery = () => {
         },
       });
     } else {
-      updateIsEditing(false);
       router.back();
     }
   };
@@ -77,8 +71,6 @@ export const RegisterWinery = () => {
       registerWineryGeneralInfoToDb(user?.uid as string, newGeneralInfo);
       setIsLoading(false);
       router.replace("/home");
-      updateShowRegisterWinery(false);
-      updateIsEditing(false);
     });
   };
 
@@ -94,7 +86,7 @@ export const RegisterWinery = () => {
     >
       <Container
         intent="flexColTop"
-        className="bg-surface min-w-[720px] relative max-w-[720px] overflow-y-auto"
+        className="bg-surface min-w-[720px] relative max-w-[720px] overflow-y-auto overflow-hidden"
       >
         {showLocationMap && (
           <div className="rounded-lg w-full h-full absolute top-[50%] -translate-y-[50%] left-[50%] -translate-x-[50%] z-10 bg-surface/80 backdrop-blur-sm">
@@ -137,9 +129,9 @@ export const RegisterWinery = () => {
                   icon="game-icons:cellar-barrels"
                   className="w-[56px] h-[56px] text-primary-light"
                 />
-                <Text intent="h2">{formTitle}</Text>
+                <Text intent="h2">{wineryForm.title}</Text>
               </Container>
-              <Text variant="dim">{formDescription}</Text>
+              <Text variant="dim">{wineryForm.description}</Text>
             </Container>
             <Container intent="grid-2" gap="medium">
               <Container intent="flexColLeft" gap="xsmall">
@@ -198,7 +190,7 @@ export const RegisterWinery = () => {
                   multiple={false}
                   title=""
                   onChange={(event: any) => {
-                    const validFile = validateFileSizeInMegabytes(
+                    const validFile = validateFileSizeAndType(
                       event.target.files[0],
                       2
                     );
@@ -207,7 +199,8 @@ export const RegisterWinery = () => {
                       updateModal({
                         show: true,
                         title: "Error",
-                        description: "File size should be less than 2MB",
+                        description:
+                          "File size should be less than 2MB and image types accepted are jpeg and png.",
                         action: {
                           label: "OK",
                           onAction: () =>
@@ -519,7 +512,7 @@ export const RegisterWinery = () => {
                 onClick={() => {}}
               >
                 {!isLoading ? (
-                  <>{isEditing ? "Update" : "Register"}</>
+                  <>{"save"}</>
                 ) : (
                   <Container intent="flexRowCenter">
                     <Icon

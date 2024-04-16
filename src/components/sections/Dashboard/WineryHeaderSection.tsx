@@ -2,7 +2,6 @@
 
 import { WineryStat, Container, WineryGeneralInfo } from "@/components";
 import { WineryStatInterface } from "@/typings/components";
-import { useWinery } from "@/context/wineryContext";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
 
 export const WineryHeaderSection = () => {

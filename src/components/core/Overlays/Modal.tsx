@@ -26,7 +26,7 @@ export const Modal = () => {
               stiffness: 260,
               damping: 20,
             }}
-            className="flex flex-col items-start justify-center p-[24px] gap-[24px] bg-surface min-w-[420px] max-w-fit rounded-lg shadow-lg"
+            className="flex flex-col items-start justify-center p-[24px] gap-[24px] bg-surface min-w-[420px] max-w-[520px] rounded-lg shadow-lg"
           >
             <Container intent="flexRowLeft">
               <Text intent="h3">{title}</Text>
