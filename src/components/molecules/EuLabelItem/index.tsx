@@ -18,6 +18,7 @@ export const EuLabelItem = ({
   variant = "normal",
 }: EuLabelItemProps) => {
   const { responsiveSize } = useResponsive();
+  console.log(title, value.length);
   return (
     <Container
       intent={!centered ? "flexColLeft" : "flexColTop"}
@@ -27,10 +28,10 @@ export const EuLabelItem = ({
         variant === "normal" && "bg-transparent max-w-fit"
       )}
     >
-      <Text intent="p2" variant="dim">
+      <Text intent="p1" variant="dim" className="font-semibold">
         {title}
       </Text>
-      <Text>{value}</Text>
+      <Text variant="dim">{value.length === 0 ? "No" : value}</Text>
     </Container>
   );
 };

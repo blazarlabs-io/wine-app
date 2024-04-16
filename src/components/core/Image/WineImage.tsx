@@ -2,6 +2,8 @@
 
 import { useResponsive } from "@/hooks/useResponsive";
 import Image from "next/image";
+import { useState } from "react";
+import { SpinnerLoader } from "../Loader/SpinnerLoader";
 
 export interface WineImageProps {
   imageUrl: string;
@@ -9,6 +11,7 @@ export interface WineImageProps {
 
 export const WineImage = ({ imageUrl }: WineImageProps) => {
   const { responsiveSize } = useResponsive();
+  const [imageLoaded, setImageLoaded] = useState<boolean>(false);
   return (
     <>
       {responsiveSize === "mobile" && (
@@ -46,6 +49,11 @@ export const WineImage = ({ imageUrl }: WineImageProps) => {
             }}
             className="rounded-lg"
           >
+            {!imageLoaded && (
+              <div className="flex items-center justify-center w-[400px] h-[400px] bg-surface-light rounded-lg">
+                <SpinnerLoader width="48px" height="48px" color="#ddd" />
+              </div>
+            )}
             <Image
               src={imageUrl || "/wine-placeholder.png"}
               alt=""
@@ -53,6 +61,9 @@ export const WineImage = ({ imageUrl }: WineImageProps) => {
               style={{
                 objectFit: "cover",
                 objectPosition: "center",
+              }}
+              onLoad={(e) => {
+                setImageLoaded(true);
               }}
               className="rounded-lg"
             />

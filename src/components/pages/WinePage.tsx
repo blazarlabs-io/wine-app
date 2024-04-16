@@ -12,12 +12,18 @@ import {
 } from "@/components";
 import { EuLabelInterface } from "@/typings/winery";
 import { classNames } from "@/utils/classNames";
+import { useEffect } from "react";
+import { useAppState } from "@/context/appStateContext";
 
 export interface WinePagePropsInterface {
   euLabel: EuLabelInterface | null;
 }
 
 export const WinePage = ({ euLabel }: WinePagePropsInterface) => {
+  const { updateAppLoading } = useAppState();
+  useEffect(() => {
+    updateAppLoading(false);
+  }, []);
   return (
     <>
       {euLabel ? (

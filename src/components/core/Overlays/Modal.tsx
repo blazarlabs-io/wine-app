@@ -26,19 +26,22 @@ export const Modal = () => {
               stiffness: 260,
               damping: 20,
             }}
-            className="flex flex-col items-start justify-center p-[24px] gap-[24px] bg-surface min-w-[420px] max-w-[520px] rounded-lg shadow-lg"
+            className="flex flex-col items-start justify-center px-[32px] pt-[32px] pb-[16px] gap-[24px] bg-surface min-w-[420px] max-w-[520px] rounded-lg shadow-lg"
           >
             <Container intent="flexRowLeft">
-              <Text intent="h3">{title}</Text>
+              <Text intent="h4">{title}</Text>
             </Container>
             <Container intent="flexRowLeft">
-              <Text intent="p1">{description}</Text>
+              <Text intent="p1" variant="dim">
+                {description}
+              </Text>
             </Container>
-            <Container intent="flexRowLeft">
+            <div className="w-full h-[2px] bg-on-surface-dark/10" />
+            <Container intent="flexRowRight">
               <Button
                 intent="primary"
                 size="medium"
-                fullWidth
+                fullWidth={false}
                 onClick={() => action.onAction()}
               >
                 {action.label}

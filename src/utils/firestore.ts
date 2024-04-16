@@ -262,6 +262,7 @@ export const getWineryLevelDb = async (tier: string) => {
     const docSnap = await getDoc(docRef);
     const data = docSnap.data();
     const level = data?.level[tier];
+    console.log(tier, data);
     return level;
   } catch (e) {
     console.error(e);
@@ -303,7 +304,6 @@ export const getEuLabelWinesByWineType = async (wineType: string) => {
   querySnapshot.forEach((doc) => {
     if (doc.data().euLabels.length > 0) {
       doc.data().euLabels.forEach((label: EuLabelInterface) => {
-        console.log(wineType, " / ", label.typeOfWine);
         if (
           label.typeOfWine.toLocaleLowerCase() === wineType.toLocaleLowerCase()
         ) {
@@ -318,7 +318,6 @@ export const getEuLabelWinesByWineType = async (wineType: string) => {
 
 export const getWineTypes = async () => {
   try {
-    console.log("getting wine types");
     const docRef = doc(db, "utils", "systemVariables");
     const docSnap = await getDoc(docRef);
     const data = docSnap.data();

@@ -33,14 +33,6 @@ export const EuLabelGeneralViewer = ({
                   General Information
                 </Text>
               </Container>
-              {/* <Container intent="grid-5" gap="large" className="">
-                <EuLabelItem
-                  title="Reference Number"
-                  variant="surface"
-                  value={item.referenceNumber}
-                />
-                <EuLabelItem title="UPC" value={item.upc} variant="surface" />
-              </Container> */}
               <Container intent="grid-4" gap="large">
                 <EuLabelItem
                   title="Wine Name"

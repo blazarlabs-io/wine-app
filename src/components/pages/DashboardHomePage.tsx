@@ -24,9 +24,9 @@ export const DashboardHomePage = () => {
         Object.keys(data?.generalInfo).length === 0
       ) {
         updateWineryForm({
-          title: "Edit Winery Details",
+          title: "Register Winery Details",
           description:
-            "Please fill in the form to edit your winery details. All fields marked with * are mandatory.",
+            "Please fill in the form to register your winery details. All fields marked with * are mandatory.",
           isEditing: true,
           formData: wineryGeneralInfo,
         });

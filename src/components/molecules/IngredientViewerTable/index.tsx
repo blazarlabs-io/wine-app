@@ -51,7 +51,7 @@ export const IngredientViewerTable = ({
                     className="flex items-center justify-between gap-[8px] w-full"
                   >
                     <Text
-                      intent="p2"
+                      intent="p1"
                       variant="dim"
                       className="font-semibold text-primary-light/80"
                     >

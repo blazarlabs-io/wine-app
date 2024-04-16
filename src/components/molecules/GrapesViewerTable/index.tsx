@@ -35,10 +35,10 @@ export const GrapesViewerTable = ({
               // className="border border-primary-light rounded-full px-[12px] py-[6px]"
               className="flex items-center justify-between gap-[8px]  w-full"
             >
-              <Text intent="p2" variant="dim">
+              <Text intent="p1" variant="dim">
                 {item.name}
               </Text>
-              <Text intent="p2" variant="dim">
+              <Text intent="p1" variant="dim">
                 {item.percentage + "%"}
               </Text>
             </div>

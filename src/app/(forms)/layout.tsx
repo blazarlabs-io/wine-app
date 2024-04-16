@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { ProtectedPage, CleanLayout } from "@/components";
-import { WineryProvider } from "@/context/wineryContext";
 import "../globals.css";
 
 export const metadata: Metadata = {

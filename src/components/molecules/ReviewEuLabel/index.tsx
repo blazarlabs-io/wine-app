@@ -27,11 +27,10 @@ export const ReviewEuLabel = ({
       >
         <Container intent="flexColLeft" gap="medium">
           <Text intent="h3" className="font-bold">
-            EU Label Registration
+            Add Wine
           </Text>
           <Text intent="p1" variant="dim">
-            The following QR code and url will be used to identify your EU only
-            label.
+            Add wine details and generate EU label QR code for your wine.
           </Text>
         </Container>
         <QRCode

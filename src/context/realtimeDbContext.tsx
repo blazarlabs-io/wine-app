@@ -102,6 +102,7 @@ export const RealtimeDbProvider = ({
         updateWineryGeneralInfo(generalInfo);
         regiterWineryEuLabels(wineryData.euLabels as EuLabelInterface[]);
         setTier(wineryData.tier as string);
+        console.log("winery level", wineryData.level as string);
         setLevel(wineryData.level as string);
       }
     });

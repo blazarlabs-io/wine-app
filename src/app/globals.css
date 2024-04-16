@@ -42,6 +42,10 @@ select {
   }
 }
 
+.PhoneInputInput {
+  background-color: theme("colors.surface.dark") !important;
+}
+
 /* SCROLL STYLING */
 /* width */
 ::-webkit-scrollbar {
