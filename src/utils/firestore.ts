@@ -3,7 +3,7 @@ import {
   DocumentData,
   arrayUnion,
   collection,
-  collectionGroup,
+  where,
   doc,
   getDoc,
   getDocs,
@@ -50,12 +50,32 @@ export const registerWineryGeneralInfoToDb = async (
   setDoc(docRef, { generalInfo: wineryData }, { merge: true });
 };
 
-export const registerWineryEuLabel = async (
+export const regiterWineryEuLabel = async (
   docId: string,
   euLabel: EuLabelInterface
 ) => {
   const docRef = doc(db, "wineries", docId as string);
   await updateDoc(docRef, { euLabels: arrayUnion(euLabel) });
+};
+
+export const updateWineryEuLabel = async (
+  docId: string,
+  euLabel: EuLabelInterface
+) => {
+  const docRef = doc(db, "wineries", docId as string);
+  const docSnap = await getDoc(docRef);
+  const data = docSnap.data();
+  const euLabels = data?.euLabels;
+  if (euLabels) {
+    const updatedEuLabels = euLabels.map((label: EuLabelInterface) => {
+      if (label.referenceNumber === euLabel.referenceNumber) {
+        return euLabel;
+      } else {
+        return label;
+      }
+    });
+    await updateDoc(docRef, { euLabels: updatedEuLabels });
+  }
 };
 
 export const uploadLogoToStorage = async (

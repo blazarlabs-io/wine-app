@@ -12,7 +12,6 @@ import {
   CheckBox,
 } from "@/components";
 import { Icon } from "@iconify/react";
-import { useWinery } from "@/context/wineryContext";
 import {
   countryList,
   bottleSizeList,
@@ -23,14 +22,15 @@ import { EuLabelInterface, ItemWithPercentage } from "@/typings/winery";
 import { dateToTimestamp } from "@/utils/dateToTimestamp";
 import { useEffect, useRef, useState } from "react";
 import { generateId } from "@/utils/generateId";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { useAppState } from "@/context/appStateContext";
 import { getQrCodeImageData } from "@/utils/getQrCodeImageData";
 import React from "react";
 import {
-  registerWineryEuLabel,
+  regiterWineryEuLabel,
   uploadQrCodeToStorage,
   uploadWineImageToStorage,
+  updateWineryEuLabel,
 } from "@/utils/firestore";
 import { useAuth } from "@/context/authContext";
 import { euLabelUrlComposer } from "@/utils/euLabelUrlComposer";
@@ -42,17 +42,14 @@ import { functions } from "@/lib/firebase/client";
 import { firebaseAuthErrors } from "@/utils/firebaseAuthErrors";
 import { generateEuLabelHtml } from "@/utils/generateEuLabelHtml";
 import { fileToBase64 } from "@/utils/fileToBase64";
+import { useForms } from "@/context/FormsContext";
+import { useToast } from "@/context/toastContext";
 
-export const RegisterEuLabel = () => {
+export const EuLabelForm = () => {
   const router = useRouter();
   const { updateAppLoading } = useAppState();
-  const {
-    formTitle,
-    formDescription,
-    updateSingleEuLabel,
-    singleEuLabel,
-    isEditing,
-  } = useWinery();
+
+  const { euLabelForm, updateEuLabelForm } = useForms();
 
   const { updateModal } = useModal();
   const inputFileRef = useRef<any>(null);
@@ -62,115 +59,135 @@ export const RegisterEuLabel = () => {
   const initialized = useRef(false);
   const { user } = useAuth();
 
+  const { updateToast } = useToast();
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showReview, setShowReview] = useState<boolean>(false);
   const [qrCodeFile, setQrCodeFile] = useState<string | null>(null);
-  const [wineImageFile, setWineImageFile] = useState<File | null>(null);
 
   const sendEmail = httpsCallable(functions, "sendEmail");
 
   useEffect(() => {
-    updateAppLoading(false);
-
-    if (!initialized.current) {
+    if (!initialized.current && !euLabelForm.isEditing) {
       const ref = generateId(5) + "-" + dateToTimestamp();
-      console.log(ref);
-      singleEuLabel.referenceNumber = ref;
-      updateSingleEuLabel({
-        ...(singleEuLabel as EuLabelInterface),
-        referenceNumber: ref,
-        wineryName: wineryGeneralInfo.name,
+      console.log("Generating new EU LABEL", ref);
+      euLabelForm.formData.referenceNumber = ref;
+      updateEuLabelForm({
+        ...euLabelForm,
+        formData: {
+          ...euLabelForm.formData,
+          referenceNumber: ref,
+          wineryName: wineryGeneralInfo.name,
+        },
+      });
+    } else {
+      console.log("Updating EU LABEL", euLabelForm);
+      updateEuLabelForm({
+        ...euLabelForm,
+        formData: {
+          ...euLabelForm.formData,
+          wineryName: wineryGeneralInfo.name,
+        },
       });
     }
+    updateAppLoading(false);
   }, []);
 
   const handleRegistration = () => {
     setIsLoading(true);
     updateAppLoading(true);
-    uploadQrCodeToStorage(
-      user?.uid as string,
-      getQrCodeImageData("euLabelQrCode"),
-      singleEuLabel.referenceNumber,
-      (url: string) => {
-        console.log("QRCODE URL", url);
-        singleEuLabel.qrCodeUrl = url;
-        uploadWineImageToStorage(
-          user?.uid as string,
-          wineImageFile as File,
-          singleEuLabel.referenceNumber,
-          (url: string) => {
-            singleEuLabel.wineImageUrl = url;
-            registerWineryEuLabel(user?.uid as string, singleEuLabel);
-            setIsLoading(false);
-            sendEmail({
-              data: {
-                from: "it@blazarlabs.io",
-                to: user?.email,
-                subject: "Your new EU label has been created!",
-                text: `Congratulations, you have successfuly registered a new EU-Only Label.`,
-                html: generateEuLabelHtml(
-                  euLabelUrlComposer(singleEuLabel.referenceNumber),
-                  singleEuLabel.qrCodeUrl
-                ),
-              },
-            })
-              .then((result) => {
-                // Read result of the Cloud Function.
-                /** @type {any} */
-                const data = result.data;
-                const sanitizedMessage: any = data;
+    if (!euLabelForm.isEditing) {
+      uploadQrCodeToStorage(
+        user?.uid as string,
+        getQrCodeImageData("euLabelQrCode"),
+        euLabelForm.formData.referenceNumber,
+        (url: string) => {
+          console.log("QRCODE URL", url);
+          euLabelForm.formData.qrCodeUrl = url;
+          regiterWineryEuLabel(user?.uid as string, euLabelForm.formData);
+          setIsLoading(false);
+          sendEmail({
+            data: {
+              from: "it@blazarlabs.io",
+              to: user?.email,
+              subject: "Your new EU label has been created!",
+              text: `Congratulations, you have successfuly registered a new EU-Only Label.`,
+              html: generateEuLabelHtml(
+                euLabelUrlComposer(euLabelForm.formData.referenceNumber),
+                euLabelForm.formData.qrCodeUrl
+              ),
+            },
+          })
+            .then((result) => {
+              // Read result of the Cloud Function.
+              /** @type {any} */
+              const data = result.data;
+              const sanitizedMessage: any = data;
 
-                updateAppLoading(false);
-                updateModal({
-                  show: true,
-                  title: "Success",
-                  description:
-                    "Your EU Label has been registered, and an email has been sent to you with the details.",
-                  action: {
-                    label: "OK",
-                    onAction: () => {
-                      updateModal({
-                        show: false,
-                        title: "",
-                        description: "",
-                        action: { label: "", onAction: () => {} },
-                      }),
-                        router.replace("/home");
-                    },
+              updateAppLoading(false);
+              updateModal({
+                show: true,
+                title: "Success",
+                description:
+                  "Your EU Label has been registered, and an email has been sent to you with the details.",
+                action: {
+                  label: "OK",
+                  onAction: () => {
+                    updateModal({
+                      show: false,
+                      title: "",
+                      description: "",
+                      action: { label: "", onAction: () => {} },
+                    });
+                    router.replace("/home");
                   },
-                });
-              })
-              .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-
-                updateAppLoading(false);
-                updateModal({
-                  show: true,
-                  title: "Error",
-                  description: firebaseAuthErrors[errorCode] as string,
-                  action: {
-                    label: "OK",
-                    onAction: () =>
-                      updateModal({
-                        show: false,
-                        title: "",
-                        description: "",
-                        action: { label: "", onAction: () => {} },
-                      }),
-                  },
-                });
+                },
               });
-          }
-        );
-      }
-    );
+            })
+            .catch((error) => {
+              const errorCode = error.code;
+              const errorMessage = error.message;
+
+              updateAppLoading(false);
+              updateModal({
+                show: true,
+                title: "Error",
+                description: firebaseAuthErrors[errorCode] as string,
+                action: {
+                  label: "OK",
+                  onAction: () => {
+                    updateModal({
+                      show: false,
+                      title: "",
+                      description: "",
+                      action: { label: "", onAction: () => {} },
+                    });
+                  },
+                },
+              });
+            });
+        }
+      );
+    } else {
+      updateWineryEuLabel(user?.uid as string, euLabelForm.formData);
+      updateToast({
+        show: true,
+        status: "success",
+        message: "EU Label updated successfully",
+        timeout: 4000,
+      });
+      router.replace("/home");
+    }
   };
 
   const handleSubmit = (event: any) => {
     console.log("submitting");
     event.preventDefault();
-    setShowReview(true);
+    if (!euLabelForm.isEditing) {
+      setShowReview(true);
+    } else {
+      handleRegistration();
+    }
   };
 
   const createQrCodeFile = async () => {
@@ -178,20 +195,39 @@ export const RegisterEuLabel = () => {
       r.blob()
     );
     return new Promise<File>((resolve) => {
-      const file = new File([blob], singleEuLabel.referenceNumber + ".png", {
-        type: "image/png",
-      });
+      const file = new File(
+        [blob],
+        euLabelForm.formData.referenceNumber + ".png",
+        {
+          type: "image/png",
+        }
+      );
       resolve(file);
     });
+  };
+
+  const handleWineImageUpload = (wineImageFile: File) => {
+    uploadWineImageToStorage(
+      user?.uid as string,
+      wineImageFile as File,
+      euLabelForm.formData.referenceNumber,
+      (url: string) => {
+        updateEuLabelForm({
+          ...euLabelForm,
+          formData: {
+            ...euLabelForm.formData,
+            wineImageUrl: url,
+          },
+        });
+      }
+    );
   };
 
   useEffect(() => {
     if (showReview) {
       createQrCodeFile()
         .then((file: File) => {
-          // console.log("FILE", file);
           fileToBase64(file).then((base64: any) => {
-            // console.log("BASE64", base64);
             setQrCodeFile(base64);
           });
         })
@@ -210,7 +246,7 @@ export const RegisterEuLabel = () => {
     >
       {showReview && (
         <ReviewEuLabel
-          qrCodeValue={euLabelUrlComposer(singleEuLabel.referenceNumber)}
+          qrCodeValue={euLabelUrlComposer(euLabelForm.formData.referenceNumber)}
           qrCodeId={"euLabelQrCode"}
           onAccept={() => {
             handleRegistration();
@@ -226,9 +262,9 @@ export const RegisterEuLabel = () => {
               icon="bi:qr-code"
               className="w-[56px] h-[56px] text-primary-light"
             />
-            <Text intent="h2">{formTitle}</Text>
+            <Text intent="h2">{euLabelForm.title}</Text>
           </Container>
-          <Text variant="dim">{formDescription}</Text>
+          <Text variant="dim">{euLabelForm.description}</Text>
         </Container>
       </Container>
       <div className="h-[1px] bg-on-surface-dark/50 w-full my-[24px]" />
@@ -243,31 +279,20 @@ export const RegisterEuLabel = () => {
           <Container intent="grid-3" gap="medium">
             <Container intent="flexColLeft" gap="xsmall">
               <Text intent="p1" variant="dim">
-                Reference Number
-              </Text>
-              <Container
-                intent="flexRowLeft"
-                gap="small"
-                className="min-h-[48px] max-h-[48px]"
-              >
-                <Text intent="p1" variant="normal">
-                  {singleEuLabel.referenceNumber}
-                </Text>
-              </Container>
-            </Container>
-            <Container intent="flexColLeft" gap="xsmall">
-              <Text intent="p1" variant="dim">
                 GTIN (UPC)
               </Text>
               <input
                 type="text"
                 placeholder=""
-                value={singleEuLabel.upc}
+                value={euLabelForm.formData.upc}
                 onChange={(event: any) => {
-                  singleEuLabel.upc = event.target.value;
-                  updateSingleEuLabel({
-                    ...(singleEuLabel as EuLabelInterface),
-                    upc: singleEuLabel.upc,
+                  euLabelForm.formData.upc = event.target.value;
+                  updateEuLabelForm({
+                    ...euLabelForm,
+                    formData: {
+                      ...euLabelForm.formData,
+                      upc: euLabelForm.formData.upc,
+                    },
                   });
                 }}
                 className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
@@ -312,7 +337,7 @@ export const RegisterEuLabel = () => {
                       },
                     });
                   } else {
-                    setWineImageFile(event.target.files[0]);
+                    handleWineImageUpload(event.target.files[0]);
                   }
                 }}
                 className="text-primary-light file:border-2 file:border-primary-light file:px-[36px] file:py-[10px] file:rounded-lg file:bg-transparent file:text-primary-light file:font-semibold transition-all duration-300 ease-in-out"
@@ -330,14 +355,8 @@ export const RegisterEuLabel = () => {
                 readOnly
                 type="text"
                 placeholder=""
-                value={singleEuLabel.wineryName}
-                onChange={(event: any) => {
-                  singleEuLabel.wineryName = event.target.value;
-                  updateSingleEuLabel({
-                    ...(singleEuLabel as EuLabelInterface),
-                    wineryName: singleEuLabel.wineryName,
-                  });
-                }}
+                value={euLabelForm.formData.wineryName}
+                onChange={(event: any) => {}}
                 className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
               />
             </Container>
@@ -349,12 +368,16 @@ export const RegisterEuLabel = () => {
                 required
                 type="text"
                 placeholder=""
-                value={singleEuLabel.wineCollectionName}
+                value={euLabelForm.formData.wineCollectionName}
                 onChange={(event: any) => {
-                  singleEuLabel.wineCollectionName = event.target.value;
-                  updateSingleEuLabel({
-                    ...(singleEuLabel as EuLabelInterface),
-                    wineCollectionName: singleEuLabel.wineCollectionName,
+                  euLabelForm.formData.wineCollectionName = event.target.value;
+                  updateEuLabelForm({
+                    ...euLabelForm,
+                    formData: {
+                      ...euLabelForm.formData,
+                      wineCollectionName:
+                        euLabelForm.formData.wineCollectionName,
+                    },
                   });
                 }}
                 className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
@@ -368,12 +391,15 @@ export const RegisterEuLabel = () => {
                 required
                 type="number"
                 placeholder=""
-                value={singleEuLabel.harvestYear}
+                value={euLabelForm.formData.harvestYear}
                 onChange={(event: any) => {
-                  singleEuLabel.harvestYear = event.target.value;
-                  updateSingleEuLabel({
-                    ...(singleEuLabel as EuLabelInterface),
-                    harvestYear: singleEuLabel.harvestYear,
+                  euLabelForm.formData.harvestYear = event.target.value;
+                  updateEuLabelForm({
+                    ...euLabelForm,
+                    formData: {
+                      ...euLabelForm.formData,
+                      harvestYear: euLabelForm.formData.harvestYear,
+                    },
                   });
                 }}
                 className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
@@ -391,12 +417,15 @@ export const RegisterEuLabel = () => {
                 isRequired
                 items={countryList}
                 fullWidth
-                selectedValue={singleEuLabel.country}
+                selectedValue={euLabelForm.formData.country}
                 onSelect={(data: string) => {
-                  singleEuLabel.country = data;
-                  updateSingleEuLabel({
-                    ...(singleEuLabel as EuLabelInterface),
-                    country: singleEuLabel.country,
+                  euLabelForm.formData.country = data;
+                  updateEuLabelForm({
+                    ...euLabelForm,
+                    formData: {
+                      ...euLabelForm.formData,
+                      country: euLabelForm.formData.country,
+                    },
                   });
                 }}
               />
@@ -409,12 +438,15 @@ export const RegisterEuLabel = () => {
                 items={typeOfWineList}
                 isRequired
                 fullWidth
-                selectedValue={singleEuLabel.typeOfWine}
+                selectedValue={euLabelForm.formData.typeOfWine}
                 onSelect={(data: string) => {
-                  singleEuLabel.typeOfWine = data;
-                  updateSingleEuLabel({
-                    ...(singleEuLabel as EuLabelInterface),
-                    typeOfWine: singleEuLabel.typeOfWine,
+                  euLabelForm.formData.typeOfWine = data;
+                  updateEuLabelForm({
+                    ...euLabelForm,
+                    formData: {
+                      ...euLabelForm.formData,
+                      typeOfWine: euLabelForm.formData.typeOfWine,
+                    },
                   });
                 }}
               />
@@ -428,12 +460,15 @@ export const RegisterEuLabel = () => {
                 items={bottleSizeList}
                 isRequired
                 fullWidth
-                selectedValue={singleEuLabel.bottleSize}
+                selectedValue={euLabelForm.formData.bottleSize}
                 onSelect={(data: string) => {
-                  singleEuLabel.bottleSize = data;
-                  updateSingleEuLabel({
-                    ...(singleEuLabel as EuLabelInterface),
-                    bottleSize: singleEuLabel.bottleSize,
+                  euLabelForm.formData.bottleSize = data;
+                  updateEuLabelForm({
+                    ...euLabelForm,
+                    formData: {
+                      ...euLabelForm.formData,
+                      bottleSize: euLabelForm.formData.bottleSize,
+                    },
                   });
                 }}
               />
@@ -450,12 +485,15 @@ export const RegisterEuLabel = () => {
                 items={colourOfWineList}
                 isRequired
                 fullWidth
-                selectedValue={singleEuLabel.colourOfWine}
+                selectedValue={euLabelForm.formData.colourOfWine}
                 onSelect={(data: string) => {
-                  singleEuLabel.colourOfWine = data;
-                  updateSingleEuLabel({
-                    ...(singleEuLabel as EuLabelInterface),
-                    colourOfWine: singleEuLabel.colourOfWine,
+                  euLabelForm.formData.colourOfWine = data;
+                  updateEuLabelForm({
+                    ...euLabelForm,
+                    formData: {
+                      ...euLabelForm.formData,
+                      colourOfWine: euLabelForm.formData.colourOfWine,
+                    },
                   });
                 }}
               />
@@ -469,12 +507,15 @@ export const RegisterEuLabel = () => {
                   required
                   type="number"
                   placeholder=""
-                  value={singleEuLabel.alcoholLevel}
+                  value={euLabelForm.formData.alcoholLevel}
                   onChange={(event: any) => {
-                    singleEuLabel.alcoholLevel = event.target.value;
-                    updateSingleEuLabel({
-                      ...(singleEuLabel as EuLabelInterface),
-                      alcoholLevel: singleEuLabel.alcoholLevel,
+                    euLabelForm.formData.alcoholLevel = event.target.value;
+                    updateEuLabelForm({
+                      ...euLabelForm,
+                      formData: {
+                        ...euLabelForm.formData,
+                        alcoholLevel: euLabelForm.formData.alcoholLevel,
+                      },
                     });
                   }}
                   className="w-full col-span-2 text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
@@ -495,14 +536,17 @@ export const RegisterEuLabel = () => {
               <input
                 type="text"
                 placeholder=""
-                value={singleEuLabel.controlledDesignationOfOrigin}
+                value={euLabelForm.formData.controlledDesignationOfOrigin}
                 onChange={(event: any) => {
-                  singleEuLabel.controlledDesignationOfOrigin =
+                  euLabelForm.formData.controlledDesignationOfOrigin =
                     event.target.value;
-                  updateSingleEuLabel({
-                    ...(singleEuLabel as EuLabelInterface),
-                    controlledDesignationOfOrigin:
-                      singleEuLabel.controlledDesignationOfOrigin,
+                  updateEuLabelForm({
+                    ...euLabelForm,
+                    formData: {
+                      ...euLabelForm.formData,
+                      controlledDesignationOfOrigin:
+                        euLabelForm.formData.controlledDesignationOfOrigin,
+                    },
                   });
                 }}
                 className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
@@ -531,16 +575,19 @@ export const RegisterEuLabel = () => {
               <TextAndNumberInputCrud
                 placeholder=""
                 required={true}
-                initialItems={singleEuLabel.ingredients.grapes.list}
+                initialItems={euLabelForm.formData.ingredients.grapes.list}
                 onItemsChange={(items: ItemWithPercentage[]) => {
-                  singleEuLabel.ingredients.grapes.list = items;
-                  updateSingleEuLabel({
-                    ...(singleEuLabel as EuLabelInterface),
-                    ingredients: {
-                      ...singleEuLabel.ingredients,
-                      grapes: {
-                        has: true,
-                        list: items,
+                  euLabelForm.formData.ingredients.grapes.list = items;
+                  updateEuLabelForm({
+                    ...euLabelForm,
+                    formData: {
+                      ...euLabelForm.formData,
+                      ingredients: {
+                        ...euLabelForm.formData.ingredients,
+                        grapes: {
+                          has: true,
+                          list: items,
+                        },
                       },
                     },
                   });
@@ -554,18 +601,25 @@ export const RegisterEuLabel = () => {
               <TextInputCrud
                 label="Name"
                 placeholder="Malic Acid"
-                initialItems={singleEuLabel.ingredients.acidityRegulators.list}
+                initialItems={
+                  euLabelForm.formData.ingredients.acidityRegulators.list
+                }
                 onItemsChange={(items: string[]) => {
-                  singleEuLabel.ingredients.acidityRegulators.list = items;
-                  updateSingleEuLabel({
-                    ...(singleEuLabel as EuLabelInterface),
-                    ingredients: {
-                      ...singleEuLabel.ingredients,
-                      acidityRegulators: {
-                        allergens:
-                          singleEuLabel.ingredients.acidityRegulators.allergens,
-                        has: true,
-                        list: items,
+                  euLabelForm.formData.ingredients.acidityRegulators.list =
+                    items;
+                  updateEuLabelForm({
+                    ...euLabelForm,
+                    formData: {
+                      ...euLabelForm.formData,
+                      ingredients: {
+                        ...euLabelForm.formData.ingredients,
+                        acidityRegulators: {
+                          allergens:
+                            euLabelForm.formData.ingredients.acidityRegulators
+                              .allergens,
+                          has: true,
+                          list: items,
+                        },
                       },
                     },
                   });
@@ -584,20 +638,25 @@ export const RegisterEuLabel = () => {
                 label="Sulphites"
                 checked={false}
                 onCheck={(state: boolean) => {
-                  updateSingleEuLabel({
-                    ...(singleEuLabel as EuLabelInterface),
-                    ingredients: {
-                      ...singleEuLabel.ingredients,
-                      preservatives: {
-                        has: singleEuLabel.ingredients.preservatives.has,
-                        list: singleEuLabel.ingredients.preservatives.list,
-                        allergens: {
-                          has: state,
-                          list: [
-                            ...singleEuLabel.ingredients.preservatives.allergens
-                              .list,
-                            "Sulphites (Allergen)",
-                          ],
+                  updateEuLabelForm({
+                    ...euLabelForm,
+                    formData: {
+                      ...euLabelForm.formData,
+                      ingredients: {
+                        ...euLabelForm.formData.ingredients,
+                        preservatives: {
+                          has: euLabelForm.formData.ingredients.preservatives
+                            .has,
+                          list: euLabelForm.formData.ingredients.preservatives
+                            .list,
+                          allergens: {
+                            has: state,
+                            list: [
+                              ...euLabelForm.formData.ingredients.preservatives
+                                .allergens.list,
+                              "Sulphites (Allergen)",
+                            ],
+                          },
                         },
                       },
                     },
@@ -607,17 +666,23 @@ export const RegisterEuLabel = () => {
               <TextInputCrud
                 label="Name"
                 placeholder="Sulphites"
-                initialItems={singleEuLabel.ingredients.preservatives.list}
+                initialItems={
+                  euLabelForm.formData.ingredients.preservatives.list
+                }
                 onItemsChange={(items: string[]) => {
-                  updateSingleEuLabel({
-                    ...(singleEuLabel as EuLabelInterface),
-                    ingredients: {
-                      ...singleEuLabel.ingredients,
-                      preservatives: {
-                        allergens:
-                          singleEuLabel.ingredients.preservatives.allergens,
-                        has: true,
-                        list: items,
+                  updateEuLabelForm({
+                    ...euLabelForm,
+                    formData: {
+                      ...euLabelForm.formData,
+                      ingredients: {
+                        ...euLabelForm.formData.ingredients,
+                        preservatives: {
+                          allergens:
+                            euLabelForm.formData.ingredients.preservatives
+                              .allergens,
+                          has: true,
+                          list: items,
+                        },
                       },
                     },
                   });
@@ -633,20 +698,25 @@ export const RegisterEuLabel = () => {
                   label="Isinglass"
                   checked={false}
                   onCheck={(state: boolean) => {
-                    updateSingleEuLabel({
-                      ...(singleEuLabel as EuLabelInterface),
-                      ingredients: {
-                        ...singleEuLabel.ingredients,
-                        finingAgents: {
-                          has: singleEuLabel.ingredients.finingAgents.has,
-                          list: singleEuLabel.ingredients.finingAgents.list,
-                          allergens: {
-                            has: state,
-                            list: [
-                              ...singleEuLabel.ingredients.finingAgents
-                                .allergens.list,
-                              "Isinglass (Fish Allergen)",
-                            ],
+                    updateEuLabelForm({
+                      ...euLabelForm,
+                      formData: {
+                        ...euLabelForm.formData,
+                        ingredients: {
+                          ...euLabelForm.formData.ingredients,
+                          finingAgents: {
+                            has: euLabelForm.formData.ingredients.finingAgents
+                              .has,
+                            list: euLabelForm.formData.ingredients.finingAgents
+                              .list,
+                            allergens: {
+                              has: state,
+                              list: [
+                                ...euLabelForm.formData.ingredients.finingAgents
+                                  .allergens.list,
+                                "Isinglass (Fish Allergen)",
+                              ],
+                            },
                           },
                         },
                       },
@@ -657,20 +727,25 @@ export const RegisterEuLabel = () => {
                   label="Casein"
                   checked={false}
                   onCheck={(state: boolean) => {
-                    updateSingleEuLabel({
-                      ...(singleEuLabel as EuLabelInterface),
-                      ingredients: {
-                        ...singleEuLabel.ingredients,
-                        finingAgents: {
-                          has: singleEuLabel.ingredients.finingAgents.has,
-                          list: singleEuLabel.ingredients.finingAgents.list,
-                          allergens: {
-                            has: state,
-                            list: [
-                              ...singleEuLabel.ingredients.finingAgents
-                                .allergens.list,
-                              "Casein (Milk Allergen)",
-                            ],
+                    updateEuLabelForm({
+                      ...euLabelForm,
+                      formData: {
+                        ...euLabelForm.formData,
+                        ingredients: {
+                          ...euLabelForm.formData.ingredients,
+                          finingAgents: {
+                            has: euLabelForm.formData.ingredients.finingAgents
+                              .has,
+                            list: euLabelForm.formData.ingredients.finingAgents
+                              .list,
+                            allergens: {
+                              has: state,
+                              list: [
+                                ...euLabelForm.formData.ingredients.finingAgents
+                                  .allergens.list,
+                                "Casein (Milk Allergen)",
+                              ],
+                            },
                           },
                         },
                       },
@@ -681,17 +756,23 @@ export const RegisterEuLabel = () => {
               <TextInputCrud
                 label="Name"
                 placeholder="Potassium sorbate"
-                initialItems={singleEuLabel.ingredients.finingAgents.list}
+                initialItems={
+                  euLabelForm.formData.ingredients.finingAgents.list
+                }
                 onItemsChange={(items: string[]) => {
-                  updateSingleEuLabel({
-                    ...(singleEuLabel as EuLabelInterface),
-                    ingredients: {
-                      ...singleEuLabel.ingredients,
-                      finingAgents: {
-                        allergens:
-                          singleEuLabel.ingredients.finingAgents.allergens,
-                        has: true,
-                        list: items,
+                  updateEuLabelForm({
+                    ...euLabelForm,
+                    formData: {
+                      ...euLabelForm.formData,
+                      ingredients: {
+                        ...euLabelForm.formData.ingredients,
+                        finingAgents: {
+                          allergens:
+                            euLabelForm.formData.ingredients.finingAgents
+                              .allergens,
+                          has: true,
+                          list: items,
+                        },
                       },
                     },
                   });
@@ -710,18 +791,23 @@ export const RegisterEuLabel = () => {
                 <TextInputCrud
                   label="Name"
                   placeholder="Arabic Gum"
-                  initialItems={singleEuLabel.ingredients.stabilizers.list}
+                  initialItems={
+                    euLabelForm.formData.ingredients.stabilizers.list
+                  }
                   onItemsChange={(items: string[]) => {
-                    singleEuLabel.ingredients.stabilizers.list = items;
-                    updateSingleEuLabel({
-                      ...(singleEuLabel as EuLabelInterface),
-                      ingredients: {
-                        ...singleEuLabel.ingredients,
-                        stabilizers: {
-                          allergens:
-                            singleEuLabel.ingredients.stabilizers.allergens,
-                          has: true,
-                          list: items,
+                    updateEuLabelForm({
+                      ...euLabelForm,
+                      formData: {
+                        ...euLabelForm.formData,
+                        ingredients: {
+                          ...euLabelForm.formData.ingredients,
+                          stabilizers: {
+                            allergens:
+                              euLabelForm.formData.ingredients.stabilizers
+                                .allergens,
+                            has: true,
+                            list: items,
+                          },
                         },
                       },
                     });
@@ -738,18 +824,23 @@ export const RegisterEuLabel = () => {
                 <TextInputCrud
                   label="Name"
                   placeholder="Gallic Acid (GA)"
-                  initialItems={singleEuLabel.ingredients.antioxidants.list}
+                  initialItems={
+                    euLabelForm.formData.ingredients.antioxidants.list
+                  }
                   onItemsChange={(items: string[]) => {
-                    singleEuLabel.ingredients.antioxidants.list = items;
-                    updateSingleEuLabel({
-                      ...(singleEuLabel as EuLabelInterface),
-                      ingredients: {
-                        ...singleEuLabel.ingredients,
-                        antioxidants: {
-                          allergens:
-                            singleEuLabel.ingredients.antioxidants.allergens,
-                          has: true,
-                          list: items,
+                    updateEuLabelForm({
+                      ...euLabelForm,
+                      formData: {
+                        ...euLabelForm.formData,
+                        ingredients: {
+                          ...euLabelForm.formData.ingredients,
+                          antioxidants: {
+                            allergens:
+                              euLabelForm.formData.ingredients.antioxidants
+                                .allergens,
+                            has: true,
+                            list: items,
+                          },
                         },
                       },
                     });
@@ -770,14 +861,17 @@ export const RegisterEuLabel = () => {
                 type="number"
                 required
                 placeholder=""
-                value={singleEuLabel.ingredients.sugars}
+                value={euLabelForm.formData.ingredients.sugars}
                 onChange={(event: any) => {
-                  singleEuLabel.ingredients.sugars = event.target.value;
-                  updateSingleEuLabel({
-                    ...(singleEuLabel as EuLabelInterface),
-                    ingredients: {
-                      ...singleEuLabel.ingredients,
-                      sugars: singleEuLabel.ingredients.sugars,
+                  euLabelForm.formData.ingredients.sugars = event.target.value;
+                  updateEuLabelForm({
+                    ...euLabelForm,
+                    formData: {
+                      ...euLabelForm.formData,
+                      ingredients: {
+                        ...euLabelForm.formData.ingredients,
+                        sugars: euLabelForm.formData.ingredients.sugars,
+                      },
                     },
                   });
                 }}
@@ -792,7 +886,9 @@ export const RegisterEuLabel = () => {
           <Button
             intent="secondary"
             size="medium"
-            onClick={() => router.back()}
+            onClick={() => {
+              router.back();
+            }}
           >
             Cancel
           </Button>
@@ -803,7 +899,7 @@ export const RegisterEuLabel = () => {
             onClick={() => {}}
           >
             {!isLoading ? (
-              <>{isEditing ? "Update" : "Register"}</>
+              <>{"Save"}</>
             ) : (
               <Container intent="flexRowCenter">
                 <Icon icon="eos-icons:loading" className="w-[16px] h-[16px]" />

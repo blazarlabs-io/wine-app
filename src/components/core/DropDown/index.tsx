@@ -41,14 +41,14 @@ export const DropDown = ({
         required={isRequired ? true : false}
         className={classNames(
           className,
-          "w-full h-full px-[8px] bg-surface-dark border-none rounded-md text-on-surface disabled:text-on-surface/40 cursor-pointer"
+          "w-full h-full capitalize px-[8px] bg-surface-dark border-none rounded-md text-on-surface disabled:text-on-surface/40 cursor-pointer"
         )}
       >
         <option value="DEFAULT" disabled selected>
           Select option...
         </option>
         {items.map((item) => (
-          <option key={item} value={item}>
+          <option className="capitalize" key={item} value={item}>
             {item}
           </option>
         ))}

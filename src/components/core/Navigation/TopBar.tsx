@@ -51,8 +51,8 @@ export const TopBar = ({ className }: TopBarProps) => {
       disabled: true,
     },
     {
-      label: "Contacts",
-      key: "contacts",
+      label: "Contact Us",
+      key: "contact-us",
       onClick: () => router.push("/contacts"),
       disabled: true,
     },

@@ -15,11 +15,17 @@ export const WineFooterSection = ({ euLabel }: WineFooterSectionProps) => {
     <>
       {responsiveSize === "mobile" && (
         <>
-          <Container intent="flexRowCenter" px="medium" className="w-full">
-            <div>
-              <EuLabelItem title="UPC" value={euLabel.upc} variant="surface" />
-            </div>
-          </Container>
+          {euLabel.upc.length > 0 && (
+            <Container intent="flexRowCenter" px="medium" className="w-full">
+              <div>
+                <EuLabelItem
+                  title="UPC"
+                  value={euLabel.upc}
+                  variant="surface"
+                />
+              </div>
+            </Container>
+          )}
 
           <Container
             intent="flexColCenter"
@@ -44,17 +50,22 @@ export const WineFooterSection = ({ euLabel }: WineFooterSectionProps) => {
       )}
       {responsiveSize === "desktop" && (
         <>
-          <Container intent="flexRowCenter" className="w-full">
-            <div>
-              <EuLabelItem title="UPC" value={euLabel.upc} variant="surface" />
-            </div>
-          </Container>
+          {euLabel.upc.length > 0 && (
+            <Container intent="flexRowLeft" px="medium" className="w-full">
+              <div>
+                <EuLabelItem
+                  title="UPC"
+                  value={euLabel.upc}
+                  variant="surface"
+                />
+              </div>
+            </Container>
+          )}
 
-          <Container intent="flexRowCenter" px="medium" className="w-full">
+          <Container intent="flexRowLeft" className="w-full">
             <Container
               intent="flexRowBetween"
               py="xsmall"
-              px="xsmall"
               gap="medium"
               className="bg-surface max-w-[400px]"
             >

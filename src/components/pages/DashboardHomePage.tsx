@@ -23,9 +23,6 @@ export const DashboardHomePage = () => {
 
   useEffect(() => {
     getWineryDataDb(user?.uid as string).then((data) => {
-      if (data === null) {
-        // initWineryInDb(user?.uid as string);
-      }
       if (
         data?.generalInfo === null ||
         data?.generalInfo === undefined ||
@@ -33,6 +30,7 @@ export const DashboardHomePage = () => {
       ) {
         updateShowRegisterWinery(true);
         updateIsEditing(false);
+        updateAppLoading(false);
         router.push("/register-winery");
       } else {
         updateAppLoading(false);

@@ -20,13 +20,15 @@ import { useState } from "react";
 
 export interface EuLabelsAccordionProps {
   data: EuLabelInterface[];
+  onEdit: (item: EuLabelInterface) => void;
 }
 
 export interface EuLabelsAccordionItemInterface {
   item: EuLabelInterface;
+  onEdit: () => void;
 }
 
-export const EuLabelsAccordion = ({ data }: EuLabelsAccordionProps) => {
+export const EuLabelsAccordion = ({ data, onEdit }: EuLabelsAccordionProps) => {
   const [active, setActive] = useState(false);
 
   const handleToggle = () => {
@@ -38,7 +40,11 @@ export const EuLabelsAccordion = ({ data }: EuLabelsAccordionProps) => {
         <div className="flex flex-col w-full">
           <div className="flex flex-col items-center min-w-full gap-[12px]">
             {data.map((item) => (
-              <AccordionItem key={item.wineCollectionName} item={item} />
+              <AccordionItem
+                key={item.wineCollectionName}
+                item={item}
+                onEdit={() => onEdit(item)}
+              />
             ))}
           </div>
         </div>
@@ -47,7 +53,7 @@ export const EuLabelsAccordion = ({ data }: EuLabelsAccordionProps) => {
   );
 };
 
-const AccordionItem = ({ item }: EuLabelsAccordionItemInterface) => {
+const AccordionItem = ({ item, onEdit }: EuLabelsAccordionItemInterface) => {
   const [active, setActive] = useState(false);
 
   const handleToggle = () => {
@@ -96,7 +102,12 @@ const AccordionItem = ({ item }: EuLabelsAccordionItemInterface) => {
         </div>
         <div className="flex items-center w-full justify-center">
           <Text intent="p1" className="font-normal text-on-surface">
-            {item.referenceNumber}
+            {item.typeOfWine}
+          </Text>
+        </div>
+        <div className="flex items-center w-full justify-center">
+          <Text intent="p1" className="font-normal text-on-surface">
+            {item.alcoholLevel} %vol
           </Text>
         </div>
         <div className="flex items-center w-full justify-center">
@@ -109,16 +120,12 @@ const AccordionItem = ({ item }: EuLabelsAccordionItemInterface) => {
             {item.country}
           </Text>
         </div>
-        <div className="flex items-center w-full justify-center">
-          <Text intent="p1" className="font-normal text-on-surface">
-            {item.upc}
-          </Text>
-        </div>
 
         <div className="flex items-center w-full gap-[16px] justify-center">
           <Button
             intent="unstyled"
             className="text-surface-dark bg-status-warning px-[16px] py-[14px] rounded-md"
+            onClick={() => onEdit()}
           >
             <Icon
               icon="ant-design:edit-outlined"
