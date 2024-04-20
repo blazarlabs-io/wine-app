@@ -9,17 +9,19 @@ import {
   WineFooterSection,
   WineImage,
   NutritionTable,
+  MapViewerSection,
 } from "@/components";
-import { EuLabelInterface } from "@/typings/winery";
+import { EuLabelInterface, WineryGeneralInfoInterface } from "@/typings/winery";
 import { classNames } from "@/utils/classNames";
 import { useEffect } from "react";
 import { useAppState } from "@/context/appStateContext";
 
 export interface WinePagePropsInterface {
+  generalInfo?: WineryGeneralInfoInterface;
   euLabel: EuLabelInterface | null;
 }
 
-export const WinePage = ({ euLabel }: WinePagePropsInterface) => {
+export const WinePage = ({ generalInfo, euLabel }: WinePagePropsInterface) => {
   const { updateAppLoading } = useAppState();
   useEffect(() => {
     updateAppLoading(false);
@@ -29,7 +31,7 @@ export const WinePage = ({ euLabel }: WinePagePropsInterface) => {
       {euLabel ? (
         <div
           className={classNames(
-            "flex flex-col items-center justify-center gap-[48px] w-full z-[-2] mb-[32px] max-w-[800px]"
+            "flex flex-col items-center justify-center gap-[48px] w-full max-w-[800px]"
           )}
         >
           <WineImage imageUrl={euLabel?.wineImageUrl} />
@@ -43,6 +45,14 @@ export const WinePage = ({ euLabel }: WinePagePropsInterface) => {
               bottleSize: euLabel.bottleSize,
             }}
           />
+
+          <MapViewerSection
+            initialPosition={generalInfo?.wineryHeadquarters as any}
+            initialItemsWithCoordinates={
+              euLabel.ingredients.grapes.listWithCoordinates
+            }
+          />
+
           <WineFooterSection euLabel={euLabel as EuLabelInterface} />
         </div>
       ) : (

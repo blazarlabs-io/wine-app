@@ -18,7 +18,6 @@ export const EuLabelItem = ({
   variant = "normal",
 }: EuLabelItemProps) => {
   const { responsiveSize } = useResponsive();
-  console.log(title, value.length);
   return (
     <Container
       intent={!centered ? "flexColLeft" : "flexColTop"}

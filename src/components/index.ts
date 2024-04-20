@@ -31,6 +31,8 @@ export { EuLabelForm } from "./molecules/EuLabelForm";
 export { TextInputCrud } from "./molecules/Crud/TextInputCrud";
 export { Map as SimpleMapViewer } from "./molecules/MapViewer/SimpleMapViewer/Map";
 export { Map as LocationFinderMap } from "./molecules/MapViewer/LocationFinderMap/Map";
+export { PolygonEditorMap } from "./molecules/Maps/PolygonEditorMap";
+export { PolygonViewerMap } from "./molecules/Maps/PolygonViewerMap";
 export { ReviewEuLabel } from "./molecules/ReviewEuLabel";
 export { IngredientViewer } from "./molecules/IngredientViewer";
 export { AllergenViewer } from "./molecules/AllergenViewer";
@@ -42,11 +44,18 @@ export { GrapesViewer } from "./molecules/GrapesViewer";
 export { GrapesViewerTable } from "./molecules/GrapesViewerTable";
 export { IngredientViewerTable } from "./molecules/IngredientViewerTable";
 export { NutritionTable } from "./molecules/NutritionTable";
+export { TextNumberMapCrud } from "./molecules/Crud/TextNumberMapCrud";
 
 // Layout components
 export { BaseLayout } from "./layouts/Base";
 export { CleanLayout } from "./layouts/Clean";
 export { ExplorerLayout } from "./layouts/Explorer";
+export { WineLayout } from "./layouts/Wine";
+
+// Widgets
+export { MapVineyardsDraw } from "./widgets/MapComponents/MapVineyardsDraw";
+export { MapVineyardsView } from "./widgets/MapComponents/MapVineyardsViewer";
+export { MapVineyardsMultiGrapeView } from "./widgets/MapComponents/MapVineyardsMultiGrapeViewer";
 
 // Sections
 export { HeroSection } from "./sections/Home/HeroSection";
@@ -56,6 +65,7 @@ export { WineHeadSection } from "./sections/Wine/HeadSection";
 export { WineGeneralInformationSection } from "./sections/Wine/GeneralInformationSection";
 export { WineIngredientsSection } from "./sections/Wine/IngredientsSection";
 export { WineFooterSection } from "./sections/Wine/FooterSection";
+export { MapViewerSection } from "./sections/Wine/MapViewerSection";
 
 // Pages
 export { HomePage } from "./pages/HomePage";

@@ -1,4 +1,9 @@
-import { EuLabelInterface, WineryGeneralInfoInterface } from "@/typings/winery";
+import {
+  EuLabelInterface,
+  WineryDataInterface,
+  WineryGeneralInfoInterface,
+  WineryInterface,
+} from "@/typings/winery";
 import {
   DocumentData,
   arrayUnion,
@@ -74,6 +79,7 @@ export const updateWineryEuLabel = async (
         return label;
       }
     });
+    console.log("updateWineryEuLabel", updatedEuLabels);
     await updateDoc(docRef, { euLabels: updatedEuLabels });
   }
 };
@@ -262,7 +268,7 @@ export const getWineryLevelDb = async (tier: string) => {
     const docSnap = await getDoc(docRef);
     const data = docSnap.data();
     const level = data?.level[tier];
-    console.log(tier, data);
+    // console.log(tier, data);
     return level;
   } catch (e) {
     console.error(e);
@@ -325,5 +331,43 @@ export const getWineTypes = async () => {
   } catch (e) {
     console.error(e);
     return null;
+  }
+};
+
+export const overWiteWineryData = async (
+  docId: string,
+  data: WineryInterface
+) => {
+  const docRef = doc(db, "wineries", docId);
+  console.log("overWiteWineryData", docId, data);
+  try {
+    await updateDoc(docRef, { ...data });
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
+};
+
+export const getWineryByWineRefNumber = async (
+  refNumber: string,
+  callback: (data: WineryInterface | null) => void
+) => {
+  const wineries = query(collection(db, "wineries"));
+  try {
+    const querySnapshot = await getDocs(wineries);
+    let winery: WineryInterface | null = null;
+    querySnapshot.forEach((doc) => {
+      if (doc.data().euLabels) {
+        doc.data().euLabels.forEach((label: EuLabelInterface) => {
+          if (label.referenceNumber === refNumber) {
+            winery = doc.data() as WineryInterface;
+          }
+        });
+      }
+    });
+    callback(winery);
+  } catch (e) {
+    console.error(e);
+    callback(null);
   }
 };
