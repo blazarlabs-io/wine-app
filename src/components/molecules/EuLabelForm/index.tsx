@@ -9,6 +9,7 @@ import {
   ReviewEuLabel,
   InfoTooltip,
   TextAndNumberInputCrud,
+  TextNumberMapCrud,
   CheckBox,
   SpinnerLoader,
 } from "@/components";
@@ -19,7 +20,11 @@ import {
   colourOfWineList,
   typeOfWineList,
 } from "@/utils/data";
-import { EuLabelInterface, ItemWithPercentage } from "@/typings/winery";
+import {
+  EuLabelInterface,
+  ItemWithPercentage,
+  WineryInterface,
+} from "@/typings/winery";
 import { dateToTimestamp } from "@/utils/dateToTimestamp";
 import { useEffect, useRef, useState } from "react";
 import { generateId } from "@/utils/generateId";
@@ -32,6 +37,7 @@ import {
   uploadQrCodeToStorage,
   uploadWineImageToStorage,
   updateWineryEuLabel,
+  overWiteWineryData,
 } from "@/utils/firestore";
 import { useAuth } from "@/context/authContext";
 import { euLabelUrlComposer } from "@/utils/euLabelUrlComposer";
@@ -55,7 +61,7 @@ export const EuLabelForm = () => {
   const { updateModal } = useModal();
   const inputFileRef = useRef<any>(null);
 
-  const { wineryGeneralInfo } = useRealtimeDb();
+  const { wineryGeneralInfo, wineryEuLabels, tier, level } = useRealtimeDb();
 
   const initialized = useRef(false);
   const { user } = useAuth();
@@ -83,7 +89,6 @@ export const EuLabelForm = () => {
         },
       });
     } else {
-      console.log("Updating EU LABEL", euLabelForm);
       updateEuLabelForm({
         ...euLabelForm,
         formData: {
@@ -171,13 +176,43 @@ export const EuLabelForm = () => {
         }
       );
     } else {
+      // console.log("Updating EU LABEL", euLabelForm.formData);
       updateWineryEuLabel(user?.uid as string, euLabelForm.formData);
-      updateToast({
-        show: true,
-        status: "success",
-        message: "EU Label updated successfully",
-        timeout: 4000,
-      });
+
+      // const sortedEuLabels = wineryEuLabels;
+      // wineryEuLabels.forEach((label, index) => {
+      //   if (label.referenceNumber === euLabelForm.formData.referenceNumber) {
+      //     sortedEuLabels[index] = euLabelForm.formData;
+      //   }
+      // });
+
+      // const wineryData: WineryInterface = {
+      //   generalInfo: wineryGeneralInfo,
+      //   tier: tier || null,
+      //   level: level || null,
+      //   wines: [] || null,
+      //   euLabels: sortedEuLabels || null,
+      // };
+      // // console.log("wineryEuLabels", wineryEuLabels);
+      // // console.log(sortedEuLabels);
+      // overWiteWineryData(user?.uid as string, wineryData)
+      //   .then(() => {
+      //     updateToast({
+      //       show: true,
+      //       status: "success",
+      //       message: "EU Label updated successfully",
+      //       timeout: 3000,
+      //     });
+      //   })
+      //   .catch((error) => {
+      //     updateToast({
+      //       show: true,
+      //       status: "error",
+      //       message: "Failed to update EU Label",
+      //       timeout: 3000,
+      //     });
+      //   });
+
       router.replace("/home");
     }
   };
@@ -599,7 +634,72 @@ export const EuLabelForm = () => {
                 </Text>
                 <InfoTooltip text="Add each grape variety and its percentage in the wine" />
               </Container>
-              <TextAndNumberInputCrud
+              <TextNumberMapCrud
+                initialPosition={wineryGeneralInfo.wineryHeadquarters}
+                placeholder=""
+                required={true}
+                initialItems={euLabelForm.formData.ingredients.grapes.list}
+                initialItemsWithCoordinates={
+                  euLabelForm.formData.ingredients.grapes.listWithCoordinates
+                }
+                onItemsChange={(items: ItemWithPercentage[]) => {
+                  euLabelForm.formData.ingredients.grapes.list = items;
+                  updateEuLabelForm({
+                    ...euLabelForm,
+                    formData: {
+                      ...euLabelForm.formData,
+                      ingredients: {
+                        ...euLabelForm.formData.ingredients,
+                        grapes: {
+                          has: true,
+                          list: items,
+                          listWithCoordinates:
+                            euLabelForm.formData.ingredients.grapes
+                              .listWithCoordinates,
+                        },
+                      },
+                    },
+                  });
+                }}
+                onPolygonComplete={(item: ItemWithPercentage, polygon: any) => {
+                  if (
+                    euLabelForm.formData.ingredients.grapes
+                      .listWithCoordinates === undefined
+                  ) {
+                    euLabelForm.formData.ingredients.grapes.listWithCoordinates =
+                      [];
+                  }
+
+                  console.log(
+                    "euLabelForm.formData.ingredients.grapes.listWithCoordinates",
+                    euLabelForm.formData.ingredients.grapes.listWithCoordinates
+                  );
+
+                  updateEuLabelForm({
+                    ...euLabelForm,
+                    formData: {
+                      ...euLabelForm.formData,
+                      ingredients: {
+                        ...euLabelForm.formData.ingredients,
+                        grapes: {
+                          has: euLabelForm.formData.ingredients.grapes.has,
+                          list: euLabelForm.formData.ingredients.grapes.list,
+                          listWithCoordinates: [
+                            ...euLabelForm.formData.ingredients.grapes
+                              .listWithCoordinates,
+                            {
+                              name: item.name,
+                              percentage: item.percentage,
+                              coordinates: polygon,
+                            },
+                          ],
+                        },
+                      },
+                    },
+                  });
+                }}
+              />
+              {/* <TextAndNumberInputCrud
                 placeholder=""
                 required={true}
                 initialItems={euLabelForm.formData.ingredients.grapes.list}
@@ -619,7 +719,7 @@ export const EuLabelForm = () => {
                     },
                   });
                 }}
-              />
+              /> */}
             </Container>
             <Container intent="flexColLeft" gap="small" className="w-full">
               <Text intent="p1" variant="dim" className="font-semibold">

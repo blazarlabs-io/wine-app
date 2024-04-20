@@ -22,9 +22,6 @@ export const IngredientViewerTable = ({
   variant = "normal",
   ingredient,
 }: IngredientViewerTableProps) => {
-  useEffect(() => {
-    ingredient.allergens.has && console.log(ingredient.allergens.list);
-  }, [ingredient]);
   return (
     <Container
       intent="flexColLeft"

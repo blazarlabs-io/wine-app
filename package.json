@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@vis.gl/react-google-maps": "^0.9.0",
     "class-variance-authority": "^0.7.0",
     "firebase": "^10.9.0",
     "framer-motion": "^11.0.20",
