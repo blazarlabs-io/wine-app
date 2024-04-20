@@ -64,6 +64,16 @@ export interface WinesInterface {
   packaging: WinePackagingInterface;
 }
 
+export interface CoordinateInterface extends google.maps.LatLng {
+  lat: () => number;
+  lng: () => number;
+}
+
+export interface GrapesMapCoordinatesInterface {
+  name: string;
+  percentage: string;
+  coordinates: any[];
+}
 export interface ItemWithPercentage {
   name: string;
   percentage: string;
@@ -87,6 +97,7 @@ export interface EuLabelInterface {
     grapes: {
       has: boolean;
       list: ItemWithPercentage[];
+      listWithCoordinates: GrapesMapCoordinatesInterface[];
     };
     acidityRegulators: {
       allergens: {

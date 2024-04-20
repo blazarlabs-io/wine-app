@@ -29,7 +29,7 @@ export const WineHeadSection = ({ euLabel }: WineHeadSectionProps) => {
         <Text intent="h6" variant="dim" className="">
           {euLabel?.wineryName}
         </Text>
-        <Button intent="unstyled">
+        <Button intent="unstyled" disabled={true}>
           <Icon
             icon="pepicons-pop:open"
             width="20"
