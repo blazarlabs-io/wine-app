@@ -24,13 +24,12 @@ export { BounceLoader } from "./core/Loader/BounceLoader";
 export { WineryGeneralInfoPublic } from "./core/Card/WineryGeneralInfoPublic";
 export { WineImage } from "./core/Image/WineImage";
 export { FilterBox } from "./core/Filter/FilterBox";
+export { Toggle } from "./core/Toggle";
 
 // Molecular components
 export { WineryForm } from "./molecules/WineryForm";
 export { EuLabelForm } from "./molecules/EuLabelForm";
 export { TextInputCrud } from "./molecules/Crud/TextInputCrud";
-export { Map as SimpleMapViewer } from "./molecules/MapViewer/SimpleMapViewer/Map";
-export { Map as LocationFinderMap } from "./molecules/MapViewer/LocationFinderMap/Map";
 export { PolygonEditorMap } from "./molecules/Maps/PolygonEditorMap";
 export { PolygonViewerMap } from "./molecules/Maps/PolygonViewerMap";
 export { ReviewEuLabel } from "./molecules/ReviewEuLabel";
@@ -45,6 +44,8 @@ export { GrapesViewerTable } from "./molecules/GrapesViewerTable";
 export { IngredientViewerTable } from "./molecules/IngredientViewerTable";
 export { NutritionTable } from "./molecules/NutritionTable";
 export { TextNumberMapCrud } from "./molecules/Crud/TextNumberMapCrud";
+export { PricingCard } from "./molecules/Pricing/PricingCard";
+export { Signup } from "./molecules/Signup";
 
 // Layout components
 export { BaseLayout } from "./layouts/Base";
@@ -56,6 +57,8 @@ export { WineLayout } from "./layouts/Wine";
 export { MapVineyardsDraw } from "./widgets/MapComponents/MapVineyardsDraw";
 export { MapVineyardsView } from "./widgets/MapComponents/MapVineyardsViewer";
 export { MapVineyardsMultiGrapeView } from "./widgets/MapComponents/MapVineyardsMultiGrapeViewer";
+export { MapLocationViewer } from "./widgets/MapComponents/MapLocationViewer";
+export { MapLocationFinder } from "./widgets/MapComponents/MapLocationFinder";
 
 // Sections
 export { HeroSection } from "./sections/Home/HeroSection";
@@ -76,3 +79,7 @@ export { EuLabelFormPage } from "./pages/EuLabelFormPage";
 export { ExplorePage } from "./pages/ExplorePage";
 export { WinePage } from "./pages/WinePage";
 export { WineryFormPage } from "./pages/WineryFormPage";
+export { AboutUsPage } from "./pages/AboutUsPage";
+export { ContactUsPage } from "./pages/ContactUsPage";
+export { PricingPage } from "./pages/PricingPage";
+export { SignupPage } from "./pages/SignupPage";

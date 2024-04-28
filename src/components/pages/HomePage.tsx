@@ -12,8 +12,8 @@ export const HomePage = () => {
         style={{
           backgroundImage:
             responsiveSize === "mobile"
-              ? "url('/bg-mobile.png')"
-              : "url('/bg.png')",
+              ? "url('/bg-mobile-2.png')"
+              : "url('/bg-2.png')",
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
           backgroundPosition: "top left 40%",

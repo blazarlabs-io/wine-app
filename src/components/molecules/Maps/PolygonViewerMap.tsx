@@ -3,7 +3,7 @@
 import { Container, Text, Button, MapVineyardsView } from "@/components";
 export interface PolygonEditorMapProps {
   initialPosition: any;
-  initialItemsWithCoordinates: any;
+  initialItems: any;
   selectedItem: any;
   onClose: () => void;
 }
@@ -11,7 +11,7 @@ export interface PolygonEditorMapProps {
 export const PolygonViewerMap = ({
   initialPosition,
   selectedItem,
-  initialItemsWithCoordinates,
+  initialItems,
   onClose,
 }: PolygonEditorMapProps) => {
   return (
@@ -23,9 +23,9 @@ export const PolygonViewerMap = ({
       <MapVineyardsView
         initialPosition={initialPosition}
         initialPolygon={
-          initialItemsWithCoordinates !== undefined
+          initialItems !== undefined
             ? (
-                initialItemsWithCoordinates.filter(
+                initialItems.filter(
                   (item: any) => item.name === selectedItem?.name
                 ) as any
               )[0]

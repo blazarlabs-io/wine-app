@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Container,
-  Button,
-  Text,
-  WineryLogo,
-  SimpleMapViewer,
-  InfoTooltip,
-} from "@/components";
+import { Container, Button, Text, WineryLogo, InfoTooltip } from "@/components";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -62,10 +55,6 @@ export const WineryGeneralInfoPublic = ({
                   className="text-on-surface-dark"
                 />
               </Button>
-              <SimpleMapViewer
-                lat={wineryGeneralInfo.wineryHeadquarters.latitude}
-                lon={wineryGeneralInfo.wineryHeadquarters.longitude}
-              />
             </motion.div>
           </motion.div>
         )}

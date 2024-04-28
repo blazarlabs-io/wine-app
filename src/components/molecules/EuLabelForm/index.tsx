@@ -22,6 +22,7 @@ import {
 } from "@/utils/data";
 import {
   EuLabelInterface,
+  GrapesMapCoordinatesInterface,
   ItemWithPercentage,
   WineryInterface,
 } from "@/typings/winery";
@@ -38,6 +39,7 @@ import {
   uploadWineImageToStorage,
   updateWineryEuLabel,
   overWiteWineryData,
+  updateGrapesInEuLabel,
 } from "@/utils/firestore";
 import { useAuth } from "@/context/authContext";
 import { euLabelUrlComposer } from "@/utils/euLabelUrlComposer";
@@ -639,40 +641,17 @@ export const EuLabelForm = () => {
                 placeholder=""
                 required={true}
                 initialItems={euLabelForm.formData.ingredients.grapes.list}
-                initialItemsWithCoordinates={
-                  euLabelForm.formData.ingredients.grapes.listWithCoordinates
-                }
-                onItemsChange={(items: ItemWithPercentage[]) => {
-                  euLabelForm.formData.ingredients.grapes.list = items;
-                  updateEuLabelForm({
-                    ...euLabelForm,
-                    formData: {
-                      ...euLabelForm.formData,
-                      ingredients: {
-                        ...euLabelForm.formData.ingredients,
-                        grapes: {
-                          has: true,
-                          list: items,
-                          listWithCoordinates:
-                            euLabelForm.formData.ingredients.grapes
-                              .listWithCoordinates,
-                        },
-                      },
-                    },
-                  });
-                }}
-                onPolygonComplete={(item: ItemWithPercentage, polygon: any) => {
-                  if (
-                    euLabelForm.formData.ingredients.grapes
-                      .listWithCoordinates === undefined
-                  ) {
-                    euLabelForm.formData.ingredients.grapes.listWithCoordinates =
-                      [];
-                  }
+                onItemsChange={(items: GrapesMapCoordinatesInterface[]) => {
+                  // console.log("ON ITEMS CHANGE", items);
 
-                  console.log(
-                    "euLabelForm.formData.ingredients.grapes.listWithCoordinates",
-                    euLabelForm.formData.ingredients.grapes.listWithCoordinates
+                  const dataToUpdate = {
+                    has: items.length > 0 ? true : false,
+                    list: items,
+                  };
+                  updateGrapesInEuLabel(
+                    user?.uid as string,
+                    euLabelForm.formData.referenceNumber,
+                    dataToUpdate
                   );
 
                   updateEuLabelForm({
@@ -682,29 +661,26 @@ export const EuLabelForm = () => {
                       ingredients: {
                         ...euLabelForm.formData.ingredients,
                         grapes: {
-                          has: euLabelForm.formData.ingredients.grapes.has,
-                          list: euLabelForm.formData.ingredients.grapes.list,
-                          listWithCoordinates: [
-                            ...euLabelForm.formData.ingredients.grapes
-                              .listWithCoordinates,
-                            {
-                              name: item.name,
-                              percentage: item.percentage,
-                              coordinates: polygon,
-                            },
-                          ],
+                          has: items.length > 0 ? true : false,
+                          list: items,
                         },
                       },
                     },
                   });
                 }}
-              />
-              {/* <TextAndNumberInputCrud
-                placeholder=""
-                required={true}
-                initialItems={euLabelForm.formData.ingredients.grapes.list}
-                onItemsChange={(items: ItemWithPercentage[]) => {
-                  euLabelForm.formData.ingredients.grapes.list = items;
+                onPolygonComplete={(items: GrapesMapCoordinatesInterface[]) => {
+                  // console.log("POLYGON COMPLETE", items);
+
+                  const dataToUpdate = {
+                    has: items.length > 0 ? true : false,
+                    list: items,
+                  };
+                  updateGrapesInEuLabel(
+                    user?.uid as string,
+                    euLabelForm.formData.referenceNumber,
+                    dataToUpdate
+                  );
+
                   updateEuLabelForm({
                     ...euLabelForm,
                     formData: {
@@ -712,14 +688,14 @@ export const EuLabelForm = () => {
                       ingredients: {
                         ...euLabelForm.formData.ingredients,
                         grapes: {
-                          has: true,
+                          has: items.length > 0 ? true : false,
                           list: items,
                         },
                       },
                     },
                   });
                 }}
-              /> */}
+              />
             </Container>
             <Container intent="flexColLeft" gap="small" className="w-full">
               <Text intent="p1" variant="dim" className="font-semibold">

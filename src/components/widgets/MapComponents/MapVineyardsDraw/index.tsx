@@ -29,7 +29,7 @@ export const MapVineyardsDraw = ({
 }: MapVineyardsDrawProps) => {
   const INITIAL_CAMERA = {
     center: { lat: initialPosition.latitude, lng: initialPosition.longitude },
-    zoom: 11,
+    zoom: 15,
   };
 
   const map = useMap();
@@ -40,26 +40,26 @@ export const MapVineyardsDraw = ({
   const handleCameraChange = (ev: MapCameraChangedEvent) =>
     setCameraProps(ev.detail);
 
-  // const drawPolygon = (polygon: CoordinateInterface[]) => {
-  //   const poly = new google.maps.Polygon({
-  //     paths: polygon,
-  //     strokeColor: "#FF0000",
-  //     strokeOpacity: 0.8,
-  //     strokeWeight: 2,
-  //     fillColor: "#FF0000",
-  //     fillOpacity: 0.35,
-  //   });
+  const drawPolygon = (polygon: CoordinateInterface[]) => {
+    const poly = new google.maps.Polygon({
+      paths: polygon,
+      strokeColor: "#FF0000",
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: "#FF0000",
+      fillOpacity: 0.35,
+    });
 
-  //   poly.setMap(map);
-  //   onPolygonComplete(polygon);
-  // };
+    poly.setMap(map);
+    onPolygonComplete(polygon);
+  };
 
-  // useEffect(() => {
-  //   // console.log("initialPolygon", initialPolygon);
-  //   if (initialPolygon) {
-  //     startWithInitialPolygon(initialPolygon.coordinates);
-  //   }
-  // }, []);
+  useEffect(() => {
+    // console.log("initialPolygon", initialPolygon);
+    if (initialPolygon) {
+      startWithInitialPolygon(initialPolygon.coordinates);
+    }
+  }, []);
 
   useEffect(() => {
     // drawPolygon(polygon);

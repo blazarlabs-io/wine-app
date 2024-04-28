@@ -26,13 +26,16 @@ export const ExplorePage = () => {
   const [winesToShow, setWinesToShow] = useState<EuLabelInterface[]>([]);
 
   useEffect(() => {
-    console.log("filtering...");
     if (filteredWines.length > 0) {
       setWinesToShow(filteredWines);
     } else {
       setWinesToShow(allWines);
     }
   }, [filteredWines, allWines]);
+
+  useEffect(() => {
+    console.log(winesToShow);
+  }, [winesToShow]);
   return (
     <Container
       intent={handleGridResponsiveness(responsiveSize)}

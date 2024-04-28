@@ -2,13 +2,14 @@ import { MapVineyardsMultiGrapeView } from "@/components";
 
 export interface MapViewerSectionProps {
   initialPosition?: any;
-  initialItemsWithCoordinates?: any;
+  initialItems?: any;
 }
 
 export const MapViewerSection = ({
   initialPosition,
-  initialItemsWithCoordinates,
+  initialItems,
 }: MapViewerSectionProps) => {
+  console.log("initialItems", initialItems);
   return (
     <MapVineyardsMultiGrapeView
       initialPosition={
@@ -17,11 +18,7 @@ export const MapViewerSection = ({
           longitude: -74.82477420222459,
         }
       }
-      polygons={
-        initialItemsWithCoordinates !== undefined
-          ? initialItemsWithCoordinates
-          : null
-      }
+      initialItems={initialItems !== undefined ? initialItems : null}
     />
   );
 };

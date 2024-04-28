@@ -1,8 +1,7 @@
 "use client";
 
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
-import { LatLng } from "leaflet";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "@vis.gl/react-google-maps/examples.css";
 
 export function useDrawingManager(

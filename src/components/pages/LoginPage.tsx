@@ -41,7 +41,7 @@ export const LoginPage = () => {
             >
               <Login
                 title="Login"
-                description="If you are a winery owner, please login using the email and password provided to you by the EE Hub team."
+                description="If you are a winery owner, please login using the email and password provided to you by the Blazar Labs team."
               />
             </motion.div>
           </motion.div>

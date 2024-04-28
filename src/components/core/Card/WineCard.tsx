@@ -148,10 +148,12 @@ export const WineCard = ({
             </Text>
           </Container>
           <Button
-            intent="text"
+            intent="unstyled"
+            size="small"
             onClick={() => {
               router.push(euLabelUrlComposer(referenceNumber));
             }}
+            className="border border-primary-light text-primary-light hover:border-primary hover:text-primary transition-all duration-300 ease-in-out rounded-md px-2 py-1"
           >
             View Details
           </Button>

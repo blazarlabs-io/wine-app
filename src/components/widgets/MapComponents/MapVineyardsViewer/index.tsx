@@ -1,8 +1,6 @@
 "use client";
 
 import {
-  ControlPosition,
-  MapControl,
   Map,
   MapCameraProps,
   MapCameraChangedEvent,
@@ -26,7 +24,7 @@ export const MapVineyardsView = ({
 }: MapVineyardsDrawProps) => {
   const INITIAL_CAMERA = {
     center: { lat: initialPosition.latitude, lng: initialPosition.longitude },
-    zoom: 11,
+    zoom: 15,
   };
 
   const map = useMap();

@@ -23,6 +23,7 @@ const container = cva("container", {
         "w-full",
       ],
       flexRowCenter: ["flex", "flex-row", "items-center", "justify-center"],
+      flexRowTop: ["flex", "flex-row", "items-start", "justify-center"],
       flexRowWrap: [
         "flex",
         "flex-row",

@@ -8,44 +8,42 @@ import {
 } from "@/components";
 import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
-import { ItemWithPercentage } from "@/typings/winery";
+import {
+  GrapesMapCoordinatesInterface,
+  ItemWithPercentage,
+} from "@/typings/winery";
 
 export interface TextInputCrudProps {
   initialPosition: any;
   placeholder: string;
-  initialItems: ItemWithPercentage[];
-  initialItemsWithCoordinates: any[];
+  initialItems: GrapesMapCoordinatesInterface[];
   required?: boolean;
-  onItemsChange: (items: ItemWithPercentage[]) => void;
-  onPolygonComplete: (selectedItem: ItemWithPercentage, polygon: any[]) => void;
+  onItemsChange: (items: GrapesMapCoordinatesInterface[]) => void;
+  onPolygonComplete: (items: GrapesMapCoordinatesInterface[]) => void;
 }
 
 export const TextNumberMapCrud = ({
   initialPosition,
   placeholder,
   initialItems,
-  initialItemsWithCoordinates,
   required = false,
   onItemsChange,
   onPolygonComplete,
 }: TextInputCrudProps) => {
-  const [items, setItems] = useState<ItemWithPercentage[] | null>(initialItems);
-  const [currentItem, setCurrentItem] = useState<ItemWithPercentage | null>(
-    null
+  const [items, setItems] = useState<GrapesMapCoordinatesInterface[] | null>(
+    initialItems
   );
+  const [currentItem, setCurrentItem] =
+    useState<GrapesMapCoordinatesInterface | null>(null);
   const [disableButton, setDisableButton] = useState<boolean>(true);
   const [isRequired, setIsRequired] = useState<boolean>(required);
   const [showMap, setShowMap] = useState<boolean>(false);
   const [showViewMap, setShowViewMap] = useState<boolean>(false);
-  const [selectedItem, setSelectedItem] = useState<ItemWithPercentage | null>(
-    null
-  );
-  const [itemWithPolygon, setItemWithPolygon] = useState<any | null>(null);
+  const [selectedItem, setSelectedItem] =
+    useState<GrapesMapCoordinatesInterface | null>(null);
 
   const handleOnPolygonComplete = () => {
-    console.log("itemWithPolygon", itemWithPolygon);
-    onPolygonComplete(itemWithPolygon.item, itemWithPolygon.polygon);
-    setItemWithPolygon(null);
+    onPolygonComplete(items as GrapesMapCoordinatesInterface[]);
   };
 
   useEffect(() => {
@@ -62,6 +60,8 @@ export const TextNumberMapCrud = ({
     }
   }, [items]);
 
+  console.log(initialItems);
+
   return (
     <>
       {showMap && (
@@ -69,10 +69,21 @@ export const TextNumberMapCrud = ({
           <PolygonEditorMap
             initialPosition={initialPosition}
             selectedItem={selectedItem}
-            initialItemsWithCoordinates={initialItemsWithCoordinates}
+            initialItems={initialItems}
             onPolygonComplete={(item, polygon) => {
               console.log("item", item, "polygon", polygon);
-              setItemWithPolygon({ item: item, polygon: polygon });
+
+              setItems(
+                (items as GrapesMapCoordinatesInterface[]).map((i) => {
+                  if (i.name === item.name) {
+                    return {
+                      ...i,
+                      coordinates: polygon,
+                    };
+                  }
+                  return i;
+                })
+              );
             }}
             onSave={() => {
               handleOnPolygonComplete();
@@ -89,7 +100,7 @@ export const TextNumberMapCrud = ({
           <PolygonViewerMap
             initialPosition={initialPosition}
             selectedItem={selectedItem}
-            initialItemsWithCoordinates={initialItemsWithCoordinates}
+            initialItems={initialItems}
             onClose={() => {
               setShowViewMap(false);
             }}
@@ -110,8 +121,9 @@ export const TextNumberMapCrud = ({
               const newItem = {
                 name: event.target.value,
                 percentage: currentItem?.percentage,
+                coordinates: [],
               };
-              setCurrentItem(newItem as ItemWithPercentage);
+              setCurrentItem(newItem as GrapesMapCoordinatesInterface);
             }}
             className="w-full placeholder:text-on-surface-dark/50 text-sm text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
           />
@@ -129,8 +141,9 @@ export const TextNumberMapCrud = ({
               const newItem = {
                 name: currentItem?.name,
                 percentage: event.target.value,
+                coordinates: [],
               };
-              setCurrentItem(newItem as ItemWithPercentage);
+              setCurrentItem(newItem as GrapesMapCoordinatesInterface);
             }}
             className="w-full placeholder:text-on-surface-dark/50 text-sm text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
           />
@@ -140,20 +153,22 @@ export const TextNumberMapCrud = ({
           intent="unstyled"
           disabled={disableButton}
           onClick={() => {
-            // console.log("currentItem", currentItem);
-            let its: ItemWithPercentage[] = [];
+            let its: GrapesMapCoordinatesInterface[] = [];
             if (items !== null && items !== undefined && items.length > 0) {
-              its = [...items, currentItem as ItemWithPercentage];
+              its = [...items, currentItem as GrapesMapCoordinatesInterface];
             } else {
-              its = [currentItem as ItemWithPercentage];
+              its = [currentItem as GrapesMapCoordinatesInterface];
             }
             setItems(its);
             onItemsChange(its);
+
+            // RESET CURRENT ITEM
             const newItem = {
               name: "",
               percentage: "",
+              coordinates: [],
             };
-            setCurrentItem(newItem as ItemWithPercentage);
+            setCurrentItem(newItem as GrapesMapCoordinatesInterface);
           }}
           className="border-[1.5px] border-primary-light mt-[32px] text-[16px] flex items-center justify-center max-w-fit px-[12px] gap-[4px] text-primary-light hover:text-primary transition-all duration-200 ease-in-out"
         >
@@ -199,23 +214,41 @@ export const TextNumberMapCrud = ({
                   </Text>
                 </Container>
                 <Container intent="flexRowLeft" className="w-full mt-[12px]">
-                  {initialItemsWithCoordinates !== undefined &&
-                  initialItemsWithCoordinates.find(
-                    (i) => i.name === item.name
-                  ) ? (
-                    <Container intent="flexRowLeft" gap="xsmall">
-                      <Text
-                        intent="p2"
-                        variant="success"
-                        className="font-semibold"
-                      >
-                        Location set
-                      </Text>
+                  <>
+                    {item.coordinates.length > 0 ? (
+                      <>
+                        <Container intent="flexRowLeft" gap="xsmall">
+                          <Text
+                            intent="p2"
+                            variant="success"
+                            className="font-semibold"
+                          >
+                            Location set
+                          </Text>
+                          <Button
+                            intent="unstyled"
+                            onClick={() => {
+                              setSelectedItem(item);
+                              setShowViewMap(true);
+                            }}
+                            className="text-sm text-primary-light font-semibold flex items-center justify-center gap-[8px] hover:text-primary transition-all duration-300 ease-in-out"
+                          >
+                            <Icon
+                              icon="carbon:map"
+                              width="16"
+                              height="16"
+                              className="mt-[-4px]"
+                            />
+                            View
+                          </Button>
+                        </Container>
+                      </>
+                    ) : (
                       <Button
                         intent="unstyled"
                         onClick={() => {
                           setSelectedItem(item);
-                          setShowViewMap(true);
+                          setShowMap(true);
                         }}
                         className="text-sm text-primary-light font-semibold flex items-center justify-center gap-[8px] hover:text-primary transition-all duration-300 ease-in-out"
                       >
@@ -225,27 +258,10 @@ export const TextNumberMapCrud = ({
                           height="16"
                           className="mt-[-4px]"
                         />
-                        View
+                        Find on map
                       </Button>
-                    </Container>
-                  ) : (
-                    <Button
-                      intent="unstyled"
-                      onClick={() => {
-                        setSelectedItem(item);
-                        setShowMap(true);
-                      }}
-                      className="text-sm text-primary-light font-semibold flex items-center justify-center gap-[8px] hover:text-primary transition-all duration-300 ease-in-out"
-                    >
-                      <Icon
-                        icon="carbon:map"
-                        width="16"
-                        height="16"
-                        className="mt-[-4px]"
-                      />
-                      Find on map
-                    </Button>
-                  )}
+                    )}
+                  </>
                 </Container>
               </div>
             ))}

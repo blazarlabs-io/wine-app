@@ -1,5 +1,8 @@
 import {
+  CreateAdminNotification,
   EuLabelInterface,
+  GrapesInterface,
+  GrapesMapCoordinatesInterface,
   WineryDataInterface,
   WineryGeneralInfoInterface,
   WineryInterface,
@@ -15,6 +18,7 @@ import {
   query,
   setDoc,
   updateDoc,
+  addDoc,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { db, storage } from "@/lib/firebase/client";
@@ -370,4 +374,59 @@ export const getWineryByWineRefNumber = async (
     console.error(e);
     callback(null);
   }
+};
+
+export const updateGrapesInEuLabel = async (
+  docId: string,
+  refNumber: string,
+  grapes: GrapesInterface
+) => {
+  const docRef = doc(db, "wineries", docId);
+  const docSnap = await getDoc(docRef);
+  const data = docSnap.data();
+  const euLabels = data?.euLabels;
+  console.log("updateGrapesInEuLabel", docId, grapes, refNumber, euLabels);
+  if (euLabels) {
+    const updatedEuLabels = euLabels.map((label: EuLabelInterface) => {
+      if (label.referenceNumber === refNumber) {
+        label.ingredients.grapes = grapes;
+        console.log("found");
+        return label;
+      } else {
+        return label;
+      }
+    });
+    await updateDoc(docRef, { euLabels: updatedEuLabels });
+  }
+};
+
+export const updateWineryHeadquarters = async (
+  docId: string,
+  latitude: number,
+  longitude: number
+) => {
+  const docRef = doc(db, "wineries", docId);
+  const docSnap = await getDoc(docRef);
+  const data = docSnap.data();
+  const updatedGeneralInfo = data?.generalInfo;
+  updatedGeneralInfo.wineryHeadquarters.latitude = latitude;
+  updatedGeneralInfo.wineryHeadquarters.longitude = longitude;
+  await updateDoc(docRef, { generalInfo: updatedGeneralInfo });
+};
+
+export const createAdminNotification = async (
+  data: CreateAdminNotification
+) => {
+  return new Promise<boolean>(async (resolve, reject) => {
+    const id = data.wineryName.replace(/\s/g, "").toLocaleLowerCase();
+    const docRef = doc(db, "notifications", id);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      resolve(true);
+    } else {
+      await setDoc(docRef, data);
+      resolve(false);
+    }
+  });
 };

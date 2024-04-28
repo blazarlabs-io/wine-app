@@ -7,6 +7,7 @@ export type ContainrIntentType =
   | "flexRowLeft"
   | "flexRowRight"
   | "flexRowCenter"
+  | "flexRowTop"
   | "flexRowWrap"
   | "flexRowBetween"
   | "flexColBetween"

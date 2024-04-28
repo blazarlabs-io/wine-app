@@ -63,7 +63,9 @@ export function useDrawingManager(
       },
     });
 
-    newDrawingManager.setDrawingMode("polygon");
+    newDrawingManager.setDrawingMode(
+      "polygon" as google.maps.drawing.OverlayType
+    );
 
     setDrawingManager(newDrawingManager);
 
