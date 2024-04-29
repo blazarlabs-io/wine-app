@@ -6,7 +6,6 @@ import {
   WineryGeneralInfoInterface,
   WineryInterface,
 } from "@/typings/winery";
-import { useWine } from "@/context/wineContext";
 import { useAppState } from "@/context/appStateContext";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -17,7 +16,6 @@ import {
 } from "@/utils/firestore";
 
 export default function WineExplorer() {
-  const { wineToShow } = useWine();
   const { updateAppLoading } = useAppState();
   const searchParams = useSearchParams();
 
