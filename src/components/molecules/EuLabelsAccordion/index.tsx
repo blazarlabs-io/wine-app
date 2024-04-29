@@ -22,7 +22,7 @@ import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { startTransition, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export interface EuLabelsAccordionProps {
@@ -79,6 +79,13 @@ const AccordionItem = ({
   const handleToggle = () => {
     setActive(!active);
   };
+
+  const handleRedirect = useCallback(async () => {
+    router.push(euLabelUrlComposer(item.referenceNumber));
+    startTransition(() => {
+      router.refresh();
+    });
+  }, [router]);
   return (
     <Container
       intent="flexColLeft"
@@ -212,8 +219,7 @@ const AccordionItem = ({
             >
               <button
                 onClick={() => {
-                  router.refresh();
-                  router.push(euLabelUrlComposer(item.referenceNumber));
+                  handleRedirect();
                 }}
               >
                 <Text variant="dim">

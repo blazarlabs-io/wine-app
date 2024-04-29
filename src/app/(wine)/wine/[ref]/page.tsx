@@ -26,6 +26,7 @@ export default function WineExplorer({ params }: { params: { ref: string } }) {
       setGeneralInfo(data?.generalInfo as WineryGeneralInfoInterface);
     });
   }, []);
+
   return (
     <WinePage
       generalInfo={generalInfo as WineryGeneralInfoInterface}
