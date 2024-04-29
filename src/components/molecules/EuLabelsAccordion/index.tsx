@@ -7,9 +7,15 @@ import {
   EuLabelGeneralViewer,
   EuLabelItem,
   IngredientViewer,
+  MapViewerSection,
   Text,
 } from "@/components";
-import { EuLabelInterface, WinesInterface } from "@/typings/winery";
+import {
+  EuLabelInterface,
+  WineGeneralInfoInterface,
+  WineryGeneralInfoInterface,
+  WinesInterface,
+} from "@/typings/winery";
 import { euLabelUrlComposer } from "@/utils/euLabelUrlComposer";
 import { textFromKey } from "@/utils/textFromKey";
 import { Icon } from "@iconify/react";
@@ -19,16 +25,22 @@ import Link from "next/link";
 import { useState } from "react";
 
 export interface EuLabelsAccordionProps {
+  generalInfo: WineryGeneralInfoInterface;
   data: EuLabelInterface[];
   onEdit: (item: EuLabelInterface) => void;
 }
 
 export interface EuLabelsAccordionItemInterface {
+  generalInfo: WineryGeneralInfoInterface;
   item: EuLabelInterface;
   onEdit: () => void;
 }
 
-export const EuLabelsAccordion = ({ data, onEdit }: EuLabelsAccordionProps) => {
+export const EuLabelsAccordion = ({
+  generalInfo,
+  data,
+  onEdit,
+}: EuLabelsAccordionProps) => {
   const [active, setActive] = useState(false);
 
   const handleToggle = () => {
@@ -43,6 +55,7 @@ export const EuLabelsAccordion = ({ data, onEdit }: EuLabelsAccordionProps) => {
               <AccordionItem
                 key={item.wineCollectionName}
                 item={item}
+                generalInfo={generalInfo}
                 onEdit={() => onEdit(item)}
               />
             ))}
@@ -53,7 +66,11 @@ export const EuLabelsAccordion = ({ data, onEdit }: EuLabelsAccordionProps) => {
   );
 };
 
-const AccordionItem = ({ item, onEdit }: EuLabelsAccordionItemInterface) => {
+const AccordionItem = ({
+  generalInfo,
+  item,
+  onEdit,
+}: EuLabelsAccordionItemInterface) => {
   const [active, setActive] = useState(false);
 
   const handleToggle = () => {
@@ -159,6 +176,10 @@ const AccordionItem = ({ item, onEdit }: EuLabelsAccordionItemInterface) => {
           }`}
         >
           <EuLabelGeneralViewer item={item} />
+          <MapViewerSection
+            initialPosition={generalInfo?.wineryHeadquarters as any}
+            initialItems={item.ingredients.grapes.list}
+          />
           <Container intent="flexColLeft" className="max-w-fit">
             <Text intent="h6" variant="accent" className="font-semibold">
               QR Code & Url

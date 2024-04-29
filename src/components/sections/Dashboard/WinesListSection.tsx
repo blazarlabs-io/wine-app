@@ -10,7 +10,8 @@ import { useModal } from "@/context/modalContext";
 
 export const WinesListSection = () => {
   const router = useRouter();
-  const { wineryEuLabels, allowedEuLabels } = useRealtimeDb();
+  const { wineryEuLabels, allowedEuLabels, wineryGeneralInfo } =
+    useRealtimeDb();
   const { updateEuLabelForm } = useForms();
   const { updateModal } = useModal();
 
@@ -88,6 +89,7 @@ export const WinesListSection = () => {
           </Container>
           <div className="min-w-full">
             <EuLabelsAccordion
+              generalInfo={wineryGeneralInfo}
               data={wineryEuLabels}
               onEdit={(item: EuLabelInterface) => {
                 updateEuLabelForm({
