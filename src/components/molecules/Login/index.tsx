@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client";
 
 import { Container, Text, Button, SpinnerLoader } from "@/components";
@@ -50,7 +51,6 @@ export const Login = ({ title, description }: LoginProps) => {
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
-        console.log("signed in", user);
         updateAuthLoading(false);
         updateAppLoading(true);
         router.replace("/home");
@@ -58,14 +58,12 @@ export const Login = ({ title, description }: LoginProps) => {
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        console.log(firebaseAuthErrors[errorCode] as string);
         const toastProps: ToastProps = {
           show: true,
           status: "error",
           message: (firebaseAuthErrors[errorCode] as string) ?? errorMessage,
           timeout: 5000,
         };
-        console.log(toastProps);
         updateToast(toastProps);
         updateAuthLoading(false);
       });
@@ -100,7 +98,7 @@ export const Login = ({ title, description }: LoginProps) => {
       </Container>
       <Container intent="flexColTop" gap="small">
         <Container intent="flexColLeft" gap="xsmall">
-          <Text intent="p1" variant="dim">
+          <Text intent="p1" variant="dim" className="font-semibold">
             Email
           </Text>
           <input
@@ -114,7 +112,7 @@ export const Login = ({ title, description }: LoginProps) => {
           />
         </Container>
         <Container intent="flexColLeft" gap="xsmall">
-          <Text intent="p1" variant="dim">
+          <Text intent="p1" variant="dim" className="font-semibold">
             Password
           </Text>
           <Container intent="flexRowLeft" gap="xsmall" className="relative">
@@ -142,6 +140,19 @@ export const Login = ({ title, description }: LoginProps) => {
             </button>
           </Container>
         </Container>
+      </Container>
+      <Container intent="flexRowBetween" gap="small">
+        <Text intent="p1" variant="dim">
+          Don't have an account yet?
+        </Text>
+        <Button
+          intent="unstyled"
+          className="text-primary-light flex items-center gap-[8px] font-semibold"
+          onClick={() => router.push("/signup")}
+        >
+          Create an account
+          {/* <Icon icon="mdi:register-outline" width="20" height="20" /> */}
+        </Button>
       </Container>
       <Container intent="flexRowBetween" gap="small">
         <Button

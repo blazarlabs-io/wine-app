@@ -10,7 +10,8 @@ import { useModal } from "@/context/modalContext";
 
 export const WinesListSection = () => {
   const router = useRouter();
-  const { wineryEuLabels, allowedEuLabels } = useRealtimeDb();
+  const { wineryEuLabels, allowedEuLabels, wineryGeneralInfo } =
+    useRealtimeDb();
   const { updateEuLabelForm } = useForms();
   const { updateModal } = useModal();
 
@@ -51,7 +52,6 @@ export const WinesListSection = () => {
               intent="primary"
               size="medium"
               onClick={() => {
-                console.log(wineryEuLabels.length, allowedEuLabels);
                 if (wineryEuLabels.length < allowedEuLabels) {
                   updateEuLabelForm({
                     title: "Create EU Label",
@@ -87,20 +87,26 @@ export const WinesListSection = () => {
             </Button>
           </Container>
           <div className="min-w-full">
-            <EuLabelsAccordion
-              data={wineryEuLabels}
-              onEdit={(item: EuLabelInterface) => {
-                updateEuLabelForm({
-                  title: "Edit EU Label",
-                  description:
-                    "Edit the EU label for your wine. All fields marked with * are mandatory.",
-                  isEditing: true,
-                  formData: item,
-                });
+            {wineryEuLabels &&
+              wineryGeneralInfo &&
+              wineryEuLabels !== undefined &&
+              wineryGeneralInfo !== undefined && (
+                <EuLabelsAccordion
+                  generalInfo={wineryGeneralInfo}
+                  data={wineryEuLabels}
+                  onEdit={(item: EuLabelInterface) => {
+                    updateEuLabelForm({
+                      title: "Edit EU Label",
+                      description:
+                        "Edit the EU label for your wine. All fields marked with * are mandatory.",
+                      isEditing: true,
+                      formData: item,
+                    });
 
-                router.push("/eu-label-form");
-              }}
-            />
+                    router.push("/eu-label-form");
+                  }}
+                />
+              )}
           </div>
         </Container>
       ) : (

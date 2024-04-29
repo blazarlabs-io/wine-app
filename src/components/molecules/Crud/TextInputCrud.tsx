@@ -52,7 +52,6 @@ export const TextInputCrud = ({
           intent="unstyled"
           disabled={!currentItem}
           onClick={() => {
-            console.log("currentItem", currentItem);
             let its: string[] = [];
             if (items !== null && items !== undefined && items.length > 0) {
               its = [...items, currentItem];

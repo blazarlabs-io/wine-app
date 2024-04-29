@@ -8,6 +8,7 @@ import { RealtimeDbProvider } from "./realtimeDbContext";
 import { FiltersProvider } from "./filtersContext";
 import { FormsProvider } from "./FormsContext";
 import { APIProvider } from "@vis.gl/react-google-maps";
+import { WineProvider } from "./wineContext";
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -27,7 +28,7 @@ export const Providers = ({ children }: ProvidersProps) => {
                       process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string
                     }
                   >
-                    {children}
+                    <WineProvider>{children}</WineProvider>
                   </APIProvider>
                 </ModalProvider>
               </ToastProvider>

@@ -39,22 +39,28 @@ export const TopBar = ({ className }: TopBarProps) => {
       disabled: false,
     },
     {
-      label: "Explore",
+      label: "Explore Wines",
       key: "explore",
       onClick: () => router.push("/explore"),
       disabled: false,
     },
     {
-      label: "About",
+      label: "Pricing",
+      key: "pricing",
+      onClick: () => router.push("/pricing"),
+      disabled: false,
+    },
+    {
+      label: "About Us",
       key: "about",
-      onClick: () => router.push("/about"),
-      disabled: true,
+      onClick: () => router.push("/about-us"),
+      disabled: false,
     },
     {
       label: "Contact Us",
       key: "contact-us",
-      onClick: () => router.push("/contacts"),
-      disabled: true,
+      onClick: () => router.push("/contact-us"),
+      disabled: false,
     },
   ];
 
@@ -85,7 +91,7 @@ export const TopBar = ({ className }: TopBarProps) => {
                 className="cursor-pointer"
               >
                 <Image
-                  src="/logo-by-eehub.svg"
+                  src="/logo-blazarlabs.png"
                   alt="Logo"
                   width={164}
                   height={56}
@@ -126,9 +132,9 @@ export const TopBar = ({ className }: TopBarProps) => {
               className="cursor-pointer"
             >
               <Image
-                src="/logo-by-eehub.svg"
+                src="/logo-by-blazarlabs.png"
                 alt="Logo"
-                width={224}
+                width={284}
                 height={56}
               />
             </button>
@@ -141,7 +147,7 @@ export const TopBar = ({ className }: TopBarProps) => {
                 onClick={() => {
                   item.onClick();
                 }}
-                className="disabled:text-status-disabled disabled:cursor-not-allowed max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out"
+                className="min-w-fit disabled:text-status-disabled disabled:cursor-not-allowed max-w-fit p-[0px] text-on-surface font-normal hover:text-primary-light transition-all duration-300 ease-in-out"
               >
                 {item.label}
               </button>

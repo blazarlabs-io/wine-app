@@ -5,8 +5,8 @@ import {
   Button,
   Text,
   WineryLogo,
-  SimpleMapViewer,
   InfoTooltip,
+  MapLocationViewer,
 } from "@/components";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
@@ -66,9 +66,11 @@ export const WineryGeneralInfo = ({
                   className="text-on-surface-dark"
                 />
               </Button>
-              <SimpleMapViewer
-                lat={wineryGeneralInfo.wineryHeadquarters.latitude}
-                lon={wineryGeneralInfo.wineryHeadquarters.longitude}
+              <MapLocationViewer
+                initialPosition={{
+                  latitude: wineryGeneralInfo.wineryHeadquarters.latitude,
+                  longitude: wineryGeneralInfo.wineryHeadquarters.longitude,
+                }}
               />
             </motion.div>
           </motion.div>

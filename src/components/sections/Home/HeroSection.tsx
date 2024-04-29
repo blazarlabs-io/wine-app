@@ -22,20 +22,20 @@ export const HeroSection = ({ className }: HeroSectionProps) => {
       className={classNames(
         className,
         "h-full",
-        responsiveSize === "mobile" ? "mt-[48px]" : "mt-[112px]"
+        responsiveSize === "mobile" ? "mt-[48px]" : "mt-[88px]"
       )}
     >
       <Container
         intent="flexColLeft"
         gap={responsiveSize === "mobile" ? "medium" : "small"}
-        className="max-w-[440px]"
+        className="max-w-[520px]"
       >
         <Text
           intent={responsiveSize === "mobile" ? "h2" : "h1"}
           className="font-bold kaushan"
         >
-          The <span className="text-primary">Wine Portal</span> delivered by EE
-          Cardano HUB
+          The <span className="text-primary">Wine Portal</span> delivered by
+          Blazar Labs, powered by Cardano
         </Text>
         <Text
           intent={responsiveSize === "mobile" ? "h5" : "p1"}
@@ -54,7 +54,7 @@ export const HeroSection = ({ className }: HeroSectionProps) => {
           size="large"
           onClick={() => router.push("/explore")}
         >
-          Explore
+          Explore Wines
         </Button>
         <Button
           intent="text"

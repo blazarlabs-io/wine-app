@@ -1,5 +1,4 @@
 export const getPolygonCenter = (coords: any) => {
-  console.log("coords", coords);
   let centerX = 0,
     centerY = 0;
 

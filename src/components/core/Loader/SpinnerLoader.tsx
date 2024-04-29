@@ -12,7 +12,7 @@ export interface AuthSpinnerLoaderProps {
 export const SpinnerLoader = ({
   width = "16px",
   height = "16px",
-  color = "#212121",
+  color = "#dddddd",
 }: AuthSpinnerLoaderProps) => {
   return (
     <Container intent="flexRowCenter" className="max-w-fit">

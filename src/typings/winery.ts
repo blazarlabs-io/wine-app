@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase-admin/firestore";
+
 export interface WineryGeneralInfoInterface {
   name: string;
   foundedOn: string;
@@ -79,6 +81,11 @@ export interface ItemWithPercentage {
   percentage: string;
 }
 
+export interface GrapesInterface {
+  has: boolean;
+  list: GrapesMapCoordinatesInterface[];
+}
+
 export interface EuLabelInterface {
   referenceNumber: string;
   upc: string;
@@ -94,11 +101,7 @@ export interface EuLabelInterface {
   qrCodeUrl: string;
   wineImageUrl: string;
   ingredients: {
-    grapes: {
-      has: boolean;
-      list: ItemWithPercentage[];
-      listWithCoordinates: GrapesMapCoordinatesInterface[];
-    };
+    grapes: GrapesInterface;
     acidityRegulators: {
       allergens: {
         has: boolean;
@@ -159,4 +162,12 @@ export interface WineryInterface {
   level: string | null;
   wines: WinesInterface[] | null;
   euLabels: EuLabelInterface[] | null;
+}
+
+export interface CreateAdminNotification {
+  requestDate: Timestamp;
+  wineryName: string;
+  wineryEmail: string;
+  wineryPhone: string;
+  wineryRepresentative: string;
 }

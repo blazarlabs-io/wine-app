@@ -117,7 +117,6 @@ export const FiltersProvider = ({
 
   useEffect(() => {
     if (filters.byWinery.result && !filters.byWineType.result) {
-      console.log("FITERING BY WINERY");
       getEuLabelWinesByWineryName(filters.byWinery.result)
         .then((wines: EuLabelInterface[]) => {
           setFilteredWines(wines);
@@ -127,7 +126,6 @@ export const FiltersProvider = ({
       return;
     }
     if (filters.byWineType.result && !filters.byWinery.result) {
-      console.log("FITERING BY WINE TYPE");
       getEuLabelWinesByWineType(filters.byWineType.result)
         .then((wines) => {
           setFilteredWines(wines);
