@@ -1,32 +1,18 @@
 "use client";
 
 import {
-  AllergenViewer,
   Button,
   Container,
   EuLabelGeneralViewer,
-  EuLabelItem,
-  IngredientViewer,
   MapViewerSection,
   Text,
 } from "@/components";
-import {
-  EuLabelInterface,
-  WineGeneralInfoInterface,
-  WineryGeneralInfoInterface,
-  WinesInterface,
-} from "@/typings/winery";
-import { euLabelUrlComposer } from "@/utils/euLabelUrlComposer";
-import { euLabelUrlComposerAPI } from "@/utils/euLabelUrlComposerAPI";
-import { textFromKey } from "@/utils/textFromKey";
+import { EuLabelInterface, WineryGeneralInfoInterface } from "@/typings/winery";
 import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { useWine } from "@/context/wineContext";
-import { useRouter } from "next/navigation";
-import { useAppState } from "@/context/appStateContext";
 import { euLabelUrlComposerRef } from "@/utils/euLabelUrlComposerRef";
 
 export interface EuLabelsAccordionProps {
@@ -76,10 +62,6 @@ const AccordionItem = ({
   item,
   onEdit,
 }: EuLabelsAccordionItemInterface) => {
-  const router = useRouter();
-  const { updateWineToShow } = useWine();
-  const { updateAppLoading } = useAppState();
-
   const [active, setActive] = useState(false);
 
   const handleToggle = () => {
@@ -117,10 +99,6 @@ const AccordionItem = ({
         </div>
 
         {/* Data to display when closed    */}
-        {/* <Container
-          intent="grid-6"
-          className="w-full my-auto items-center justify-center"
-        > */}
         <div className="flex items-center w-full justify-center">
           <Text intent="p1" className="font-normal text-on-surface">
             {item.wineCollectionName}
@@ -167,7 +145,6 @@ const AccordionItem = ({
           </Button>
         </div>
       </Container>
-      {/* </Container> */}
 
       {/* Data to display when opened */}
       <Container
@@ -216,14 +193,6 @@ const AccordionItem = ({
               py="small"
               className="max-w-fit h-full bg-surface rounded-md"
             >
-              {/* <Link
-                href={euLabelUrlComposer(item.referenceNumber)}
-                target="__blank"
-              >
-                <Text variant="dim">
-                  {euLabelUrlComposer(item.referenceNumber)}
-                </Text>
-              </Link> */}
               <Link
                 href={euLabelUrlComposerRef(item.referenceNumber)}
                 target="__blank"
@@ -232,25 +201,6 @@ const AccordionItem = ({
                   {euLabelUrlComposerRef(item.referenceNumber)}
                 </Text>
               </Link>
-              {/* <button
-                onClick={() => {
-                  fetch(euLabelUrlComposerAPI(item.referenceNumber))
-                    .then(async (res) => {
-                      res.json().then((data) => {
-                        updateWineToShow(data);
-                        updateAppLoading(true);
-                        router.push("/wine");
-                      });
-                    })
-                    .catch((err) => {
-                      console.error(err);
-                    });
-                }}
-              >
-                <Text variant="dim">
-                  {euLabelUrlComposerAPI(item.referenceNumber)}
-                </Text>
-              </button> */}
             </Container>
           </Container>
         </motion.div>

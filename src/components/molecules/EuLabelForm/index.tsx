@@ -42,7 +42,7 @@ import {
   updateGrapesInEuLabel,
 } from "@/utils/firestore";
 import { useAuth } from "@/context/authContext";
-import { euLabelUrlComposer } from "@/utils/euLabelUrlComposer";
+import { euLabelUrlComposerRef } from "@/utils/euLabelUrlComposerRef";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
 import { validateFileSizeAndType } from "@/utils/validateFileSizeAndType";
 import { useModal } from "@/context/modalContext";
@@ -120,7 +120,7 @@ export const EuLabelForm = () => {
               subject: "Your new EU label has been created!",
               text: `Congratulations, you have successfuly registered a new EU-Only Label.`,
               html: generateEuLabelHtml(
-                euLabelUrlComposer(euLabelForm.formData.referenceNumber),
+                euLabelUrlComposerRef(euLabelForm.formData.referenceNumber),
                 euLabelForm.formData.qrCodeUrl
               ),
             },
@@ -249,7 +249,9 @@ export const EuLabelForm = () => {
     >
       {showReview && (
         <ReviewEuLabel
-          qrCodeValue={euLabelUrlComposer(euLabelForm.formData.referenceNumber)}
+          qrCodeValue={euLabelUrlComposerRef(
+            euLabelForm.formData.referenceNumber
+          )}
           qrCodeId={"euLabelQrCode"}
           onAccept={() => {
             handleRegistration();
