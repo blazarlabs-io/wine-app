@@ -23,6 +23,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export interface EuLabelsAccordionProps {
   generalInfo: WineryGeneralInfoInterface;
@@ -71,6 +72,8 @@ const AccordionItem = ({
   item,
   onEdit,
 }: EuLabelsAccordionItemInterface) => {
+  const router = useRouter();
+
   const [active, setActive] = useState(false);
 
   const handleToggle = () => {
@@ -207,14 +210,16 @@ const AccordionItem = ({
               py="small"
               className="max-w-fit h-full bg-surface rounded-md"
             >
-              <Link
-                href={euLabelUrlComposer(item.referenceNumber)}
-                target="__blank"
+              <button
+                onClick={() => {
+                  router.refresh();
+                  router.push(euLabelUrlComposer(item.referenceNumber));
+                }}
               >
                 <Text variant="dim">
                   {euLabelUrlComposer(item.referenceNumber)}
                 </Text>
-              </Link>
+              </button>
             </Container>
           </Container>
         </motion.div>
