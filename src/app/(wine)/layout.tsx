@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { BaseLayout } from "@/components";
 import "../globals.css";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Wine",
@@ -12,5 +13,9 @@ export default function ExplorerRootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <BaseLayout>{children}</BaseLayout>;
+  return (
+    <BaseLayout>
+      <Suspense>{children}</Suspense>
+    </BaseLayout>
+  );
 }
