@@ -52,7 +52,6 @@ export const Signup = ({ title, description }: LoginProps) => {
   }, []);
 
   useEffect(() => {
-    console.log("errors", errors);
     if (errors.email === null && errors.text === null) {
       setSendButtonDisabled(false);
     } else {
@@ -193,7 +192,6 @@ export const Signup = ({ title, description }: LoginProps) => {
                   }}
                   value={wineryPhone as string}
                   onChange={(event: any) => {
-                    console.log("event", event);
                     setWineryPhone(event as string);
                   }}
                   inputStyle={{

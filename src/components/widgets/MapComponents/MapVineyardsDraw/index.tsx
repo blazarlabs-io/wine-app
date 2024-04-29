@@ -55,7 +55,6 @@ export const MapVineyardsDraw = ({
   };
 
   useEffect(() => {
-    // console.log("initialPolygon", initialPolygon);
     if (initialPolygon) {
       startWithInitialPolygon(initialPolygon.coordinates);
     }

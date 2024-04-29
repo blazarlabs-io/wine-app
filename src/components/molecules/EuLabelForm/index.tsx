@@ -80,7 +80,6 @@ export const EuLabelForm = () => {
   useEffect(() => {
     if (!initialized.current && !euLabelForm.isEditing) {
       const ref = generateId(5) + "-" + dateToTimestamp();
-      console.log("Generating new EU LABEL", ref);
       euLabelForm.formData.referenceNumber = ref;
       updateEuLabelForm({
         ...euLabelForm,
@@ -111,7 +110,6 @@ export const EuLabelForm = () => {
         getQrCodeImageData("euLabelQrCode"),
         euLabelForm.formData.referenceNumber,
         (url: string) => {
-          console.log("QRCODE URL", url);
           euLabelForm.formData.qrCodeUrl = url;
           regiterWineryEuLabel(user?.uid as string, euLabelForm.formData);
           setIsLoading(false);
@@ -178,49 +176,13 @@ export const EuLabelForm = () => {
         }
       );
     } else {
-      // console.log("Updating EU LABEL", euLabelForm.formData);
       updateWineryEuLabel(user?.uid as string, euLabelForm.formData);
-
-      // const sortedEuLabels = wineryEuLabels;
-      // wineryEuLabels.forEach((label, index) => {
-      //   if (label.referenceNumber === euLabelForm.formData.referenceNumber) {
-      //     sortedEuLabels[index] = euLabelForm.formData;
-      //   }
-      // });
-
-      // const wineryData: WineryInterface = {
-      //   generalInfo: wineryGeneralInfo,
-      //   tier: tier || null,
-      //   level: level || null,
-      //   wines: [] || null,
-      //   euLabels: sortedEuLabels || null,
-      // };
-      // // console.log("wineryEuLabels", wineryEuLabels);
-      // // console.log(sortedEuLabels);
-      // overWiteWineryData(user?.uid as string, wineryData)
-      //   .then(() => {
-      //     updateToast({
-      //       show: true,
-      //       status: "success",
-      //       message: "EU Label updated successfully",
-      //       timeout: 3000,
-      //     });
-      //   })
-      //   .catch((error) => {
-      //     updateToast({
-      //       show: true,
-      //       status: "error",
-      //       message: "Failed to update EU Label",
-      //       timeout: 3000,
-      //     });
-      //   });
 
       router.replace("/home");
     }
   };
 
   const handleSubmit = (event: any) => {
-    console.log("submitting");
     event.preventDefault();
     if (!euLabelForm.isEditing) {
       setShowReview(true);
@@ -642,8 +604,6 @@ export const EuLabelForm = () => {
                 required={true}
                 initialItems={euLabelForm.formData.ingredients.grapes.list}
                 onItemsChange={(items: GrapesMapCoordinatesInterface[]) => {
-                  // console.log("ON ITEMS CHANGE", items);
-
                   const dataToUpdate = {
                     has: items.length > 0 ? true : false,
                     list: items,
@@ -669,8 +629,6 @@ export const EuLabelForm = () => {
                   });
                 }}
                 onPolygonComplete={(items: GrapesMapCoordinatesInterface[]) => {
-                  // console.log("POLYGON COMPLETE", items);
-
                   const dataToUpdate = {
                     has: items.length > 0 ? true : false,
                     list: items,

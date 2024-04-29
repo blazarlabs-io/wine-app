@@ -52,7 +52,6 @@ export const WinesListSection = () => {
               intent="primary"
               size="medium"
               onClick={() => {
-                console.log(wineryEuLabels.length, allowedEuLabels);
                 if (wineryEuLabels.length < allowedEuLabels) {
                   updateEuLabelForm({
                     title: "Create EU Label",

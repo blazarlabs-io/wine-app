@@ -80,12 +80,10 @@ export function useDrawingManager(
         google.maps.event.addListener(rawPolygon, "dragend", function () {
           const newNormalCoordinates = normalizeData(rawPolygon);
           setPolygon(newNormalCoordinates);
-          console.log("dragend");
         });
 
         const normalCoordinates = normalizeData(rawPolygon);
         setPolygon(normalCoordinates);
-        console.log("polygoncomplete");
       }
     );
 
@@ -96,7 +94,6 @@ export function useDrawingManager(
   }, [drawing, map]);
 
   useEffect(() => {
-    console.log("initialPolygon", initialPolygon);
     if (initialPolygon) {
       setPolygon(initialPolygon);
     }

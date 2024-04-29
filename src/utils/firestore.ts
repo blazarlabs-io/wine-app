@@ -24,7 +24,6 @@ import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { db, storage } from "@/lib/firebase/client";
 
 export const initWineryInDb = async (docId: string) => {
-  console.log("initWineryInDb", db, docId);
   try {
     await setDoc(
       doc(db, "wineries", docId),
@@ -83,7 +82,6 @@ export const updateWineryEuLabel = async (
         return label;
       }
     });
-    console.log("updateWineryEuLabel", updatedEuLabels);
     await updateDoc(docRef, { euLabels: updatedEuLabels });
   }
 };
@@ -114,7 +112,7 @@ export const uploadLogoToStorage = async (
       );
     },
     (error) => {
-      console.log(error);
+      console.error(error);
     },
     () => {
       getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
@@ -152,7 +150,7 @@ export const uploadQrCodeToStorage = async (
       );
     },
     (error) => {
-      console.log(error);
+      console.error(error);
     },
     () => {
       getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
@@ -187,7 +185,7 @@ export const uploadWineImageToStorage = async (
       );
     },
     (error) => {
-      console.log(error);
+      console.error(error);
     },
     () => {
       getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
@@ -205,10 +203,8 @@ export const getWineByRefNumber = async (
   const querySnapshot = await getDocs(wineries);
   querySnapshot.forEach((doc) => {
     if (doc.data().euLabels) {
-      console.log("[getWineByRefNumber]", doc.data().euLabels);
       doc.data().euLabels.forEach((label: EuLabelInterface) => {
         if (label.referenceNumber === refNumber) {
-          // console.log(doc.id, " => ", label);
           callback(label);
         } else {
           // callback(null);
@@ -230,7 +226,6 @@ export const getWineByUpcCode = async (
     if (doc.data().euLabels) {
       doc.data().euLabels.forEach((label: EuLabelInterface) => {
         if (label.upc === upc) {
-          // console.log(doc.id, " => ", label);
           callback(label);
         } else {
           // callback(null);
@@ -317,7 +312,6 @@ export const getEuLabelWinesByWineType = async (wineType: string) => {
         if (
           label.typeOfWine.toLocaleLowerCase() === wineType.toLocaleLowerCase()
         ) {
-          console.log("found", label.typeOfWine);
           items.push(label);
         }
       });
@@ -343,7 +337,6 @@ export const overWiteWineryData = async (
   data: WineryInterface
 ) => {
   const docRef = doc(db, "wineries", docId);
-  console.log("overWiteWineryData", docId, data);
   try {
     await updateDoc(docRef, { ...data });
   } catch (e) {
@@ -385,12 +378,10 @@ export const updateGrapesInEuLabel = async (
   const docSnap = await getDoc(docRef);
   const data = docSnap.data();
   const euLabels = data?.euLabels;
-  console.log("updateGrapesInEuLabel", docId, grapes, refNumber, euLabels);
   if (euLabels) {
     const updatedEuLabels = euLabels.map((label: EuLabelInterface) => {
       if (label.referenceNumber === refNumber) {
         label.ingredients.grapes = grapes;
-        console.log("found");
         return label;
       } else {
         return label;

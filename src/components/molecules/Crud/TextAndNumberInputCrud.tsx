@@ -84,7 +84,6 @@ export const TextAndNumberInputCrud = ({
           intent="unstyled"
           disabled={disableButton}
           onClick={() => {
-            console.log("currentItem", currentItem);
             let its: ItemWithPercentage[] = [];
             if (items !== null && items !== undefined && items.length > 0) {
               its = [...items, currentItem as ItemWithPercentage];

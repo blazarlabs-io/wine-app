@@ -100,7 +100,6 @@ export const WineryForm = () => {
   };
 
   useEffect(() => {
-    console.log("wineryGeneralInfo", wineryGeneralInfo);
     setInitialMapPosition({
       latitude: wineryGeneralInfo.wineryHeadquarters.latitude,
       longitude: wineryGeneralInfo.wineryHeadquarters.longitude,
@@ -129,7 +128,6 @@ export const WineryForm = () => {
                   longitude: initialMapPosition.longitude || -2.135153202045415,
                 }}
                 onMarkerSet={(marker: any) => {
-                  console.log("marker", marker);
                   if (marker && marker.lat && marker.lng) {
                     wineryGeneralInfo.wineryHeadquarters.latitude = marker.lat;
                     wineryGeneralInfo.wineryHeadquarters.longitude = marker.lng;
@@ -552,7 +550,6 @@ export const WineryForm = () => {
                     }}
                     value={wineryGeneralInfo.wineryRepresentative.phone}
                     onChange={(event: any) => {
-                      console.log("event", event);
                       const newGeneralInfo = {
                         ...wineryGeneralInfo,
                         wineryRepresentative: {

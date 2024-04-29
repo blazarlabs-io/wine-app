@@ -38,7 +38,6 @@ export const MapLocationFinder = ({
     setCameraProps(ev.detail);
 
   useEffect(() => {
-    console.log("isEditing", isEditing, INITIAL_CAMERA.center);
     if (marker) {
       onMarkerSet(marker);
     }

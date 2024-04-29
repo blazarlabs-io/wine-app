@@ -76,7 +76,6 @@ export const MapVineyardsMultiGrapeView = ({
 
   useEffect(() => {
     initialItems?.forEach((item: any, index: number) => {
-      console.log("polygon", item);
       const centerMarker = drawPolygon(item as any, colors[index]);
 
       google.maps.event.addListener(centerMarker, "click", function () {
@@ -84,9 +83,7 @@ export const MapVineyardsMultiGrapeView = ({
         infowindow.open(map, centerMarker);
       });
 
-      google.maps.event.addListener(item, "click", function (event: Event) {
-        console.log("polygon", item);
-      });
+      google.maps.event.addListener(item, "click", function (event: Event) {});
     });
 
     return () => {

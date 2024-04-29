@@ -60,8 +60,6 @@ export const TextNumberMapCrud = ({
     }
   }, [items]);
 
-  console.log(initialItems);
-
   return (
     <>
       {showMap && (
@@ -71,8 +69,6 @@ export const TextNumberMapCrud = ({
             selectedItem={selectedItem}
             initialItems={initialItems}
             onPolygonComplete={(item, polygon) => {
-              console.log("item", item, "polygon", polygon);
-
               setItems(
                 (items as GrapesMapCoordinatesInterface[]).map((i) => {
                   if (i.name === item.name) {

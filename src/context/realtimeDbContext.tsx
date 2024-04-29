@@ -117,7 +117,6 @@ export const RealtimeDbProvider = ({
           const levels: AvailableLevels[] = [];
           const sorted = sortLevels(data.level);
           const levelsKeys = Object.keys(sorted);
-          // console.log(sorted, levelsKeys);
           levelsKeys.forEach((key) => {
             const k = key as keyof LevelsInterface;
             if (sorted[k] !== null)
@@ -153,7 +152,6 @@ export const RealtimeDbProvider = ({
         updateWineryGeneralInfo(generalInfo);
         regiterWineryEuLabels(wineryData.euLabels as EuLabelInterface[]);
         setTier(wineryData.tier as string);
-        // console.log("winery level", wineryData.level as string);
         setLevel(wineryData.level as string);
       }
     });
@@ -167,7 +165,6 @@ export const RealtimeDbProvider = ({
   useEffect(() => {
     if (level) {
       getWineryLevelDb(level as string).then((data) => {
-        console.log("[setAllowedEuLabels]", data.euLabels);
         if (data) setAllowedEuLabels(data.euLabels as number);
       });
     }
@@ -185,7 +182,6 @@ export const RealtimeDbProvider = ({
 
     if (availableLevels) {
       const maxPrice = findMaxPrice(availableLevels);
-      console.log(maxPrice);
       setMaxPrice(maxPrice);
     }
   }, [availableLevels]);

@@ -47,7 +47,6 @@ export function useDrawingManager(
       newDrawingManager,
       "markercomplete",
       (marker: any) => {
-        console.log(marker.getPosition().lat(), marker.getPosition().lng());
         setDrawingMode(null);
         setPosibleDrawingModes([]);
         setMarker({
@@ -55,7 +54,6 @@ export function useDrawingManager(
           lng: marker.getPosition().lng(),
         });
         google.maps.event.addListener(marker, "dragend", () => {
-          console.log(marker.getPosition().lat(), marker.getPosition().lng());
           setMarker({
             lat: marker.getPosition().lat(),
             lng: marker.getPosition().lng(),
