@@ -9,7 +9,12 @@ export const MapViewerSection = ({
   initialPosition,
   initialItems,
 }: MapViewerSectionProps) => {
-  console.log("initialPosition", initialPosition, "initialItems", initialItems);
+  console.log(
+    "\ninitialPosition",
+    initialPosition,
+    "initialItems",
+    initialItems
+  );
   return (
     <MapVineyardsMultiGrapeView
       initialPosition={
