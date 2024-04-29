@@ -27,6 +27,7 @@ import { useState } from "react";
 import { useWine } from "@/context/wineContext";
 import { useRouter } from "next/navigation";
 import { useAppState } from "@/context/appStateContext";
+import { euLabelUrlComposerRef } from "@/utils/euLabelUrlComposerRef";
 
 export interface EuLabelsAccordionProps {
   generalInfo: WineryGeneralInfoInterface;
@@ -223,7 +224,15 @@ const AccordionItem = ({
                   {euLabelUrlComposer(item.referenceNumber)}
                 </Text>
               </Link> */}
-              <button
+              <Link
+                href={euLabelUrlComposerRef(item.referenceNumber)}
+                target="__blank"
+              >
+                <Text variant="dim">
+                  {euLabelUrlComposerRef(item.referenceNumber)}
+                </Text>
+              </Link>
+              {/* <button
                 onClick={() => {
                   fetch(euLabelUrlComposerAPI(item.referenceNumber))
                     .then(async (res) => {
@@ -241,7 +250,7 @@ const AccordionItem = ({
                 <Text variant="dim">
                   {euLabelUrlComposerAPI(item.referenceNumber)}
                 </Text>
-              </button>
+              </button> */}
             </Container>
           </Container>
         </motion.div>
