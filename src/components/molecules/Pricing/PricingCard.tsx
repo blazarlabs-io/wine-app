@@ -32,7 +32,7 @@ export const PricingCard = ({ data, maxPrice }: PricingCardProps) => {
         intent="flexColTop"
         px="medium"
         py="large"
-        className="bg-surface-light rounded-lg"
+        className="bg-surface-light rounded-lg max-h-[300px]"
       >
         <Container intent="flexColCenter" className="">
           <Container intent="flexRowCenter" gap="xsmall">
@@ -58,7 +58,21 @@ export const PricingCard = ({ data, maxPrice }: PricingCardProps) => {
           py="medium"
           className="mt-[24px] bg-surface-dark rounded-lg"
         >
-          <ul className="space-y-[12px]">
+          <Container
+            intent="flexRowCenter"
+            gap="xsmall"
+            className="flex items-center justify-center w-full"
+          >
+            {/* <div className="min-w-[8px] min-h-[8px] max-w-[8px] max-h-[8px] mt-[8px] rounded-full bg-primary-light" /> */}
+            <Text
+              intent="h5"
+              variant="dim"
+              className="text-center font-semibold"
+            >
+              {allowedLabels}
+            </Text>
+          </Container>
+          {/* <ul className="space-y-[12px]">
             <Container
               intent="unstyled"
               gap="xsmall"
@@ -85,7 +99,7 @@ export const PricingCard = ({ data, maxPrice }: PricingCardProps) => {
               <div className="min-w-[8px] min-h-[8px] max-w-[8px] max-h-[8px] mt-[8px] rounded-full bg-primary-light" />
               <li className="text-on-surface">{allowedLabels}</li>
             </Container>
-          </ul>
+          </ul> */}
           {/* <Container intent="flexRowCenter" gap="small">
           <Button
             intent="primary"

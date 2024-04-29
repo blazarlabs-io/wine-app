@@ -91,9 +91,9 @@ export const TopBar = ({ className }: TopBarProps) => {
                 className="cursor-pointer"
               >
                 <Image
-                  src="/logo-blazarlabs.png"
+                  src="/logo-by-blazarlabs.png"
                   alt="Logo"
-                  width={164}
+                  width={200}
                   height={56}
                 />
               </button>
@@ -134,7 +134,7 @@ export const TopBar = ({ className }: TopBarProps) => {
               <Image
                 src="/logo-by-blazarlabs.png"
                 alt="Logo"
-                width={284}
+                width={240}
                 height={56}
               />
             </button>

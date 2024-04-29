@@ -1,13 +1,17 @@
+"use client";
+
 import { Container, Text } from "@/components";
 import Image from "next/image";
 import Link from "next/link";
+import { useResponsive } from "@/hooks/useResponsive";
 
 export const ContactUsPage = () => {
+  const { responsiveSize } = useResponsive();
   return (
     <Container intent="flexColTop" py="large" gap="medium">
       <Text intent="h3">Contact Us</Text>
       <Container
-        intent="flexRowLeft"
+        intent={responsiveSize === "mobile" ? "flexColTop" : "flexRowLeft"}
         gap="medium"
         className="max-h-[320px] max-w-fit"
       >
