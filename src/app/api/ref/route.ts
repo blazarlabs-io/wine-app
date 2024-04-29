@@ -8,8 +8,12 @@ export async function GET(request: NextRequest) {
   const ref = request.nextUrl.searchParams.get("ref") as string;
   const label = await getWineByRef(ref);
   const info = await getWineryGeneralInfoByWineRef(ref);
-  return Response.json({
+  const response = Response.json({
     generalInfo: info,
     euLabel: label,
   });
+
+  response.headers.set("Access-Control-Allow-Origin", "*");
+
+  return response;
 }

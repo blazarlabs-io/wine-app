@@ -26,6 +26,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useWine } from "@/context/wineContext";
 import { useRouter } from "next/navigation";
+import { useAppState } from "@/context/appStateContext";
 
 export interface EuLabelsAccordionProps {
   generalInfo: WineryGeneralInfoInterface;
@@ -76,6 +77,7 @@ const AccordionItem = ({
 }: EuLabelsAccordionItemInterface) => {
   const router = useRouter();
   const { updateWineToShow } = useWine();
+  const { updateAppLoading } = useAppState();
 
   const [active, setActive] = useState(false);
 
@@ -227,6 +229,7 @@ const AccordionItem = ({
                     .then(async (res) => {
                       res.json().then((data) => {
                         updateWineToShow(data);
+                        updateAppLoading(true);
                         router.push("/wine");
                       });
                     })
