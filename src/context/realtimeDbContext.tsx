@@ -168,7 +168,7 @@ export const RealtimeDbProvider = ({
     if (level) {
       getWineryLevelDb(level as string).then((data) => {
         console.log(data);
-        setAllowedEuLabels(data.euLabels as number);
+        if (data) setAllowedEuLabels(data.euLabels as number);
       });
     }
   }, [level]);
