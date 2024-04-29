@@ -1,18 +1,13 @@
 "use client";
 
-import {
-  Container,
-  Text,
-  Toggle,
-  PricingCard,
-  SpinnerLoader,
-} from "@/components";
+import { Container, Text, PricingCard, SpinnerLoader } from "@/components";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
 import Link from "next/link";
+import { useResponsive } from "@/hooks/useResponsive";
 
 export const PricingPage = () => {
   const { availableLevels, maxPrice } = useRealtimeDb();
-
+  const { responsiveSize } = useResponsive();
   return (
     <Container
       intent="flexColTop"
@@ -23,6 +18,7 @@ export const PricingPage = () => {
       <Container
         intent="flexColTop"
         gap="medium"
+        px="medium"
         className="max-w-[480px] h-full"
       >
         <Text intent="h3">Pricing</Text>
@@ -35,7 +31,12 @@ export const PricingPage = () => {
         </Text>
       </Container>
       {maxPrice ? (
-        <Container intent="grid-4" gap="medium" className="w-full mt-[48px]">
+        <Container
+          intent={responsiveSize === "mobile" ? "grid-1" : "grid-4"}
+          gap="medium"
+          px="medium"
+          className="w-full mt-[48px]"
+        >
           <>
             {availableLevels?.map((level) => (
               <div key={level.name}>

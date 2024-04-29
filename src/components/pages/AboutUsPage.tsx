@@ -5,6 +5,7 @@ export const AboutUsPage = () => {
     <Container
       intent="flexColTop"
       py="large"
+      px="medium"
       gap="medium"
       className="max-w-[720px]"
     >
