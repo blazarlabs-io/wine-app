@@ -13,6 +13,8 @@ import {
 import { DocumentData } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
+export const dynamic = "force-dynamic";
+
 export default function WineExplorer({ params }: { params: { ref: string } }) {
   const [generalInfo, setGeneralInfo] =
     useState<WineryGeneralInfoInterface | null>(null);
