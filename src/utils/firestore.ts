@@ -216,6 +216,44 @@ export const getWineByRefNumber = async (
   });
 };
 
+export const getWineByRef = async (refNumber: string) => {
+  const wineries = query(collection(db, "wineries"));
+  const querySnapshot = await getDocs(wineries);
+  let label: EuLabelInterface | null = null;
+  querySnapshot.forEach((doc) => {
+    if (doc.data().euLabels) {
+      doc.data().euLabels.forEach((l: EuLabelInterface) => {
+        if (l.referenceNumber === refNumber) {
+          label = l;
+        }
+      });
+    }
+  });
+  return label;
+};
+
+export const getWineryGeneralInfoByWineRef = async (refNumber: string) => {
+  const wineries = query(collection(db, "wineries"));
+  try {
+    const querySnapshot = await getDocs(wineries);
+    let winery: WineryInterface | null = null;
+    let generalInfo: WineryGeneralInfoInterface | null = null;
+    querySnapshot.forEach((doc) => {
+      if (doc.data().euLabels) {
+        doc.data().euLabels.forEach((label: EuLabelInterface) => {
+          if (label.referenceNumber === refNumber) {
+            winery = doc.data() as WineryInterface;
+            generalInfo = doc.data().generalInfo as WineryGeneralInfoInterface;
+          }
+        });
+      }
+    });
+    return generalInfo;
+  } catch (e) {
+    console.error(e);
+  }
+};
+
 export const getWineByUpcCode = async (
   upc: string,
   callback: (label: EuLabelInterface | null) => void

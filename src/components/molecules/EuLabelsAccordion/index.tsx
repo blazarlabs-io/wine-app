@@ -17,12 +17,14 @@ import {
   WinesInterface,
 } from "@/typings/winery";
 import { euLabelUrlComposer } from "@/utils/euLabelUrlComposer";
+import { euLabelUrlComposerAPI } from "@/utils/euLabelUrlComposerAPI";
 import { textFromKey } from "@/utils/textFromKey";
 import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { startTransition, useCallback, useState } from "react";
+import { useState } from "react";
+import { useWine } from "@/context/wineContext";
 import { useRouter } from "next/navigation";
 
 export interface EuLabelsAccordionProps {
@@ -73,19 +75,13 @@ const AccordionItem = ({
   onEdit,
 }: EuLabelsAccordionItemInterface) => {
   const router = useRouter();
+  const { updateWineToShow } = useWine();
 
   const [active, setActive] = useState(false);
 
   const handleToggle = () => {
     setActive(!active);
   };
-
-  const handleRedirect = useCallback(async () => {
-    router.push(euLabelUrlComposer(item.referenceNumber));
-    startTransition(() => {
-      router.refresh();
-    });
-  }, [router]);
   return (
     <Container
       intent="flexColLeft"
@@ -217,13 +213,30 @@ const AccordionItem = ({
               py="small"
               className="max-w-fit h-full bg-surface rounded-md"
             >
-              <button
-                onClick={() => {
-                  handleRedirect();
-                }}
+              {/* <Link
+                href={euLabelUrlComposer(item.referenceNumber)}
+                target="__blank"
               >
                 <Text variant="dim">
                   {euLabelUrlComposer(item.referenceNumber)}
+                </Text>
+              </Link> */}
+              <button
+                onClick={() => {
+                  fetch(euLabelUrlComposerAPI(item.referenceNumber))
+                    .then(async (res) => {
+                      res.json().then((data) => {
+                        updateWineToShow(data);
+                        router.push("/wine");
+                      });
+                    })
+                    .catch((err) => {
+                      console.error(err);
+                    });
+                }}
+              >
+                <Text variant="dim">
+                  {euLabelUrlComposerAPI(item.referenceNumber)}
                 </Text>
               </button>
             </Container>
