@@ -205,6 +205,7 @@ export const getWineByRefNumber = async (
   const querySnapshot = await getDocs(wineries);
   querySnapshot.forEach((doc) => {
     if (doc.data().euLabels) {
+      console.log("[getWineByRefNumber]", doc.data().euLabels);
       doc.data().euLabels.forEach((label: EuLabelInterface) => {
         if (label.referenceNumber === refNumber) {
           // console.log(doc.id, " => ", label);
@@ -266,13 +267,12 @@ export const getAllEuLabelWines = async () => {
   return items;
 };
 
-export const getWineryLevelDb = async (tier: string) => {
+export const getWineryLevelDb = async (l: string) => {
   try {
     const docRef = doc(db, "utils", "systemVariables");
     const docSnap = await getDoc(docRef);
     const data = docSnap.data();
-    const level = data?.level[tier];
-    // console.log(tier, data);
+    const level = data?.level[l];
     return level;
   } catch (e) {
     console.error(e);

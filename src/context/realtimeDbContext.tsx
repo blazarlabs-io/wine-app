@@ -167,7 +167,7 @@ export const RealtimeDbProvider = ({
   useEffect(() => {
     if (level) {
       getWineryLevelDb(level as string).then((data) => {
-        console.log(data);
+        console.log("[setAllowedEuLabels]", data.euLabels);
         if (data) setAllowedEuLabels(data.euLabels as number);
       });
     }
