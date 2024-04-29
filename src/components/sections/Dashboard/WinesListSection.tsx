@@ -88,21 +88,26 @@ export const WinesListSection = () => {
             </Button>
           </Container>
           <div className="min-w-full">
-            <EuLabelsAccordion
-              generalInfo={wineryGeneralInfo}
-              data={wineryEuLabels}
-              onEdit={(item: EuLabelInterface) => {
-                updateEuLabelForm({
-                  title: "Edit EU Label",
-                  description:
-                    "Edit the EU label for your wine. All fields marked with * are mandatory.",
-                  isEditing: true,
-                  formData: item,
-                });
+            {wineryEuLabels &&
+              wineryGeneralInfo &&
+              wineryEuLabels !== undefined &&
+              wineryGeneralInfo !== undefined && (
+                <EuLabelsAccordion
+                  generalInfo={wineryGeneralInfo}
+                  data={wineryEuLabels}
+                  onEdit={(item: EuLabelInterface) => {
+                    updateEuLabelForm({
+                      title: "Edit EU Label",
+                      description:
+                        "Edit the EU label for your wine. All fields marked with * are mandatory.",
+                      isEditing: true,
+                      formData: item,
+                    });
 
-                router.push("/eu-label-form");
-              }}
-            />
+                    router.push("/eu-label-form");
+                  }}
+                />
+              )}
           </div>
         </Container>
       ) : (
