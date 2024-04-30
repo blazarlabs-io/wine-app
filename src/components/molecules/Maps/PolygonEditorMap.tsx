@@ -40,7 +40,7 @@ export const PolygonEditorMap = ({
       <MapVineyardsDraw
         initialPosition={initialPosition}
         initialPolygon={
-          initialItems !== undefined
+          initialItems && initialItems !== undefined
             ? (
                 initialItems.filter(
                   (item: any) => item.name === selectedItem?.name

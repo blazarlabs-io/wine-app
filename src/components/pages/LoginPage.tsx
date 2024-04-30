@@ -5,10 +5,12 @@ import { motion } from "framer-motion";
 import { useAuth } from "@/context/authContext";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useAppState } from "@/context/appStateContext";
 
 export const LoginPage = () => {
-  const { authLoading, user } = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
+  const { isAppLoading } = useAppState();
 
   useEffect(() => {
     if (user) {
@@ -18,7 +20,7 @@ export const LoginPage = () => {
 
   return (
     <>
-      {!authLoading && (
+      {!isAppLoading && (
         <>
           <motion.div
             initial={{ opacity: 0 }}

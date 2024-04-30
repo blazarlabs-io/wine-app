@@ -19,7 +19,7 @@ export const WinesListSection = () => {
     updateModal({
       title: "Error",
       description:
-        "You have reached the maximum number of EU labels allowed. Please contact our team's representative and upgrade your plan to add more EU labels.",
+        "You have reached the maximum number of QR codes allowed. Please contact our team's representative and upgrade your plan to add more QR codes.",
       show: true,
       action: {
         label: "Close",

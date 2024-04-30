@@ -25,12 +25,13 @@ import { useRealtimeDb } from "@/context/realtimeDbContext";
 import { useForms } from "@/context/FormsContext";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
+import { useMasterLoader } from "@/context/masterLoaderContext";
 
 export const WineryForm = () => {
   const { user } = useAuth();
   const router = useRouter();
   const { updateModal } = useModal();
-
+  const { updateMasterLoading } = useMasterLoader();
   const { wineryForm, updateWineryForm } = useForms();
 
   const { wineryGeneralInfo, updateWineryGeneralInfo } = useRealtimeDb();
@@ -105,6 +106,10 @@ export const WineryForm = () => {
       longitude: wineryGeneralInfo.wineryHeadquarters.longitude,
     });
   }, [wineryGeneralInfo]);
+
+  useEffect(() => {
+    updateMasterLoading(false);
+  }, []);
 
   return (
     <Container

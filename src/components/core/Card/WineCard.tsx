@@ -150,7 +150,6 @@ export const WineCard = ({
           </Container>
           <Link
             href={euLabelUrlComposerRef(referenceNumber)}
-            target="__blank"
             className="border border-primary-light text-primary-light hover:border-primary hover:text-primary transition-all duration-300 ease-in-out rounded-md px-2 py-1"
           >
             <Text

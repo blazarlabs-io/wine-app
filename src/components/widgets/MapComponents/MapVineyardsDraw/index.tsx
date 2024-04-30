@@ -18,7 +18,7 @@ import { UndoRedoControl } from "./undoRedoControl";
 
 export interface MapVineyardsDrawProps {
   initialPosition: any;
-  initialPolygon?: GrapesMapCoordinatesInterface;
+  initialPolygon?: GrapesMapCoordinatesInterface | null;
   onPolygonComplete: (polygon: any[]) => void;
 }
 

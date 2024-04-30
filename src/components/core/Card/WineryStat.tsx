@@ -17,7 +17,11 @@ export const WineryStat = ({ data }: WineryStatProps) => {
     >
       <Container intent="flexColLeft" gap="xsmall" className="h-full">
         <Container intent="flexRowLeft">
-          <Text intent="h2">{data.value}</Text>
+          {data.value === " Ha" ? (
+            <Text intent="h2">0</Text>
+          ) : (
+            <Text intent="h2">{data.value}</Text>
+          )}
         </Container>
         <Container
           intent="flexRowLeft"

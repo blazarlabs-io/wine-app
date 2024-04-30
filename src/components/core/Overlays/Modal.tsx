@@ -2,10 +2,11 @@
 
 import { Container, Text, Button } from "@/components";
 import { useModal } from "@/context/modalContext";
+import { Icon } from "@iconify/react";
 import { AnimatePresence, motion } from "framer-motion";
 
 export const Modal = () => {
-  const { show, title, description, action } = useModal();
+  const { show, title, description, action, updateModal } = useModal();
   return (
     <AnimatePresence>
       {show && (
@@ -26,8 +27,30 @@ export const Modal = () => {
               stiffness: 260,
               damping: 20,
             }}
-            className="flex flex-col items-start justify-center px-[32px] pt-[32px] pb-[16px] gap-[24px] bg-surface min-w-[420px] max-w-[520px] rounded-lg shadow-lg"
+            className="relative flex flex-col items-start justify-center px-[32px] pt-[32px] pb-[16px] gap-[24px] bg-surface min-w-[420px] max-w-[520px] rounded-lg shadow-lg"
           >
+            <Button
+              intent="unstyled"
+              className="absolute top-[16px] right-[16px]"
+              onClick={() => {
+                updateModal({
+                  show: false,
+                  title: "",
+                  description: "",
+                  action: {
+                    label: "",
+                    onAction: () => {},
+                  },
+                });
+              }}
+            >
+              <Icon
+                icon="material-symbols:close"
+                width="20px"
+                height="20px"
+                className="text-on-surface-dark"
+              />
+            </Button>
             <Container intent="flexRowLeft">
               <Text intent="h4">{title}</Text>
             </Container>

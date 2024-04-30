@@ -7,6 +7,7 @@ import {
   Button,
   SpinnerLoader,
   InfoTooltip,
+  PasswordInput,
 } from "@/components";
 import { Icon } from "@iconify/react";
 import { useEffect, useState } from "react";
@@ -14,14 +15,13 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/context/toastContext";
 import { useAuth } from "@/context/authContext";
 import { useAppState } from "@/context/appStateContext";
-import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import { useModal } from "@/context/modalContext";
-import { CreateAdminNotification } from "@/typings/winery";
-import { Timestamp } from "firebase/firestore";
-import { httpsCallable } from "firebase/functions";
-import { functions } from "@/lib/firebase/client";
+import { auth } from "@/lib/firebase/client";
 import { useFormValidation } from "@/hooks/useFormValidation";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { firebaseAuthErrors } from "@/utils/firebaseAuthErrors";
+import { useMasterLoader } from "@/context/masterLoaderContext";
 
 export interface LoginProps {
   title: string;
@@ -31,13 +31,11 @@ export interface LoginProps {
 export const Signup = ({ title, description }: LoginProps) => {
   const { user } = useAuth();
   const router = useRouter();
-  const { updateAuthLoading, authLoading } = useAuth();
   const { updateToast } = useToast();
-  const { updateAppLoading } = useAppState();
   const { updateModal } = useModal();
+  const { updateAppLoading } = useAppState();
+  const { updateMasterLoading } = useMasterLoader();
   const { handleChange, errors } = useFormValidation();
-
-  const createNotification = httpsCallable(functions, "createNotification");
 
   const [wineryName, setWineryName] = useState<string | null>(null);
   const [wineryEmail, setWineryEmail] = useState<string | null>(null);
@@ -46,62 +44,86 @@ export const Signup = ({ title, description }: LoginProps) => {
     string | null
   >(null);
   const [sendButtonDisabled, setSendButtonDisabled] = useState<boolean>(true);
+  const [password, setPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [passwordsMatch, setPasswordsMatch] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    !user && updateAppLoading(false);
+    updateAppLoading(false);
   }, []);
 
   useEffect(() => {
-    if (errors.email === null && errors.text === null) {
+    if (
+      errors.email === null &&
+      errors.text === null &&
+      errors.password === null &&
+      passwordsMatch
+    ) {
       setSendButtonDisabled(false);
     } else {
       setSendButtonDisabled(true);
     }
-  }, [errors]);
 
-  const handleRegistration = (
-    wn: string,
-    we: string,
-    wp: string,
-    wr: string
-  ) => {
-    updateAuthLoading(true);
-    const data: CreateAdminNotification = {
-      requestDate: Timestamp.now(),
-      wineryName: wn,
-      wineryEmail: we,
-      wineryPhone: wp,
-      wineryRepresentative: wr,
-    };
+    if (
+      !passwordsMatch &&
+      password.length > 0 &&
+      confirmPassword.length === 0 &&
+      errors.password
+    ) {
+      setErrorMessage(errors.password);
+    }
+  }, [errors, passwordsMatch, password, confirmPassword]);
 
-    createNotification({ data: data })
-      .then((res: any) => {
-        const { exists } = res.data;
-        updateAuthLoading(false);
-        if (!exists) {
-          updateToast({
-            show: true,
-            status: "success",
-            message: "Request sent successfully",
-            timeout: 5000,
-          });
-          router.replace("/");
-        } else {
-          updateToast({
-            show: true,
-            status: "error",
-            message: "Request already exists",
-            timeout: 5000,
-          });
-        }
-      })
-      .catch((error) => {
-        updateAuthLoading(false);
+  useEffect(() => {
+    if (password.length > 0) {
+      if (password === confirmPassword) {
+        setPasswordsMatch(true);
+        setErrorMessage(null);
+      } else {
+        console.log("Passwords don't match!");
+        setPasswordsMatch(false);
+        setErrorMessage("Passwords don't match!");
+      }
+    } else {
+      setErrorMessage(null);
+    }
+  }, [password, confirmPassword]);
+
+  const handleRegistration = () => {
+    createUserWithEmailAndPassword(auth, wineryEmail as string, password)
+      .then((userCredential) => {
+        updateMasterLoading(true);
         updateToast({
           show: true,
-          status: "error",
-          message: "Request failed",
+          status: "success",
+          message: "Account created successfully.",
           timeout: 5000,
+        });
+      })
+      .catch((error: any) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log("Error: ", error);
+        updateAppLoading(false);
+        updateModal({
+          show: true,
+          title: "Error",
+          description: firebaseAuthErrors[error.code] as string,
+          action: {
+            label: "OK",
+            onAction: () => {
+              updateModal({
+                show: false,
+                title: "",
+                description: "",
+                action: {
+                  label: "",
+                  onAction: () => {},
+                },
+              });
+            },
+          },
         });
       });
   };
@@ -115,7 +137,7 @@ export const Signup = ({ title, description }: LoginProps) => {
       px="medium"
       py="medium"
       intent="flexColTop"
-      gap="large"
+      gap="small"
       className="bg-surface-light min-w-fit rounded-lg shadow-lg max-w-[520px]"
     >
       <Container intent="flexColLeft" gap="small">
@@ -133,10 +155,10 @@ export const Signup = ({ title, description }: LoginProps) => {
           {description}
         </Text>
       </Container>
-      <form>
+      <form className="mt-[24px] w-full">
         <Container intent="flexColTop" gap="small">
-          <Container intent="grid-2" gap="small">
-            <Container intent="flexColLeft" gap="xsmall">
+          <Container intent="flexRowLeft" gap="small">
+            {/* <Container intent="flexColLeft" gap="xsmall">
               <Text intent="p1" variant="dim" className="font-semibold">
                 * Winery Name
               </Text>
@@ -147,11 +169,11 @@ export const Signup = ({ title, description }: LoginProps) => {
                 placeholder="Name of your Winery"
                 onChange={(event: any) => {
                   setWineryName(event.target.value as string);
-                  handleChange(event, "text");
+                  handleChange(event.target.value, "text");
                 }}
                 className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
               />
-            </Container>
+            </Container> */}
             <Container intent="flexColLeft" gap="xsmall">
               <Text intent="p1" variant="dim" className="font-semibold">
                 * Winery Email
@@ -163,13 +185,37 @@ export const Signup = ({ title, description }: LoginProps) => {
                 placeholder="Enter your email"
                 onChange={(event: any) => {
                   setWineryEmail(event.target.value as string);
-                  handleChange(event, "email");
+                  handleChange(event.target.value, "email");
                 }}
                 className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
               />
             </Container>
           </Container>
-          <Container intent="grid-2" gap="small">
+          <Container intent="flexColLeft" gap="small">
+            <Container intent="flexColLeft" gap="xsmall">
+              <Text intent="p1" variant="dim" className="font-semibold">
+                * Password
+              </Text>
+              <PasswordInput
+                onChange={(value: string) => {
+                  setPassword(value);
+                  handleChange(value, "password");
+                }}
+              />
+            </Container>
+            <Container intent="flexColLeft" gap="xsmall">
+              <Text intent="p1" variant="dim" className="font-semibold">
+                * Confirm Password
+              </Text>
+              <PasswordInput
+                onChange={(value: string) => {
+                  setConfirmPassword(value);
+                  handleChange(value, "password");
+                }}
+              />
+            </Container>
+          </Container>
+          {/* <Container intent="grid-2" gap="small">
             <Container intent="flexColLeft" gap="xsmall">
               <Container intent="flexRowLeft" gap="xsmall" className="">
                 <Text intent="p1" variant="dim" className="font-semibold">
@@ -216,6 +262,14 @@ export const Signup = ({ title, description }: LoginProps) => {
                 className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
               />
             </Container>
+          </Container> */}
+
+          <Container intent="flexRowLeft" className="h-[48px]">
+            {errorMessage && (
+              <Text intent="p2" variant="error" className="">
+                {errorMessage}
+              </Text>
+            )}
           </Container>
         </Container>
       </form>
@@ -235,15 +289,11 @@ export const Signup = ({ title, description }: LoginProps) => {
           fullWidth
           disabled={sendButtonDisabled}
           onClick={() => {
-            handleRegistration(
-              wineryName as string,
-              wineryEmail as string,
-              wineryPhone as string,
-              wineryRepresentative as string
-            );
+            updateAppLoading(true);
+            handleRegistration();
           }}
         >
-          {!authLoading ? "Send" : <SpinnerLoader />}
+          Create Account
         </Button>
       </Container>
     </Container>

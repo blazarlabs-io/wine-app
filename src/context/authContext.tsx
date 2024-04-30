@@ -10,14 +10,10 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 export interface AuthContextInterface {
   user: User | null;
-  authLoading: boolean;
-  updateAuthLoading: (loading: boolean) => void;
 }
 
 const contextInitialData: AuthContextInterface = {
   user: null,
-  authLoading: true,
-  updateAuthLoading: () => {},
 };
 
 const AuthContext = createContext(contextInitialData);
@@ -42,23 +38,15 @@ export const AuthProvider = ({
 
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
-  const [authLoading, setAuthLoading] = useState<boolean>(true);
-
-  const updateAuthLoading = (loading: boolean) => {
-    setAuthLoading(loading);
-  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setAuthLoading(false);
-      updateAppLoading(true);
+      updateAppLoading(false);
       if (user) {
         // console.log("User", user);
         setUser(user);
-        updateAppLoading(false);
         // router.push("/home");
       } else {
-        setUser(null);
         updateAppLoading(false);
       }
     });
@@ -68,9 +56,7 @@ export const AuthProvider = ({
     };
   }, []);
 
-  return (
-    <AuthContext.Provider value={{ user, authLoading, updateAuthLoading }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  const value = { user };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

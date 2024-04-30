@@ -46,12 +46,13 @@ export const WinePage = ({ generalInfo, euLabel }: WinePagePropsInterface) => {
               bottleSize: euLabel.bottleSize,
             }}
           />
-
-          <MapViewerSection
-            initialPosition={generalInfo?.wineryHeadquarters as any}
-            initialItems={euLabel.ingredients.grapes.list}
-          />
-
+          {euLabel.ingredients.grapes.list.length > 0 &&
+            euLabel.ingredients.grapes.list[0].coordinates.length > 0 && (
+              <MapViewerSection
+                initialPosition={generalInfo?.wineryHeadquarters as any}
+                initialItems={euLabel.ingredients.grapes.list}
+              />
+            )}
           <WineFooterSection euLabel={euLabel as EuLabelInterface} />
         </div>
       ) : (

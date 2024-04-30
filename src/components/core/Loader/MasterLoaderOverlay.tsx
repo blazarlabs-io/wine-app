@@ -2,14 +2,14 @@
 
 import { Container } from "@/components";
 import { Icon } from "@iconify/react";
-import { useAuth } from "@/context/authContext";
+import { useMasterLoader } from "@/context/masterLoaderContext";
 
-export const AuthSpinnerLoader = () => {
-  const { authLoading: isAuthLoading } = useAuth();
+export const MasterLoaderOverlay = () => {
+  const { isMasterLoading } = useMasterLoader();
   return (
     <>
-      {isAuthLoading && (
-        <div className="fixed top-0 left-0 z-[999] w-full h-full bg-surface/80 flex justify-center items-center backdrop-blur-sm">
+      {isMasterLoading && (
+        <div className="fixed top-0 left-0 z-[3000] w-full h-full bg-surface/90 flex justify-center items-center backdrop-blur-md">
           <Container intent="flexRowCenter">
             <Icon
               icon="svg-spinners:270-ring"

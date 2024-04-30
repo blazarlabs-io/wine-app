@@ -7,6 +7,7 @@ import {
   useMap,
 } from "@vis.gl/react-google-maps";
 import { useEffect, useState } from "react";
+import { useDrawingManager } from "./useDrawingManager";
 
 export interface MapLocationViewerProps {
   initialPosition: any;
@@ -21,11 +22,13 @@ export const MapLocationViewer = ({
   };
 
   const map = useMap();
-  // const { drawingManager } = useDrawingManager();
+  const { drawingManager } = useDrawingManager();
   const [cameraProps, setCameraProps] =
     useState<MapCameraProps>(INITIAL_CAMERA);
   const handleCameraChange = (ev: MapCameraChangedEvent) =>
     setCameraProps(ev.detail);
+
+  var infowindow = new google.maps.InfoWindow();
 
   useEffect(() => {
     const mark = new google.maps.Marker({
@@ -33,16 +36,28 @@ export const MapLocationViewer = ({
       title: "Headquarters",
     });
 
+    google.maps.event.addListener(mark, "click", function () {
+      infowindow.setContent(mark.getTitle());
+      infowindow.open(map, mark);
+    });
+
     mark.setMap(map);
   }, [INITIAL_CAMERA]);
+
+  useEffect(() => {
+    if (map) {
+      console.log(map);
+      map.overlayMapTypes.forEach((layer) => {
+        console.log(layer);
+      });
+    }
+  }, [map]);
 
   return (
     <Map
       {...cameraProps}
       style={{ width: 800, height: 600 }}
       onCameraChanged={handleCameraChange}
-      gestureHandling={"greedy"}
-      disableDefaultUI={true}
-    ></Map>
+    />
   );
 };

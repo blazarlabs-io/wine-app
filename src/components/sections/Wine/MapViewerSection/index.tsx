@@ -1,4 +1,5 @@
 import { MapVineyardsMultiGrapeView } from "@/components";
+import { useRealtimeDb } from "@/context/realtimeDbContext";
 
 export interface MapViewerSectionProps {
   initialPosition?: any;
@@ -9,18 +10,14 @@ export const MapViewerSection = ({
   initialPosition,
   initialItems,
 }: MapViewerSectionProps) => {
-  console.log(
-    "\ninitialPosition",
-    initialPosition,
-    "initialItems",
-    initialItems
-  );
+  const { wineryGeneralInfo } = useRealtimeDb();
   return (
     <MapVineyardsMultiGrapeView
       initialPosition={
-        initialPosition || {
-          latitude: 11.029170401405926,
-          longitude: -74.82477420222459,
+        (initialPosition.latitud !== undefined &&
+          initialPosition.longitude !== undefined) || {
+          latitude: wineryGeneralInfo.wineryHeadquarters.latitude,
+          longitude: wineryGeneralInfo.wineryHeadquarters.longitude,
         }
       }
       initialItems={initialItems !== undefined ? initialItems : null}
