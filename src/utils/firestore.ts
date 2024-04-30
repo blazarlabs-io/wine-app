@@ -1,5 +1,8 @@
 import {
+  CreateAdminNotification,
   EuLabelInterface,
+  GrapesInterface,
+  GrapesMapCoordinatesInterface,
   WineryDataInterface,
   WineryGeneralInfoInterface,
   WineryInterface,
@@ -15,12 +18,12 @@ import {
   query,
   setDoc,
   updateDoc,
+  addDoc,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { db, storage } from "@/lib/firebase/client";
 
 export const initWineryInDb = async (docId: string) => {
-  console.log("initWineryInDb", db, docId);
   try {
     await setDoc(
       doc(db, "wineries", docId),
@@ -79,7 +82,6 @@ export const updateWineryEuLabel = async (
         return label;
       }
     });
-    console.log("updateWineryEuLabel", updatedEuLabels);
     await updateDoc(docRef, { euLabels: updatedEuLabels });
   }
 };
@@ -110,7 +112,7 @@ export const uploadLogoToStorage = async (
       );
     },
     (error) => {
-      console.log(error);
+      console.error(error);
     },
     () => {
       getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
@@ -148,7 +150,7 @@ export const uploadQrCodeToStorage = async (
       );
     },
     (error) => {
-      console.log(error);
+      console.error(error);
     },
     () => {
       getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
@@ -183,7 +185,7 @@ export const uploadWineImageToStorage = async (
       );
     },
     (error) => {
-      console.log(error);
+      console.error(error);
     },
     () => {
       getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
@@ -203,7 +205,6 @@ export const getWineByRefNumber = async (
     if (doc.data().euLabels) {
       doc.data().euLabels.forEach((label: EuLabelInterface) => {
         if (label.referenceNumber === refNumber) {
-          // console.log(doc.id, " => ", label);
           callback(label);
         } else {
           // callback(null);
@@ -225,7 +226,6 @@ export const getWineByUpcCode = async (
     if (doc.data().euLabels) {
       doc.data().euLabels.forEach((label: EuLabelInterface) => {
         if (label.upc === upc) {
-          // console.log(doc.id, " => ", label);
           callback(label);
         } else {
           // callback(null);
@@ -262,13 +262,12 @@ export const getAllEuLabelWines = async () => {
   return items;
 };
 
-export const getWineryLevelDb = async (tier: string) => {
+export const getWineryLevelDb = async (l: string) => {
   try {
     const docRef = doc(db, "utils", "systemVariables");
     const docSnap = await getDoc(docRef);
     const data = docSnap.data();
-    const level = data?.level[tier];
-    // console.log(tier, data);
+    const level = data?.level[l];
     return level;
   } catch (e) {
     console.error(e);
@@ -313,7 +312,6 @@ export const getEuLabelWinesByWineType = async (wineType: string) => {
         if (
           label.typeOfWine.toLocaleLowerCase() === wineType.toLocaleLowerCase()
         ) {
-          console.log("found", label.typeOfWine);
           items.push(label);
         }
       });
@@ -339,7 +337,6 @@ export const overWiteWineryData = async (
   data: WineryInterface
 ) => {
   const docRef = doc(db, "wineries", docId);
-  console.log("overWiteWineryData", docId, data);
   try {
     await updateDoc(docRef, { ...data });
   } catch (e) {
@@ -370,4 +367,57 @@ export const getWineryByWineRefNumber = async (
     console.error(e);
     callback(null);
   }
+};
+
+export const updateGrapesInEuLabel = async (
+  docId: string,
+  refNumber: string,
+  grapes: GrapesInterface
+) => {
+  const docRef = doc(db, "wineries", docId);
+  const docSnap = await getDoc(docRef);
+  const data = docSnap.data();
+  const euLabels = data?.euLabels;
+  if (euLabels) {
+    const updatedEuLabels = euLabels.map((label: EuLabelInterface) => {
+      if (label.referenceNumber === refNumber) {
+        label.ingredients.grapes = grapes;
+        return label;
+      } else {
+        return label;
+      }
+    });
+    await updateDoc(docRef, { euLabels: updatedEuLabels });
+  }
+};
+
+export const updateWineryHeadquarters = async (
+  docId: string,
+  latitude: number,
+  longitude: number
+) => {
+  const docRef = doc(db, "wineries", docId);
+  const docSnap = await getDoc(docRef);
+  const data = docSnap.data();
+  const updatedGeneralInfo = data?.generalInfo;
+  updatedGeneralInfo.wineryHeadquarters.latitude = latitude;
+  updatedGeneralInfo.wineryHeadquarters.longitude = longitude;
+  await updateDoc(docRef, { generalInfo: updatedGeneralInfo });
+};
+
+export const createAdminNotification = async (
+  data: CreateAdminNotification
+) => {
+  return new Promise<boolean>(async (resolve, reject) => {
+    const id = data.wineryName.replace(/\s/g, "").toLocaleLowerCase();
+    const docRef = doc(db, "notifications", id);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      resolve(true);
+    } else {
+      await setDoc(docRef, data);
+      resolve(false);
+    }
+  });
 };

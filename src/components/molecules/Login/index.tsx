@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client";
 
 import { Container, Text, Button, SpinnerLoader } from "@/components";
@@ -21,7 +22,6 @@ export interface LoginProps {
 export const Login = ({ title, description }: LoginProps) => {
   const { user } = useAuth();
   const router = useRouter();
-  const { updateAuthLoading, authLoading } = useAuth();
   const { updateToast } = useToast();
   const { updateAppLoading } = useAppState();
   const [email, setEmail] = useLocalStorage(
@@ -45,29 +45,26 @@ export const Login = ({ title, description }: LoginProps) => {
   }, []);
 
   const handleSignIn = async () => {
-    updateAuthLoading(true);
+    updateAppLoading(true);
     signInWithEmailAndPassword(auth, email.address, password.value)
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
-        console.log("signed in", user);
-        updateAuthLoading(false);
+        updateAppLoading(false);
         updateAppLoading(true);
         router.replace("/home");
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        console.log(firebaseAuthErrors[errorCode] as string);
         const toastProps: ToastProps = {
           show: true,
           status: "error",
           message: (firebaseAuthErrors[errorCode] as string) ?? errorMessage,
           timeout: 5000,
         };
-        console.log(toastProps);
         updateToast(toastProps);
-        updateAuthLoading(false);
+        updateAppLoading(false);
       });
   };
 
@@ -100,7 +97,7 @@ export const Login = ({ title, description }: LoginProps) => {
       </Container>
       <Container intent="flexColTop" gap="small">
         <Container intent="flexColLeft" gap="xsmall">
-          <Text intent="p1" variant="dim">
+          <Text intent="p1" variant="dim" className="font-semibold">
             Email
           </Text>
           <input
@@ -114,7 +111,7 @@ export const Login = ({ title, description }: LoginProps) => {
           />
         </Container>
         <Container intent="flexColLeft" gap="xsmall">
-          <Text intent="p1" variant="dim">
+          <Text intent="p1" variant="dim" className="font-semibold">
             Password
           </Text>
           <Container intent="flexRowLeft" gap="xsmall" className="relative">
@@ -144,6 +141,19 @@ export const Login = ({ title, description }: LoginProps) => {
         </Container>
       </Container>
       <Container intent="flexRowBetween" gap="small">
+        <Text intent="p1" variant="dim">
+          Don't have an account yet?
+        </Text>
+        <Button
+          intent="unstyled"
+          className="text-primary-light flex items-center gap-[8px] font-semibold"
+          onClick={() => router.push("/signup")}
+        >
+          Create an account
+          {/* <Icon icon="mdi:register-outline" width="20" height="20" /> */}
+        </Button>
+      </Container>
+      <Container intent="flexRowBetween" gap="small">
         <Button
           intent="secondary"
           size="medium"
@@ -153,7 +163,7 @@ export const Login = ({ title, description }: LoginProps) => {
           Cancel
         </Button>
         <Button intent="primary" size="medium" fullWidth onClick={handleSignIn}>
-          {!authLoading ? "Login" : <SpinnerLoader />}
+          Login
         </Button>
       </Container>
     </Container>

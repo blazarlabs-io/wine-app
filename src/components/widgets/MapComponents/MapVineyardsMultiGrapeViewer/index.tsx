@@ -8,24 +8,24 @@ import {
 } from "@vis.gl/react-google-maps";
 import { useEffect, useState } from "react";
 import { useDrawingManager } from "./useDrawingManager";
-import {
-  CoordinateInterface,
-  GrapesMapCoordinatesInterface,
-} from "@/typings/winery";
+import { GrapesMapCoordinatesInterface } from "@/typings/winery";
 import { getPolygonCenter } from "@/utils/getPolygonCenter";
+import { useResponsive } from "@/hooks/useResponsive";
 
 export interface MapVineyardsDrawProps {
   initialPosition: any;
-  polygons?: any;
+  initialItems?: any;
 }
 
 export const MapVineyardsMultiGrapeView = ({
   initialPosition,
-  polygons,
+  initialItems,
 }: MapVineyardsDrawProps) => {
+  const { responsiveSize } = useResponsive();
+
   const INITIAL_CAMERA = {
     center: { lat: initialPosition.latitude, lng: initialPosition.longitude },
-    zoom: 11,
+    zoom: 15,
   };
 
   const map = useMap();
@@ -75,25 +75,19 @@ export const MapVineyardsMultiGrapeView = ({
   var infowindow = new google.maps.InfoWindow();
 
   useEffect(() => {
-    // if (initialPolygon) drawPolygon(initialPolygon?.coordinates as any);
-    console.log("initialPosition", initialPosition);
-
-    polygons?.forEach((polygon: any, index: number) => {
-      console.log("polygon", polygon);
-      const centerMarker = drawPolygon(polygon as any, colors[index]);
+    initialItems?.forEach((item: any, index: number) => {
+      const centerMarker = drawPolygon(item as any, colors[index]);
 
       google.maps.event.addListener(centerMarker, "click", function () {
-        infowindow.setContent(polygon.name + ": " + polygon.percentage + "%");
+        infowindow.setContent(item.name + ": " + item.percentage + "%");
         infowindow.open(map, centerMarker);
       });
 
-      google.maps.event.addListener(polygon, "click", function (event) {
-        console.log("polygon", polygon);
-      });
+      google.maps.event.addListener(item, "click", function (event: Event) {});
     });
 
     return () => {
-      polygons?.forEach((polygon: any) => {
+      initialItems?.forEach((polygon: any) => {
         // polygon.setMap(null);
         google.maps.event.clearListeners(polygon, "click");
       });
@@ -103,7 +97,11 @@ export const MapVineyardsMultiGrapeView = ({
   return (
     <Map
       {...cameraProps}
-      style={{ width: 800, height: 400 }}
+      style={{
+        minWidth: responsiveSize === "desktop" ? 800 : 320,
+        maxWidth: 800,
+        height: 400,
+      }}
       onCameraChanged={handleCameraChange}
       gestureHandling={"greedy"}
       disableDefaultUI={false}

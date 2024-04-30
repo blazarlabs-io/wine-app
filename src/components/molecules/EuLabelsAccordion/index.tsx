@@ -1,34 +1,37 @@
 "use client";
 
 import {
-  AllergenViewer,
   Button,
   Container,
   EuLabelGeneralViewer,
-  EuLabelItem,
-  IngredientViewer,
+  MapViewerSection,
   Text,
 } from "@/components";
-import { EuLabelInterface, WinesInterface } from "@/typings/winery";
-import { euLabelUrlComposer } from "@/utils/euLabelUrlComposer";
-import { textFromKey } from "@/utils/textFromKey";
+import { EuLabelInterface, WineryGeneralInfoInterface } from "@/typings/winery";
 import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { euLabelUrlComposerRef } from "@/utils/euLabelUrlComposerRef";
 
 export interface EuLabelsAccordionProps {
+  generalInfo: WineryGeneralInfoInterface;
   data: EuLabelInterface[];
   onEdit: (item: EuLabelInterface) => void;
 }
 
 export interface EuLabelsAccordionItemInterface {
+  generalInfo: WineryGeneralInfoInterface;
   item: EuLabelInterface;
   onEdit: () => void;
 }
 
-export const EuLabelsAccordion = ({ data, onEdit }: EuLabelsAccordionProps) => {
+export const EuLabelsAccordion = ({
+  generalInfo,
+  data,
+  onEdit,
+}: EuLabelsAccordionProps) => {
   const [active, setActive] = useState(false);
 
   const handleToggle = () => {
@@ -43,6 +46,7 @@ export const EuLabelsAccordion = ({ data, onEdit }: EuLabelsAccordionProps) => {
               <AccordionItem
                 key={item.wineCollectionName}
                 item={item}
+                generalInfo={generalInfo}
                 onEdit={() => onEdit(item)}
               />
             ))}
@@ -53,7 +57,11 @@ export const EuLabelsAccordion = ({ data, onEdit }: EuLabelsAccordionProps) => {
   );
 };
 
-const AccordionItem = ({ item, onEdit }: EuLabelsAccordionItemInterface) => {
+const AccordionItem = ({
+  generalInfo,
+  item,
+  onEdit,
+}: EuLabelsAccordionItemInterface) => {
   const [active, setActive] = useState(false);
 
   const handleToggle = () => {
@@ -91,10 +99,6 @@ const AccordionItem = ({ item, onEdit }: EuLabelsAccordionItemInterface) => {
         </div>
 
         {/* Data to display when closed    */}
-        {/* <Container
-          intent="grid-6"
-          className="w-full my-auto items-center justify-center"
-        > */}
         <div className="flex items-center w-full justify-center">
           <Text intent="p1" className="font-normal text-on-surface">
             {item.wineCollectionName}
@@ -141,7 +145,6 @@ const AccordionItem = ({ item, onEdit }: EuLabelsAccordionItemInterface) => {
           </Button>
         </div>
       </Container>
-      {/* </Container> */}
 
       {/* Data to display when opened */}
       <Container
@@ -159,6 +162,13 @@ const AccordionItem = ({ item, onEdit }: EuLabelsAccordionItemInterface) => {
           }`}
         >
           <EuLabelGeneralViewer item={item} />
+          {item.ingredients.grapes.list.length > 0 &&
+            item.ingredients.grapes.list[0].coordinates.length > 0 && (
+              <MapViewerSection
+                initialPosition={generalInfo?.wineryHeadquarters as any}
+                initialItems={item.ingredients.grapes.list}
+              />
+            )}
           <Container intent="flexColLeft" className="max-w-fit">
             <Text intent="h6" variant="accent" className="font-semibold">
               QR Code & Url
@@ -187,11 +197,11 @@ const AccordionItem = ({ item, onEdit }: EuLabelsAccordionItemInterface) => {
               className="max-w-fit h-full bg-surface rounded-md"
             >
               <Link
-                href={euLabelUrlComposer(item.referenceNumber)}
+                href={euLabelUrlComposerRef(item.referenceNumber)}
                 target="__blank"
               >
                 <Text variant="dim">
-                  {euLabelUrlComposer(item.referenceNumber)}
+                  {euLabelUrlComposerRef(item.referenceNumber)}
                 </Text>
               </Link>
             </Container>

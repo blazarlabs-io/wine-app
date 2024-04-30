@@ -5,10 +5,12 @@ import { motion } from "framer-motion";
 import { useAuth } from "@/context/authContext";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useAppState } from "@/context/appStateContext";
 
 export const LoginPage = () => {
-  const { authLoading, user } = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
+  const { isAppLoading } = useAppState();
 
   useEffect(() => {
     if (user) {
@@ -18,7 +20,7 @@ export const LoginPage = () => {
 
   return (
     <>
-      {!authLoading && (
+      {!isAppLoading && (
         <>
           <motion.div
             initial={{ opacity: 0 }}
@@ -41,7 +43,7 @@ export const LoginPage = () => {
             >
               <Login
                 title="Login"
-                description="If you are a winery owner, please login using the email and password provided to you by the EE Hub team."
+                description="If you are a winery owner, please login using the email and password provided to you by the Blazar Labs team."
               />
             </motion.div>
           </motion.div>

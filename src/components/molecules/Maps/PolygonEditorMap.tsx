@@ -7,7 +7,7 @@ import { useState } from "react";
 
 export interface PolygonEditorMapProps {
   initialPosition: any;
-  initialItemsWithCoordinates: any;
+  initialItems: any;
   selectedItem: any;
   onPolygonComplete: (item: any, polygon: any[]) => void;
   onCancel: () => void;
@@ -17,7 +17,7 @@ export interface PolygonEditorMapProps {
 export const PolygonEditorMap = ({
   initialPosition,
   selectedItem,
-  initialItemsWithCoordinates,
+  initialItems,
   onPolygonComplete,
   onCancel,
   onSave,
@@ -40,9 +40,9 @@ export const PolygonEditorMap = ({
       <MapVineyardsDraw
         initialPosition={initialPosition}
         initialPolygon={
-          initialItemsWithCoordinates !== undefined
+          initialItems && initialItems !== undefined
             ? (
-                initialItemsWithCoordinates.filter(
+                initialItems.filter(
                   (item: any) => item.name === selectedItem?.name
                 ) as any
               )[0]

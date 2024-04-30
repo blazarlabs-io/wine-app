@@ -5,18 +5,19 @@ import {
   Container,
   Text,
   InfoTooltip,
-  LocationFinderMap,
   TextInputCrud,
   SpinnerLoader,
+  MapLocationFinder,
 } from "@/components";
 import { Icon } from "@iconify/react";
 import { useAuth } from "@/context/authContext";
 import { WineryGeneralInfoInterface } from "@/typings/winery";
 import {
   registerWineryGeneralInfoToDb,
+  updateWineryHeadquarters,
   uploadLogoToStorage,
 } from "@/utils/firestore";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { validateFileSizeAndType } from "@/utils/validateFileSizeAndType";
 import { useModal } from "@/context/modalContext";
 import { useRouter } from "next/navigation";
@@ -24,13 +25,13 @@ import { useRealtimeDb } from "@/context/realtimeDbContext";
 import { useForms } from "@/context/FormsContext";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
-import { set } from "firebase/database";
+import { useMasterLoader } from "@/context/masterLoaderContext";
 
 export const WineryForm = () => {
   const { user } = useAuth();
   const router = useRouter();
   const { updateModal } = useModal();
-
+  const { updateMasterLoading } = useMasterLoader();
   const { wineryForm, updateWineryForm } = useForms();
 
   const { wineryGeneralInfo, updateWineryGeneralInfo } = useRealtimeDb();
@@ -39,6 +40,10 @@ export const WineryForm = () => {
   const [imageUploading, setImageUploading] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showLocationMap, setShowLocationMap] = useState<boolean>(false);
+  const [initialMapPosition, setInitialMapPosition] = useState<any | null>(
+    null
+  );
+  const [enableMapSave, setEnableMapSave] = useState<boolean>(false);
 
   const inputFileRef = useRef<any>(null);
 
@@ -95,6 +100,17 @@ export const WineryForm = () => {
     handleRegistration();
   };
 
+  useEffect(() => {
+    setInitialMapPosition({
+      latitude: wineryGeneralInfo.wineryHeadquarters.latitude,
+      longitude: wineryGeneralInfo.wineryHeadquarters.longitude,
+    });
+  }, [wineryGeneralInfo]);
+
+  useEffect(() => {
+    updateMasterLoading(false);
+  }, []);
+
   return (
     <Container
       intent="flexColTop"
@@ -110,23 +126,52 @@ export const WineryForm = () => {
               intent="flexColCenter"
               className="bg-surface-light p-[24px]"
             >
-              <LocationFinderMap
-                onPin={(lat, lon) => {
-                  console.log("onPin", lat, lon);
-                  wineryGeneralInfo.wineryHeadquarters.latitude = lat;
-                  wineryGeneralInfo.wineryHeadquarters.longitude = lon;
+              <MapLocationFinder
+                isEditing={initialMapPosition ? true : false}
+                initialPosition={{
+                  latitude: initialMapPosition.latitude || 54.75198957490845,
+                  longitude: initialMapPosition.longitude || -2.135153202045415,
+                }}
+                onMarkerSet={(marker: any) => {
+                  if (marker && marker.lat && marker.lng) {
+                    wineryGeneralInfo.wineryHeadquarters.latitude = marker.lat;
+                    wineryGeneralInfo.wineryHeadquarters.longitude = marker.lng;
+                    setEnableMapSave(true);
+                    updateWineryGeneralInfo(wineryGeneralInfo);
+                  }
                 }}
               />
               <Container intent="flexRowBetween" className="mt-[48px] w-full">
-                <Text>Please click on maker to make it draggable.</Text>
-                <Button
-                  intent="primary"
-                  size="medium"
-                  className=""
-                  onClick={() => setShowLocationMap(false)}
-                >
-                  Done
-                </Button>
+                <Text>Please find your location and click to add marker.</Text>
+                <Container intent="flexRowRight" gap="medium">
+                  <Button
+                    intent="unstyled"
+                    size="medium"
+                    onClick={() => setShowLocationMap(false)}
+                    className="border border-primary-light text-primary-light font-semibold"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    intent="primary"
+                    size="medium"
+                    disabled={!enableMapSave}
+                    onClick={() => {
+                      setShowLocationMap(false);
+                      updateWineryHeadquarters(
+                        user?.uid as string,
+                        parseFloat(
+                          wineryGeneralInfo.wineryHeadquarters.latitude
+                        ),
+                        parseFloat(
+                          wineryGeneralInfo.wineryHeadquarters.longitude
+                        )
+                      );
+                    }}
+                  >
+                    Save
+                  </Button>
+                </Container>
               </Container>
             </Container>
           </div>
@@ -510,7 +555,6 @@ export const WineryForm = () => {
                     }}
                     value={wineryGeneralInfo.wineryRepresentative.phone}
                     onChange={(event: any) => {
-                      console.log("event", event);
                       const newGeneralInfo = {
                         ...wineryGeneralInfo,
                         wineryRepresentative: {

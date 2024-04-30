@@ -10,8 +10,6 @@ export const ProtectedPage = ({ children }: React.PropsWithChildren) => {
 
   const { updateAppLoading } = useAppState();
 
-  console.log("PROTECTED");
-
   if (!user) {
     updateAppLoading(false);
     redirect("/login");

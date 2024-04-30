@@ -18,7 +18,6 @@ export const euLabelInitData: EuLabelInterface = {
     grapes: {
       has: false,
       list: [],
-      listWithCoordinates: [],
     },
     acidityRegulators: {
       allergens: {

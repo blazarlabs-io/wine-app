@@ -24,11 +24,12 @@ export interface WinePagePropsInterface {
 export const WinePage = ({ generalInfo, euLabel }: WinePagePropsInterface) => {
   const { updateAppLoading } = useAppState();
   useEffect(() => {
+    console.log("euLabel", euLabel, "generalInfo", generalInfo);
     updateAppLoading(false);
   }, []);
   return (
     <>
-      {euLabel ? (
+      {euLabel && generalInfo ? (
         <div
           className={classNames(
             "flex flex-col items-center justify-center gap-[48px] w-full max-w-[800px]"
@@ -45,14 +46,13 @@ export const WinePage = ({ generalInfo, euLabel }: WinePagePropsInterface) => {
               bottleSize: euLabel.bottleSize,
             }}
           />
-
-          <MapViewerSection
-            initialPosition={generalInfo?.wineryHeadquarters as any}
-            initialItemsWithCoordinates={
-              euLabel.ingredients.grapes.listWithCoordinates
-            }
-          />
-
+          {euLabel.ingredients.grapes.list.length > 0 &&
+            euLabel.ingredients.grapes.list[0].coordinates.length > 0 && (
+              <MapViewerSection
+                initialPosition={generalInfo?.wineryHeadquarters as any}
+                initialItems={euLabel.ingredients.grapes.list}
+              />
+            )}
           <WineFooterSection euLabel={euLabel as EuLabelInterface} />
         </div>
       ) : (
