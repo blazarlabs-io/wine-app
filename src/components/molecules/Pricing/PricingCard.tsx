@@ -16,13 +16,13 @@ export const PricingCard = ({ data, maxPrice }: PricingCardProps) => {
 
   useEffect(() => {
     if (data.price === 0) {
-      setAllowedLabels("2 Free EU Labels");
+      setAllowedLabels("2 Free QR Codes");
       setPrice("Free");
     } else if (data.price > 0 && data.price < maxPrice) {
-      setAllowedLabels(data.euLabels + " EU Labels");
+      setAllowedLabels(data.euLabels + " QR Codes");
       setPrice("$" + data.price.toLocaleString("en-US"));
     } else if (data.price === maxPrice) {
-      setAllowedLabels("Unlimited EU Labels");
+      setAllowedLabels("Unlimited QR Codes");
       setPrice("$" + data.price.toLocaleString("en-US"));
     }
   }, [data]);

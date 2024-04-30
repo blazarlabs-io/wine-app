@@ -118,7 +118,7 @@ export const EuLabelForm = () => {
               from: "it@blazarlabs.io",
               to: user?.email,
               subject: "Your new EU label has been created!",
-              text: `Congratulations, you have successfuly registered a new EU-Only Label.`,
+              text: `Congratulations, you have successfuly registered a new EU Label.`,
               html: generateEuLabelHtml(
                 euLabelUrlComposerRef(euLabelForm.formData.referenceNumber),
                 euLabelForm.formData.qrCodeUrl
@@ -582,7 +582,7 @@ export const EuLabelForm = () => {
             </Container>
           </Container>
 
-          <Container intent="flexRowLeft">
+          <Container intent="flexRowLeft" gap="xsmall">
             <Text
               intent="h5"
               variant="accent"
@@ -590,6 +590,10 @@ export const EuLabelForm = () => {
             >
               Ingredients
             </Text>
+            <InfoTooltip
+              className="mt-[-8px]"
+              text="List of potential allergens MUST be included on the printed bottle label if present in the product Eg: sulphites, albumin, isinglass, casein"
+            />
           </Container>
           {/* Fith Row */}
           <Container intent="grid-2" gap="small" className="w-full">

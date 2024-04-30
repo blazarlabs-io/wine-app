@@ -4,6 +4,7 @@ import { Container, Text, Button } from "@/components";
 import { classNames } from "@/utils/classNames";
 import { useRouter } from "next/navigation";
 import { useResponsive } from "@/hooks/useResponsive";
+import { useAuth } from "@/context/authContext";
 
 export interface HeroSectionProps {
   className?: string;
@@ -12,6 +13,7 @@ export interface HeroSectionProps {
 export const HeroSection = ({ className }: HeroSectionProps) => {
   const router = useRouter();
   const { responsiveSize } = useResponsive();
+  const { user } = useAuth();
 
   return (
     <Container
@@ -56,13 +58,15 @@ export const HeroSection = ({ className }: HeroSectionProps) => {
         >
           Explore Wines
         </Button>
-        <Button
-          intent="text"
-          size="large"
-          onClick={() => router.push("/login")}
-        >
-          Are you a winery owner?
-        </Button>
+        {!user && (
+          <Button
+            intent="text"
+            size="large"
+            onClick={() => router.push("/login")}
+          >
+            Are you a winery owner?
+          </Button>
+        )}
       </Container>
     </Container>
   );

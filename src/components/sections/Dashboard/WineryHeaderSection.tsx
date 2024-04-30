@@ -63,7 +63,7 @@ export const WineryHeaderSection = () => {
               />
             </div>
             <Text intent="p2" variant="dim" className="font-semibold">
-              {`${allowedEuLabels - wineryEuLabels.length} EU labels left`}
+              {`${allowedEuLabels - wineryEuLabels.length} QR Codes left`}
             </Text>
           </Container>
           <Container intent="flexRowRight" gap="small" className="max-w-fit">

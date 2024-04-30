@@ -22,7 +22,6 @@ export interface LoginProps {
 export const Login = ({ title, description }: LoginProps) => {
   const { user } = useAuth();
   const router = useRouter();
-  const { updateAuthLoading, authLoading } = useAuth();
   const { updateToast } = useToast();
   const { updateAppLoading } = useAppState();
   const [email, setEmail] = useLocalStorage(
@@ -46,12 +45,12 @@ export const Login = ({ title, description }: LoginProps) => {
   }, []);
 
   const handleSignIn = async () => {
-    updateAuthLoading(true);
+    updateAppLoading(true);
     signInWithEmailAndPassword(auth, email.address, password.value)
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
-        updateAuthLoading(false);
+        updateAppLoading(false);
         updateAppLoading(true);
         router.replace("/home");
       })
@@ -65,7 +64,7 @@ export const Login = ({ title, description }: LoginProps) => {
           timeout: 5000,
         };
         updateToast(toastProps);
-        updateAuthLoading(false);
+        updateAppLoading(false);
       });
   };
 
@@ -164,7 +163,7 @@ export const Login = ({ title, description }: LoginProps) => {
           Cancel
         </Button>
         <Button intent="primary" size="medium" fullWidth onClick={handleSignIn}>
-          {!authLoading ? "Login" : <SpinnerLoader />}
+          Login
         </Button>
       </Container>
     </Container>

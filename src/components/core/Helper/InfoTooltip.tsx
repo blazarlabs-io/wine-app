@@ -1,5 +1,6 @@
 "use client";
 
+import { classNames } from "@/utils/classNames";
 import { Icon } from "@iconify/react";
 
 export interface InfoTooltipProps {
@@ -18,7 +19,10 @@ export const InfoTooltip = ({
   return (
     <div
       style={{ width: containerWidth }}
-      className="group cursor-pointer relative inline-block text-center"
+      className={classNames(
+        className,
+        "group cursor-pointer relative inline-block text-center"
+      )}
     >
       <Icon
         icon="material-symbols:help-outline"

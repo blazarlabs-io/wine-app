@@ -16,6 +16,13 @@ import { useRealtimeDb } from "@/context/realtimeDbContext";
 import { classNames } from "@/utils/classNames";
 import { useForms } from "@/context/FormsContext";
 import { useModal } from "@/context/modalContext";
+import { httpsCallable } from "firebase/functions";
+import { functions } from "@/lib/firebase/client";
+import { CreateAdminNotification } from "@/typings/winery";
+import { Timestamp } from "firebase/firestore";
+import { useAuth } from "@/context/authContext";
+import { useToast } from "@/context/toastContext";
+import { useAppState } from "@/context/appStateContext";
 
 export interface WineryGeneralInfoProps {
   fullWidth?: boolean;
@@ -29,6 +36,53 @@ export const WineryGeneralInfo = ({
   const { wineryGeneralInfo, level, tier } = useRealtimeDb();
   const { wineryForm, updateWineryForm } = useForms();
   const { updateModal } = useModal();
+  const { user } = useAuth();
+  const { updateToast } = useToast();
+  const { updateAppLoading } = useAppState();
+
+  const createNotification = httpsCallable(functions, "createNotification");
+
+  const sendNotification = () => {
+    updateAppLoading(true);
+
+    const data: CreateAdminNotification = {
+      requestDate: Timestamp.now(),
+      wineryName: wineryGeneralInfo.name,
+      wineryEmail: user?.email as string,
+      wineryPhone: wineryGeneralInfo.wineryRepresentative.phone,
+      wineryRepresentative: wineryGeneralInfo.wineryRepresentative.name,
+    };
+
+    createNotification({ data: data })
+      .then((res: any) => {
+        const { exists } = res.data;
+        updateAppLoading(false);
+        if (!exists) {
+          updateToast({
+            show: true,
+            status: "success",
+            message: "Request sent successfully",
+            timeout: 5000,
+          });
+        } else {
+          updateToast({
+            show: true,
+            status: "error",
+            message: "Request already exists",
+            timeout: 5000,
+          });
+        }
+      })
+      .catch((error) => {
+        updateAppLoading(false);
+        updateToast({
+          show: true,
+          status: "error",
+          message: "Request failed",
+          timeout: 5000,
+        });
+      });
+  };
 
   return (
     <>
@@ -89,31 +143,8 @@ export const WineryGeneralInfo = ({
         <Container
           intent="grid-3"
           gap="small"
-          className="w-full place-items-start"
+          className="w-full place-items-start items-center"
         >
-          <Button
-            intent="unstyled"
-            onClick={() => {
-              updateWineryForm({
-                title: "Edit Winery Details",
-                description:
-                  "Please fill in the form to edit your winery details. All fields marked with * are mandatory.",
-                isEditing: true,
-                formData: wineryGeneralInfo,
-              });
-
-              router.push("/winery-form");
-            }}
-            className="min-w-fit p-0 text-primary-light font-semibold hover:text-primary transition-all duration-300 ease-in-out"
-          >
-            <Container intent="flexRowCenter" gap="xsmall" className="w-full">
-              <Icon
-                icon="ant-design:edit-outlined"
-                className="w-[20px] h-[20px]"
-              />
-              Edit details
-            </Container>
-          </Button>
           <Container intent="flexRowLeft" gap="xsmall" className="w-full">
             <div className="">
               <Icon
@@ -152,6 +183,38 @@ export const WineryGeneralInfo = ({
               />
             </div>
           </Container>
+          <Container intent="flexRowRight" gap="xsmall" className="w-full">
+            <Button
+              intent="unstyled"
+              size="small"
+              className="text-primary-light px-[8px] py-[4px] border border-primary-light flex items-center gap-[4px] hover:bg-primary-light hover:text-surface transition-all duration-300 ease-in-out"
+              onClick={() => {
+                updateModal({
+                  title: "Upgrade Plan Request",
+                  description:
+                    "By clicking the button below, you agree to get contacted by a member of our team as soon as possible.",
+                  show: true,
+                  action: {
+                    label: "Agree",
+                    onAction: () => {
+                      sendNotification();
+                      updateModal({
+                        show: false,
+                        title: "",
+                        description: "",
+                        action: {
+                          label: "",
+                          onAction: () => {},
+                        },
+                      });
+                    },
+                  },
+                });
+              }}
+            >
+              Upgrade Plan
+            </Button>
+          </Container>
         </Container>
         <Container
           intent="flexRowLeft"
@@ -180,41 +243,66 @@ export const WineryGeneralInfo = ({
             </Text>
           </Container>
         </Container>
-        <Button
-          intent="unstyled"
-          onClick={() => {
-            if (
-              wineryGeneralInfo.wineryHeadquarters.latitude.length === 0 ||
-              wineryGeneralInfo.wineryHeadquarters.longitude.length === 0
-            ) {
-              updateModal({
-                title: "Location not available",
-                description:
-                  "The location of the winery is not available. Please edit your Winery details to add the location.",
-                show: true,
-                action: {
-                  label: "Close",
-                  onAction: () => {
-                    updateModal({
-                      show: false,
-                      title: "",
-                      description: "",
-                      action: {
-                        label: "",
-                        onAction: () => {},
-                      },
-                    });
+        <Container intent="flexRowBetween" gap="medium" className="w-full">
+          <Button
+            intent="unstyled"
+            onClick={() => {
+              if (
+                wineryGeneralInfo.wineryHeadquarters.latitude.length === 0 ||
+                wineryGeneralInfo.wineryHeadquarters.longitude.length === 0
+              ) {
+                updateModal({
+                  title: "Location not available",
+                  description:
+                    "The location of the winery is not available. Please edit your Winery details to add the location.",
+                  show: true,
+                  action: {
+                    label: "Close",
+                    onAction: () => {
+                      updateModal({
+                        show: false,
+                        title: "",
+                        description: "",
+                        action: {
+                          label: "",
+                          onAction: () => {},
+                        },
+                      });
+                    },
                   },
-                },
+                });
+              } else {
+                setShowMap(true);
+              }
+            }}
+            className="min-w-fit p-0 text-primary-light font-semibold hover:text-primary transition-all duration-300 ease-in-out"
+          >
+            Show on map
+          </Button>
+          <Button
+            intent="unstyled"
+            onClick={() => {
+              updateWineryForm({
+                title: "Edit Winery Details",
+                description:
+                  "Please fill in the form to edit your winery details. All fields marked with * are mandatory.",
+                isEditing: true,
+                formData: wineryGeneralInfo,
               });
-            } else {
-              setShowMap(true);
-            }
-          }}
-          className="min-w-fit p-0 text-primary-light font-semibold hover:text-primary transition-all duration-300 ease-in-out"
-        >
-          Show on map
-        </Button>
+
+              router.push("/winery-form");
+            }}
+            className="min-w-fit p-0 text-primary-light font-semibold hover:text-primary transition-all duration-300 ease-in-out"
+          >
+            <Container intent="flexRowCenter" gap="xsmall" className="w-full">
+              <Icon
+                icon="ant-design:edit-outlined"
+                className="w-[20px] h-[20px]"
+              />
+              Edit details
+            </Container>
+          </Button>
+        </Container>
       </Container>
     </>
   );
