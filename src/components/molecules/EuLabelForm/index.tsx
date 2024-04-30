@@ -601,7 +601,12 @@ export const EuLabelForm = () => {
                 <InfoTooltip text="Add each grape variety and its percentage in the wine" />
               </Container>
               <TextNumberMapCrud
-                initialPosition={wineryGeneralInfo.wineryHeadquarters}
+                initialPosition={
+                  wineryGeneralInfo.wineryHeadquarters || {
+                    latitud: 0,
+                    longitud: 0,
+                  }
+                }
                 placeholder=""
                 required={true}
                 initialItems={euLabelForm.formData.ingredients.grapes.list}
