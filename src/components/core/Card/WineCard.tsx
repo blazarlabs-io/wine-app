@@ -39,7 +39,7 @@ export const WineCard = ({
       <Container
         intent="flexColTop"
         className={classNames(
-          "w-full bg-surface-light rounded-md shadow-lg transition-transform hover:scale-[103%] duration-150 ease-in-out",
+          "w-full bg-surface-light rounded-md shadow-lg transition-transform hover:scale-[103%] duration-150 ease-in-out max-h-[720px]",
           responsiveSize === "mobile" ? "max-w-[400px] " : "max-w-[340px] "
         )}
         gap="medium"
@@ -58,12 +58,13 @@ export const WineCard = ({
           <Container
             intent={"flexColCenter"}
             gap="xsmall"
-            px={responsiveSize === "mobile" ? "medium" : "none"}
+            px={responsiveSize === "mobile" ? "medium" : "medium"}
             className={classNames("min-w-full, mt-[24px]")}
           >
             <Container
               intent="flexRowCenter"
               gap="xsmall"
+              px="medium"
               className="max-w-fit"
             >
               <Text intent="h6" variant="dim" className="">
@@ -78,7 +79,7 @@ export const WineCard = ({
                 />
               </Button>
             </Container>
-            <Text intent="h3" variant="dim" className="">
+            <Text intent="h4" variant="dim" className="truncate max-w-full">
               {wineCollectionName}
             </Text>
           </Container>
