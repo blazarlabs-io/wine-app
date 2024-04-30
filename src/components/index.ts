@@ -11,7 +11,6 @@ export { DropDown } from "./core/DropDown";
 export { CheckBox } from "./core/CheckBox";
 export { CheckInputText } from "./core/CheckInputText";
 export { Modal } from "./core/Overlays/Modal";
-export { AuthSpinnerLoader } from "./core/Loader/AuthSpinnerLoader";
 export { GeneralLoaderOverlay } from "./core/Loader/GeneralLoaderOverlay";
 export { MasterLoaderOverlay } from "./core/Loader/MasterLoaderOverlay";
 export { SpinnerLoader } from "./core/Loader/SpinnerLoader";
