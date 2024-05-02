@@ -23,7 +23,6 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { firebaseAuthErrors } from "@/utils/firebaseAuthErrors";
 import { useMasterLoader } from "@/context/masterLoaderContext";
 import { getFunctions, httpsCallable } from "firebase/functions";
-import { sendEmail } from "@/utils/sendEmail";
 
 export interface LoginProps {
   title: string;
