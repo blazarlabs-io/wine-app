@@ -32,13 +32,39 @@ export const HeroSection = ({ className }: HeroSectionProps) => {
         gap={responsiveSize === "mobile" ? "medium" : "small"}
         className="max-w-[520px]"
       >
-        <Text
+        {/* <Text
           intent={responsiveSize === "mobile" ? "h2" : "h1"}
           className="font-bold kaushan"
         >
           The <span className="text-primary">Wine Portal</span> delivered by
           Blazar Labs, powered by Cardano
-        </Text>
+        </Text> */}
+        <Container intent="flexColLeft" gap="xsmall">
+          <Text
+            intent={responsiveSize === "mobile" ? "h2" : "h1/2"}
+            className="font-bold kaushan"
+          >
+            The <span className="text-primary">Wine Portal</span>
+          </Text>
+          <Text
+            intent={responsiveSize === "mobile" ? "h2" : "h1/2"}
+            className="font-bold kaushan"
+          >
+            Delivered by
+          </Text>
+          <Text
+            intent={responsiveSize === "mobile" ? "h2" : "h1/2"}
+            className="font-bold kaushan"
+          >
+            Blazar Labs,
+          </Text>
+          <Text
+            intent={responsiveSize === "mobile" ? "h2" : "h1/2"}
+            className="font-bold kaushan"
+          >
+            Powered by Cardano
+          </Text>
+        </Container>
         <Text
           intent={responsiveSize === "mobile" ? "h5" : "p1"}
           variant={responsiveSize === "mobile" ? "normal" : "dim"}

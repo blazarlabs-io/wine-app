@@ -50,6 +50,7 @@ export type ContainerPyType =
 // TEXT COMPONENT
 export type TextIntentType =
   | "h1"
+  | "h1/2"
   | "h2"
   | "h3"
   | "h4"

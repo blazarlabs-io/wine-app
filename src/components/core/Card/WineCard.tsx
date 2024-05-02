@@ -40,7 +40,9 @@ export const WineCard = ({
         intent="flexColTop"
         className={classNames(
           "w-full bg-surface-light rounded-md shadow-lg transition-transform hover:scale-[103%] duration-150 ease-in-out max-h-[720px]",
-          responsiveSize === "mobile" ? "max-w-[400px] " : "max-w-[340px] "
+          responsiveSize === "mobile"
+            ? "min-w-[400px] max-w-[400px] "
+            : "min-w-[340px] max-w-[340px] "
         )}
         gap="medium"
       >
@@ -134,8 +136,8 @@ export const WineCard = ({
             </Container>
           </Container>
         </Container>
-        <Container intent="flexRowBetween" px="medium" className="mb-[24px]">
-          <Container intent="flexRowLeft" gap="xsmall" className="max-w-fit">
+        <Container intent="flexRowRight" px="medium" className="mb-[24px]">
+          {/* <Container intent="flexRowLeft" gap="xsmall" className="max-w-fit">
             <Container intent="flexRowLeft" gap="xsmall" className="w-full">
               <Text
                 intent="p1"
@@ -148,7 +150,7 @@ export const WineCard = ({
             <Text intent="p1" variant="dim" className="text-on-surface-dark/60">
               {upc}
             </Text>
-          </Container>
+          </Container> */}
           <Link
             href={euLabelUrlComposerRef(referenceNumber)}
             className="border border-primary-light text-primary-light hover:border-primary hover:text-primary transition-all duration-300 ease-in-out rounded-md px-2 py-1"
