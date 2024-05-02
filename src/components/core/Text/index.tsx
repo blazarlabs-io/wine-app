@@ -5,6 +5,7 @@ const text = cva("", {
   variants: {
     intent: {
       h1: ["text-[64px]", "font-bold"],
+      "h1/2": ["text-[56px]", "font-bold"],
       h2: ["text-[48px]", "font-semibold"],
       h3: ["text-[32px]", "font-bold"],
       h4: ["text-[24px]", "font-bold"],

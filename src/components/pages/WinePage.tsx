@@ -47,6 +47,7 @@ export const WinePage = ({ generalInfo, euLabel }: WinePagePropsInterface) => {
             }}
           />
           {euLabel.ingredients.grapes.list.length > 0 &&
+            euLabel.ingredients.grapes.list[0].coordinates &&
             euLabel.ingredients.grapes.list[0].coordinates.length > 0 && (
               <MapViewerSection
                 initialPosition={generalInfo?.wineryHeadquarters as any}

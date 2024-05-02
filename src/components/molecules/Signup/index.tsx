@@ -17,11 +17,13 @@ import { useAuth } from "@/context/authContext";
 import { useAppState } from "@/context/appStateContext";
 import "react-phone-number-input/style.css";
 import { useModal } from "@/context/modalContext";
-import { auth } from "@/lib/firebase/client";
+import { auth, functions } from "@/lib/firebase/client";
 import { useFormValidation } from "@/hooks/useFormValidation";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { firebaseAuthErrors } from "@/utils/firebaseAuthErrors";
 import { useMasterLoader } from "@/context/masterLoaderContext";
+import { getFunctions, httpsCallable } from "firebase/functions";
+import { sendEmail } from "@/utils/sendEmail";
 
 export interface LoginProps {
   title: string;
@@ -94,6 +96,24 @@ export const Signup = ({ title, description }: LoginProps) => {
     createUserWithEmailAndPassword(auth, wineryEmail as string, password)
       .then((userCredential) => {
         updateMasterLoading(true);
+        console.log("User created: ", userCredential);
+
+        // sendEmail({
+        //   data: {
+        //     from: "it@blazarlabs.io",
+        //     to: userCredential.user.email,
+        //     subject: "Your new account has been created!",
+        //     text: `Congratulations, you have successfuly registered a new account.`,
+        //     html: "", //generateWelcomelHtml(),
+        //   },
+        // })
+        //   .then((result) => {
+        //     console.log("Email sent: ", result);
+        //   })
+        //   .catch((error) => {
+        //     console.log("Error: ", error);
+        //   });
+
         updateToast({
           show: true,
           status: "success",
@@ -106,6 +126,7 @@ export const Signup = ({ title, description }: LoginProps) => {
         const errorMessage = error.message;
         console.log("Error: ", error);
         updateAppLoading(false);
+
         updateModal({
           show: true,
           title: "Error",
@@ -299,3 +320,6 @@ export const Signup = ({ title, description }: LoginProps) => {
     </Container>
   );
 };
+function generateWelcomelHtml() {
+  throw new Error("Function not implemented.");
+}
