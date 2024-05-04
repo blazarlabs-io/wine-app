@@ -9,6 +9,7 @@ import { FiltersProvider } from "./filtersContext";
 import { FormsProvider } from "./FormsContext";
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { MasterLoaderProvider } from "./masterLoaderContext";
+import { UiContextProvider } from "./uiContext";
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -18,25 +19,27 @@ export const Providers = ({ children }: ProvidersProps) => {
   return (
     <MasterLoaderProvider>
       <AppStateProvider>
-        <AuthProvider>
-          <RealtimeDbProvider>
-            <FormsProvider>
-              <FiltersProvider>
-                <ToastProvider>
-                  <ModalProvider>
-                    <APIProvider
-                      apiKey={
-                        process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string
-                      }
-                    >
-                      {children}
-                    </APIProvider>
-                  </ModalProvider>
-                </ToastProvider>
-              </FiltersProvider>
-            </FormsProvider>
-          </RealtimeDbProvider>
-        </AuthProvider>
+        <UiContextProvider>
+          <AuthProvider>
+            <RealtimeDbProvider>
+              <FormsProvider>
+                <FiltersProvider>
+                  <ToastProvider>
+                    <ModalProvider>
+                      <APIProvider
+                        apiKey={
+                          process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string
+                        }
+                      >
+                        {children}
+                      </APIProvider>
+                    </ModalProvider>
+                  </ToastProvider>
+                </FiltersProvider>
+              </FormsProvider>
+            </RealtimeDbProvider>
+          </AuthProvider>
+        </UiContextProvider>
       </AppStateProvider>
     </MasterLoaderProvider>
   );
