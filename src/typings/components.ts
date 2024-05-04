@@ -101,3 +101,14 @@ export interface ModalProps {
     onAction: () => void;
   };
 }
+
+export interface MenuItemInterface {
+  key: string;
+  label: string;
+  disabled: boolean;
+  icon: string;
+  href: string;
+  onClick?: () => void;
+}
+
+export type MenuItemsInterface = MenuItemInterface[];

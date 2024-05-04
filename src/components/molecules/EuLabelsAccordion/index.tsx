@@ -163,6 +163,7 @@ const AccordionItem = ({
         >
           <EuLabelGeneralViewer item={item} />
           {item.ingredients.grapes.list.length > 0 &&
+            item.ingredients.grapes.list[0].coordinates &&
             item.ingredients.grapes.list[0].coordinates.length > 0 && (
               <MapViewerSection
                 initialPosition={generalInfo?.wineryHeadquarters as any}

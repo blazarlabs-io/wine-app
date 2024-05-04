@@ -26,6 +26,8 @@ export { WineImage } from "./core/Image/WineImage";
 export { FilterBox } from "./core/Filter/FilterBox";
 export { Toggle } from "./core/Toggle";
 export { PasswordInput } from "./core/Input/PasswordInput";
+export { Avatar } from "./core/Avatar";
+export { AvatarMenu } from "./core/Navigation/AvatarMenu";
 
 // Molecular components
 export { WineryForm } from "./molecules/WineryForm";
@@ -47,6 +49,7 @@ export { NutritionTable } from "./molecules/NutritionTable";
 export { TextNumberMapCrud } from "./molecules/Crud/TextNumberMapCrud";
 export { PricingCard } from "./molecules/Pricing/PricingCard";
 export { Signup } from "./molecules/Signup";
+export { ConfirmDeleteDialog } from "./molecules/ConfirmDeleteDialog";
 
 // Layout components
 export { BaseLayout } from "./layouts/Base";
@@ -84,3 +87,4 @@ export { AboutUsPage } from "./pages/AboutUsPage";
 export { ContactUsPage } from "./pages/ContactUsPage";
 export { PricingPage } from "./pages/PricingPage";
 export { SignupPage } from "./pages/SignupPage";
+export { UserAccountPage } from "./pages/UserAccountPage";

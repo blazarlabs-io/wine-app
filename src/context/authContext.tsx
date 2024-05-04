@@ -35,7 +35,6 @@ export const AuthProvider = ({
   children,
 }: React.PropsWithChildren): JSX.Element => {
   const { updateAppLoading } = useAppState();
-
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
 
@@ -43,11 +42,14 @@ export const AuthProvider = ({
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       updateAppLoading(false);
       if (user) {
-        // console.log("User", user);
+        console.log("User", user);
         setUser(user);
         // router.push("/home");
       } else {
+        console.log("No user");
+        setUser(null);
         updateAppLoading(false);
+        // router.replace("/");
       }
     });
 
