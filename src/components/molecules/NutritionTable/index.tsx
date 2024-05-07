@@ -43,14 +43,18 @@ export const NutritionTable = ({ items }: NutritionTableProps) => {
           </Container>
           <Container intent="flexColLeft">
             <Container intent="flexRowBetween" gap="xsmall" className="w-full">
-              <Text intent="p1" variant="dim">
+              <Text intent="p1" variant="dim" className="font-semibold">
                 Serving Size
               </Text>
               <Text intent="p1" variant="dim">
                 100ml (3.52 fl oz)
               </Text>
             </Container>
-            <Container intent="flexRowBetween" gap="xsmall" className="w-full">
+            <Container
+              intent="flexRowBetween"
+              gap="xsmall"
+              className="w-full font-semibold"
+            >
               <Text intent="p1" variant="dim">
                 Servings Per Container
               </Text>

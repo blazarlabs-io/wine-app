@@ -65,7 +65,8 @@ export const TextInputCrud = ({
           }}
           className={classNames(
             "border-[1.5px] border-primary-light  text-[16px] flex items-center justify-center max-w-fit px-[12px] gap-[4px] text-primary-light hover:text-primary transition-all duration-200 ease-in-out",
-            label && "mt-[32px]"
+            label && "mt-[32px]",
+            !currentItem ? "cursor-not-allowed opacity-30" : ""
           )}
         >
           <Icon

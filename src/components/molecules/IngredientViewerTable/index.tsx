@@ -22,6 +22,8 @@ export const IngredientViewerTable = ({
   variant = "normal",
   ingredient,
 }: IngredientViewerTableProps) => {
+  console.log("ViewerTable", ingredient);
+
   return (
     <Container
       intent="flexColLeft"
@@ -63,12 +65,16 @@ export const IngredientViewerTable = ({
                 key={item}
                 className="flex items-center justify-between gap-[8px] w-full"
               >
-                <Text intent="p2" variant="dim" key={item}>
+                <Text intent="p1" variant="dim" key={item}>
                   {item}
                 </Text>
               </div>
             ))}
-            {!ingredient.has && !ingredient.allergens.has && <Text>No</Text>}
+            {!ingredient.has && !ingredient.allergens.has && (
+              <Text intent="p1" variant="dim">
+                No
+              </Text>
+            )}
           </>
         </Container>
       )}

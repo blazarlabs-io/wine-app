@@ -27,7 +27,7 @@ export const GrapesViewerTable = ({
       <Text intent="p1" variant="dim" className="font-semibold">
         {title}
       </Text>
-      {ingredient !== undefined ? (
+      {ingredient !== undefined && ingredient.length > 0 ? (
         <Container intent="flexColLeft" gap="xsmall" className="w-full">
           {ingredient.map((item) => (
             <div
@@ -45,7 +45,7 @@ export const GrapesViewerTable = ({
           ))}
         </Container>
       ) : (
-        <Text>No</Text>
+        <Text variant="dim">No</Text>
       )}
     </Container>
   );

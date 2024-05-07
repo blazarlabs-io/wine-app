@@ -12,6 +12,7 @@ import {
   GrapesMapCoordinatesInterface,
   ItemWithPercentage,
 } from "@/typings/winery";
+import { classNames } from "@/utils/classNames";
 
 export interface TextInputCrudProps {
   initialPosition: any;
@@ -166,7 +167,10 @@ export const TextNumberMapCrud = ({
             };
             setCurrentItem(newItem as GrapesMapCoordinatesInterface);
           }}
-          className="border-[1.5px] border-primary-light mt-[32px] text-[16px] flex items-center justify-center max-w-fit px-[12px] gap-[4px] text-primary-light hover:text-primary transition-all duration-200 ease-in-out"
+          className={classNames(
+            "border-[1.5px] border-primary-light mt-[32px] text-[16px] flex items-center justify-center max-w-fit px-[12px] gap-[4px] text-primary-light hover:text-primary transition-all duration-200 ease-in-out",
+            disableButton ? "cursor-not-allowed opacity-30" : ""
+          )}
         >
           <Icon
             icon="material-symbols:add"

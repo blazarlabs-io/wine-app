@@ -49,7 +49,7 @@ export const WineHeadSection = ({ euLabel }: WineHeadSectionProps) => {
             height="20"
             className="text-primary-light mt-[-4px]"
           />
-          <Text intent="p1" variant="dim" className="">
+          <Text intent="p1" variant="dim" className="font-semibold">
             {euLabel?.typeOfWine}
           </Text>
         </Container>
@@ -60,7 +60,7 @@ export const WineHeadSection = ({ euLabel }: WineHeadSectionProps) => {
             height="20"
             className="text-primary-light mt-[-4px]"
           />
-          <Text intent="p1" variant="dim" className="">
+          <Text intent="p1" variant="dim" className="font-semibold">
             Alc. {euLabel?.alcoholLevel} % vol
           </Text>
         </Container>
@@ -71,7 +71,7 @@ export const WineHeadSection = ({ euLabel }: WineHeadSectionProps) => {
             height="20"
             className="text-primary-light mt-[-4px]"
           />
-          <Text intent="p1" variant="dim" className="">
+          <Text intent="p1" variant="dim" className="font-semibold">
             {euLabel?.country}
           </Text>
         </Container>
