@@ -17,12 +17,11 @@ import { useAuth } from "@/context/authContext";
 import { useAppState } from "@/context/appStateContext";
 import "react-phone-number-input/style.css";
 import { useModal } from "@/context/modalContext";
-import { auth, functions } from "@/lib/firebase/client";
+import { auth } from "@/lib/firebase/client";
 import { useFormValidation } from "@/hooks/useFormValidation";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { firebaseAuthErrors } from "@/utils/firebaseAuthErrors";
 import { useMasterLoader } from "@/context/masterLoaderContext";
-import { getFunctions, httpsCallable } from "firebase/functions";
 
 export interface LoginProps {
   title: string;

@@ -253,7 +253,7 @@ export const getAllEuLabelWines = async () => {
 
   const items: EuLabelInterface[] = [];
   await querySnapshot.forEach((doc) => {
-    if (doc.data().euLabels.length > 0) {
+    if (doc.data().euLabels.length > 0 && doc.data().disabled === false) {
       doc.data().euLabels.forEach((label: EuLabelInterface) => {
         items.push(label);
       });
@@ -280,7 +280,9 @@ export const getAllWineryNames = async () => {
   const querySnapshot = await getDocs(wineries);
   const items: string[] = [];
   querySnapshot.forEach((doc) => {
-    items.push(doc.data().generalInfo.name);
+    if (doc.data().disabled === false) {
+      items.push(doc.data().generalInfo.name);
+    }
   });
   return items;
 };
@@ -293,7 +295,7 @@ export const getEuLabelWinesByWineryName = async (wineryName: string) => {
   const querySnapshot = await getDocs(wineries);
   const items: EuLabelInterface[] = [];
   querySnapshot.forEach((doc) => {
-    if (doc.data().euLabels.length > 0) {
+    if (doc.data().euLabels.length > 0 && doc.data().disabled === false) {
       doc.data().euLabels.forEach((label: EuLabelInterface) => {
         items.push(label);
       });
@@ -307,7 +309,7 @@ export const getEuLabelWinesByWineType = async (wineType: string) => {
   const querySnapshot = await getDocs(wineries);
   const items: EuLabelInterface[] = [];
   querySnapshot.forEach((doc) => {
-    if (doc.data().euLabels.length > 0) {
+    if (doc.data().euLabels.length > 0 && doc.data().disabled === false) {
       doc.data().euLabels.forEach((label: EuLabelInterface) => {
         if (
           label.typeOfWine.toLocaleLowerCase() === wineType.toLocaleLowerCase()
@@ -332,7 +334,7 @@ export const getWineTypes = async () => {
   }
 };
 
-export const overWiteWineryData = async (
+export const overwriteWineryData = async (
   docId: string,
   data: WineryInterface
 ) => {

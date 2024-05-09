@@ -33,9 +33,6 @@ export const ExplorePage = () => {
     }
   }, [filteredWines, allWines]);
 
-  // useEffect(() => {
-  //   console.log(winesToShow);
-  // }, [winesToShow]);
   return (
     <Container
       intent={handleGridResponsiveness(responsiveSize)}

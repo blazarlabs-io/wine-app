@@ -50,6 +50,8 @@ export { TextNumberMapCrud } from "./molecules/Crud/TextNumberMapCrud";
 export { PricingCard } from "./molecules/Pricing/PricingCard";
 export { Signup } from "./molecules/Signup";
 export { ConfirmDeleteDialog } from "./molecules/ConfirmDeleteDialog";
+export { ConfirmDisableDialog } from "./molecules/ConfirmDisableDialog";
+export { UpdatePasswordDialog } from "./molecules/UpdatePasswordDialog";
 
 // Layout components
 export { BaseLayout } from "./layouts/Base";
@@ -73,6 +75,8 @@ export { WineGeneralInformationSection } from "./sections/Wine/GeneralInformatio
 export { WineIngredientsSection } from "./sections/Wine/IngredientsSection";
 export { WineFooterSection } from "./sections/Wine/FooterSection";
 export { MapViewerSection } from "./sections/Wine/MapViewerSection";
+export { DangerZoneSection } from "./sections/UserAccount/DangerZoneSection";
+export { GeneralSection } from "./sections/UserAccount/GeneralSection";
 
 // Pages
 export { HomePage } from "./pages/HomePage";

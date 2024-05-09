@@ -38,7 +38,7 @@ import {
   uploadQrCodeToStorage,
   uploadWineImageToStorage,
   updateWineryEuLabel,
-  overWiteWineryData,
+  overwriteWineryData,
   updateGrapesInEuLabel,
 } from "@/utils/firestore";
 import { useAuth } from "@/context/authContext";
