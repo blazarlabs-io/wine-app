@@ -63,7 +63,7 @@ export const useFormValidation = () => {
         errors.password = null;
       } else {
         errors.password =
-          "Password must be at least 6 characters, contain at least one uppercase letter, one number, and one special character";
+          "Password must be at least 6 characters, contain at least one uppercase letter, one number, and one special character (!>-_#?%$)";
       }
     }
 
