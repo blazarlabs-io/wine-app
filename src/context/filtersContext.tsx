@@ -2,13 +2,12 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { useResponsive } from "@/hooks/useResponsive";
-import { EuLabelInterface } from "@/typings/winery";
+import { WineInterface } from "@/typings/winery";
 import {
-  getAllEuLabelWines,
+  getAllWines,
   getAllWineryNames,
-  getEuLabelWinesByWineType,
-  getEuLabelWinesByWineryName,
-  getWineByUpcCode,
+  getWinesByWineType,
+  getWinesByWineryName,
   getWineTypes,
 } from "@/utils/firestore";
 
@@ -27,8 +26,8 @@ export interface FiltersContextInterface {
   mobileFilters: boolean;
   showFilters: boolean;
   filters: FiltersInterface;
-  filteredWines: EuLabelInterface[];
-  allWines: EuLabelInterface[];
+  filteredWines: WineInterface[];
+  allWines: WineInterface[];
   filtersLoading: boolean;
   filtersMessage: string;
   updateShowFilters: (value: boolean) => void;
@@ -89,8 +88,8 @@ export const FiltersProvider = ({
     },
     byUpc: null,
   });
-  const [filteredWines, setFilteredWines] = useState<EuLabelInterface[]>([]);
-  const [allWines, setAllWines] = useState<EuLabelInterface[]>([]);
+  const [filteredWines, setFilteredWines] = useState<WineInterface[]>([]);
+  const [allWines, setAllWines] = useState<WineInterface[]>([]);
   const [filtersLoading, setFiltersLoading] = useState<boolean>(false);
   const [filtersMessage, setFiltersMessage] = useState<string>("");
 
@@ -117,8 +116,8 @@ export const FiltersProvider = ({
 
   useEffect(() => {
     if (filters.byWinery.result && !filters.byWineType.result) {
-      getEuLabelWinesByWineryName(filters.byWinery.result)
-        .then((wines: EuLabelInterface[]) => {
+      getWinesByWineryName(filters.byWinery.result)
+        .then((wines: WineInterface[]) => {
           setFilteredWines(wines);
           setFiltersLoading(false);
         })
@@ -126,7 +125,7 @@ export const FiltersProvider = ({
       return;
     }
     if (filters.byWineType.result && !filters.byWinery.result) {
-      getEuLabelWinesByWineType(filters.byWineType.result)
+      getWinesByWineType(filters.byWineType.result)
         .then((wines) => {
           setFilteredWines(wines);
           setFiltersLoading(false);
@@ -160,7 +159,7 @@ export const FiltersProvider = ({
         }));
       })
       .catch((error) => {});
-    getAllEuLabelWines().then((wines) => {
+    getAllWines().then((wines) => {
       setAllWines(wines);
     });
   }, []);

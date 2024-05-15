@@ -86,7 +86,7 @@ export interface GrapesInterface {
   list: GrapesMapCoordinatesInterface[];
 }
 
-export interface EuLabelInterface {
+export interface WineInterface {
   referenceNumber: string;
   upc: string;
   wineryName: string;
@@ -152,16 +152,14 @@ export interface WineryDataInterface {
   wineryGeneralInfo: WineryGeneralInfoInterface | null;
   tier: string | null;
   level: string | null;
-  wines: WinesInterface[] | null;
-  euLabels: EuLabelInterface[] | null;
+  wines: WineInterface[] | null;
 }
 
 export interface WineryInterface {
   generalInfo: WineryGeneralInfoInterface | null;
   tier: string | null;
   level: string | null;
-  wines: WinesInterface[] | null;
-  euLabels: EuLabelInterface[] | null;
+  wines: WineInterface[] | null;
 }
 
 export interface CreateAdminNotification {

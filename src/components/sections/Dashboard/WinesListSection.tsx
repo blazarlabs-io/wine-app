@@ -1,21 +1,20 @@
 "use client";
-import { Container, Button, Text, EuLabelsAccordion } from "@/components";
+import { Container, Button, Text, WinesAccordion } from "@/components";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/navigation";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
-import { EuLabelInterface } from "@/typings/winery";
+import { WineInterface } from "@/typings/winery";
 import { useForms } from "@/context/FormsContext";
-import { euLabelInitData } from "@/data/euLablelInitData";
+import { wineInitData } from "@/data/wineInitData";
 import { useModal } from "@/context/modalContext";
 
 export const WinesListSection = () => {
   const router = useRouter();
-  const { wineryEuLabels, allowedEuLabels, wineryGeneralInfo } =
-    useRealtimeDb();
-  const { updateEuLabelForm } = useForms();
+  const { wines, allowedWines, wineryGeneralInfo } = useRealtimeDb();
+  const { updateWineForm } = useForms();
   const { updateModal } = useModal();
 
-  const handleMaxEuLabelsReached = () => {
+  const handleMaxWinesReached = () => {
     updateModal({
       title: "Error",
       description:
@@ -40,7 +39,7 @@ export const WinesListSection = () => {
 
   return (
     <>
-      {wineryEuLabels && wineryEuLabels.length > 0 ? (
+      {wines && wines.length > 0 ? (
         <Container intent="flexColLeft" className="min-w-full">
           <Container
             intent="flexRowLeft"
@@ -52,17 +51,17 @@ export const WinesListSection = () => {
               intent="primary"
               size="medium"
               onClick={() => {
-                if (wineryEuLabels.length < allowedEuLabels) {
-                  updateEuLabelForm({
+                if (wines.length < allowedWines) {
+                  updateWineForm({
                     title: "Create EU Label",
                     description:
                       "Create a new EU label for your wine. All fields marked with * are mandatory.",
                     isEditing: false,
-                    formData: euLabelInitData,
+                    formData: wineInitData,
                   });
-                  router.push("/eu-label-form");
+                  router.push("/wine-form");
                 } else {
-                  handleMaxEuLabelsReached();
+                  handleMaxWinesReached();
                 }
               }}
               className="flex items-center gap-[8px]"
@@ -87,15 +86,15 @@ export const WinesListSection = () => {
             </Button>
           </Container>
           <div className="min-w-full">
-            {wineryEuLabels &&
+            {wines &&
               wineryGeneralInfo &&
-              wineryEuLabels !== undefined &&
+              wines !== undefined &&
               wineryGeneralInfo !== undefined && (
-                <EuLabelsAccordion
+                <WinesAccordion
                   generalInfo={wineryGeneralInfo}
-                  data={wineryEuLabels}
-                  onEdit={(item: EuLabelInterface) => {
-                    updateEuLabelForm({
+                  data={wines}
+                  onEdit={(item: WineInterface) => {
+                    updateWineForm({
                       title: "Edit EU Label",
                       description:
                         "Edit the EU label for your wine. All fields marked with * are mandatory.",
@@ -103,7 +102,7 @@ export const WinesListSection = () => {
                       formData: item,
                     });
 
-                    router.push("/eu-label-form");
+                    router.push("/wine-form");
                   }}
                 />
               )}
@@ -124,17 +123,17 @@ export const WinesListSection = () => {
               size="medium"
               className="flex items-center gap-[8px]"
               onClick={() => {
-                if (wineryEuLabels.length < allowedEuLabels) {
-                  updateEuLabelForm({
+                if (wines.length < allowedWines) {
+                  updateWineForm({
                     title: "Create EU Label",
                     description:
                       "Create a new EU label for your wine. All fields marked with * are mandatory.",
                     isEditing: false,
-                    formData: euLabelInitData,
+                    formData: wineInitData,
                   });
-                  router.push("/eu-label-form");
+                  router.push("/wine-form");
                 } else {
-                  handleMaxEuLabelsReached();
+                  handleMaxWinesReached();
                 }
               }}
             >

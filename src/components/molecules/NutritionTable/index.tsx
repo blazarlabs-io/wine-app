@@ -1,6 +1,6 @@
 "use client";
 
-import { Container, EuLabelItem, Text } from "@/components/";
+import { Container, WineItem, Text } from "@/components/";
 import { useResponsive } from "@/hooks/useResponsive";
 import { kcal, kj } from "@/utils/nutritionCalculator";
 import { Icon } from "@iconify/react";

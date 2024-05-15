@@ -6,9 +6,8 @@ import {
   DropDown,
   Text,
   TextInputCrud,
-  ReviewEuLabel,
+  ReviewWine,
   InfoTooltip,
-  TextAndNumberInputCrud,
   TextNumberMapCrud,
   CheckBox,
   SpinnerLoader,
@@ -20,50 +19,44 @@ import {
   colourOfWineList,
   typeOfWineList,
 } from "@/utils/data";
-import {
-  EuLabelInterface,
-  GrapesMapCoordinatesInterface,
-  ItemWithPercentage,
-  WineryInterface,
-} from "@/typings/winery";
+import { GrapesMapCoordinatesInterface } from "@/typings/winery";
 import { dateToTimestamp } from "@/utils/dateToTimestamp";
 import { useEffect, useRef, useState } from "react";
 import { generateId } from "@/utils/generateId";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useAppState } from "@/context/appStateContext";
 import { getQrCodeImageData } from "@/utils/getQrCodeImageData";
 import React from "react";
 import {
-  regiterWineryEuLabel,
+  registerWineryWine,
   uploadQrCodeToStorage,
   uploadWineImageToStorage,
   updateWineryEuLabel,
-  overwriteWineryData,
   updateGrapesInEuLabel,
 } from "@/utils/firestore";
 import { useAuth } from "@/context/authContext";
-import { euLabelUrlComposerRef } from "@/utils/euLabelUrlComposerRef";
+import { wineUrlComposerRef } from "@/utils/wineUrlComposerRef";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
 import { validateFileSizeAndType } from "@/utils/validateFileSizeAndType";
 import { useModal } from "@/context/modalContext";
 import { httpsCallable } from "firebase/functions";
 import { functions } from "@/lib/firebase/client";
 import { firebaseAuthErrors } from "@/utils/firebaseAuthErrors";
-import { generateEuLabelHtml } from "@/utils/generateEuLabelHtml";
+import { generateWineHtml } from "@/utils/generateWineHtml";
 import { fileToBase64 } from "@/utils/fileToBase64";
 import { useForms } from "@/context/FormsContext";
 import { useToast } from "@/context/toastContext";
 
-export const EuLabelForm = () => {
+export const WineForm = () => {
   const router = useRouter();
   const { updateAppLoading } = useAppState();
 
-  const { euLabelForm, updateEuLabelForm } = useForms();
+  const { wineForm, updateWineForm } = useForms();
 
   const { updateModal } = useModal();
   const inputFileRef = useRef<any>(null);
 
-  const { wineryGeneralInfo, wineryEuLabels, tier, level } = useRealtimeDb();
+  const { wineryGeneralInfo, wines, tier, level } = useRealtimeDb();
 
   const initialized = useRef(false);
   const { user } = useAuth();
@@ -78,22 +71,22 @@ export const EuLabelForm = () => {
   const sendEmail = httpsCallable(functions, "sendEmail");
 
   useEffect(() => {
-    if (!initialized.current && !euLabelForm.isEditing) {
+    if (!initialized.current && !wineForm.isEditing) {
       const ref = generateId(5) + "-" + dateToTimestamp();
-      euLabelForm.formData.referenceNumber = ref;
-      updateEuLabelForm({
-        ...euLabelForm,
+      wineForm.formData.referenceNumber = ref;
+      updateWineForm({
+        ...wineForm,
         formData: {
-          ...euLabelForm.formData,
+          ...wineForm.formData,
           referenceNumber: ref,
           wineryName: wineryGeneralInfo.name,
         },
       });
     } else {
-      updateEuLabelForm({
-        ...euLabelForm,
+      updateWineForm({
+        ...wineForm,
         formData: {
-          ...euLabelForm.formData,
+          ...wineForm.formData,
           wineryName: wineryGeneralInfo.name,
         },
       });
@@ -104,14 +97,14 @@ export const EuLabelForm = () => {
   const handleRegistration = () => {
     setIsLoading(true);
     updateAppLoading(true);
-    if (!euLabelForm.isEditing) {
+    if (!wineForm.isEditing) {
       uploadQrCodeToStorage(
         user?.uid as string,
         getQrCodeImageData("euLabelQrCode"),
-        euLabelForm.formData.referenceNumber,
+        wineForm.formData.referenceNumber,
         (url: string) => {
-          euLabelForm.formData.qrCodeUrl = url;
-          regiterWineryEuLabel(user?.uid as string, euLabelForm.formData);
+          wineForm.formData.qrCodeUrl = url;
+          registerWineryWine(user?.uid as string, wineForm.formData);
           setIsLoading(false);
           sendEmail({
             data: {
@@ -119,9 +112,9 @@ export const EuLabelForm = () => {
               to: user?.email,
               subject: "Your new EU label has been created!",
               text: `Congratulations, you have successfuly registered a new EU Label.`,
-              html: generateEuLabelHtml(
-                euLabelUrlComposerRef(euLabelForm.formData.referenceNumber),
-                euLabelForm.formData.qrCodeUrl
+              html: generateWineHtml(
+                wineUrlComposerRef(wineForm.formData.referenceNumber),
+                wineForm.formData.qrCodeUrl
               ),
             },
           })
@@ -176,7 +169,7 @@ export const EuLabelForm = () => {
         }
       );
     } else {
-      updateWineryEuLabel(user?.uid as string, euLabelForm.formData);
+      updateWineryEuLabel(user?.uid as string, wineForm.formData);
 
       router.replace("/home");
     }
@@ -184,7 +177,7 @@ export const EuLabelForm = () => {
 
   const handleSubmit = (event: any) => {
     event.preventDefault();
-    if (!euLabelForm.isEditing) {
+    if (!wineForm.isEditing) {
       setShowReview(true);
     } else {
       handleRegistration();
@@ -198,7 +191,7 @@ export const EuLabelForm = () => {
     return new Promise<File>((resolve) => {
       const file = new File(
         [blob],
-        euLabelForm.formData.referenceNumber + ".png",
+        wineForm.formData.referenceNumber + ".png",
         {
           type: "image/png",
         }
@@ -212,12 +205,12 @@ export const EuLabelForm = () => {
     uploadWineImageToStorage(
       user?.uid as string,
       wineImageFile as File,
-      euLabelForm.formData.referenceNumber,
+      wineForm.formData.referenceNumber,
       (url: string) => {
-        updateEuLabelForm({
-          ...euLabelForm,
+        updateWineForm({
+          ...wineForm,
           formData: {
-            ...euLabelForm.formData,
+            ...wineForm.formData,
             wineImageUrl: url,
           },
         });
@@ -248,10 +241,8 @@ export const EuLabelForm = () => {
       className="w-full h-full"
     >
       {showReview && (
-        <ReviewEuLabel
-          qrCodeValue={euLabelUrlComposerRef(
-            euLabelForm.formData.referenceNumber
-          )}
+        <ReviewWine
+          qrCodeValue={wineUrlComposerRef(wineForm.formData.referenceNumber)}
           qrCodeId={"euLabelQrCode"}
           onAccept={() => {
             handleRegistration();
@@ -267,9 +258,9 @@ export const EuLabelForm = () => {
               icon="bi:qr-code"
               className="w-[56px] h-[56px] text-primary-light"
             />
-            <Text intent="h2">{euLabelForm.title}</Text>
+            <Text intent="h2">{wineForm.title}</Text>
           </Container>
-          <Text variant="dim">{euLabelForm.description}</Text>
+          <Text variant="dim">{wineForm.description}</Text>
         </Container>
       </Container>
       <div className="h-[1px] bg-on-surface-dark/50 w-full my-[24px]" />
@@ -289,14 +280,14 @@ export const EuLabelForm = () => {
               <input
                 type="text"
                 placeholder=""
-                value={euLabelForm.formData.upc}
+                value={wineForm.formData.upc}
                 onChange={(event: any) => {
-                  euLabelForm.formData.upc = event.target.value;
-                  updateEuLabelForm({
-                    ...euLabelForm,
+                  wineForm.formData.upc = event.target.value;
+                  updateWineForm({
+                    ...wineForm,
                     formData: {
-                      ...euLabelForm.formData,
-                      upc: euLabelForm.formData.upc,
+                      ...wineForm.formData,
+                      upc: wineForm.formData.upc,
                     },
                   });
                 }}
@@ -377,7 +368,7 @@ export const EuLabelForm = () => {
                 readOnly
                 type="text"
                 placeholder=""
-                value={euLabelForm.formData.wineryName}
+                value={wineForm.formData.wineryName}
                 onChange={(event: any) => {}}
                 className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
               />
@@ -390,15 +381,14 @@ export const EuLabelForm = () => {
                 required
                 type="text"
                 placeholder=""
-                value={euLabelForm.formData.wineCollectionName}
+                value={wineForm.formData.wineCollectionName}
                 onChange={(event: any) => {
-                  euLabelForm.formData.wineCollectionName = event.target.value;
-                  updateEuLabelForm({
-                    ...euLabelForm,
+                  wineForm.formData.wineCollectionName = event.target.value;
+                  updateWineForm({
+                    ...wineForm,
                     formData: {
-                      ...euLabelForm.formData,
-                      wineCollectionName:
-                        euLabelForm.formData.wineCollectionName,
+                      ...wineForm.formData,
+                      wineCollectionName: wineForm.formData.wineCollectionName,
                     },
                   });
                 }}
@@ -413,14 +403,14 @@ export const EuLabelForm = () => {
                 required
                 type="number"
                 placeholder=""
-                value={euLabelForm.formData.harvestYear}
+                value={wineForm.formData.harvestYear}
                 onChange={(event: any) => {
-                  euLabelForm.formData.harvestYear = event.target.value;
-                  updateEuLabelForm({
-                    ...euLabelForm,
+                  wineForm.formData.harvestYear = event.target.value;
+                  updateWineForm({
+                    ...wineForm,
                     formData: {
-                      ...euLabelForm.formData,
-                      harvestYear: euLabelForm.formData.harvestYear,
+                      ...wineForm.formData,
+                      harvestYear: wineForm.formData.harvestYear,
                     },
                   });
                 }}
@@ -439,14 +429,14 @@ export const EuLabelForm = () => {
                 isRequired
                 items={countryList}
                 fullWidth
-                selectedValue={euLabelForm.formData.country}
+                selectedValue={wineForm.formData.country}
                 onSelect={(data: string) => {
-                  euLabelForm.formData.country = data;
-                  updateEuLabelForm({
-                    ...euLabelForm,
+                  wineForm.formData.country = data;
+                  updateWineForm({
+                    ...wineForm,
                     formData: {
-                      ...euLabelForm.formData,
-                      country: euLabelForm.formData.country,
+                      ...wineForm.formData,
+                      country: wineForm.formData.country,
                     },
                   });
                 }}
@@ -460,14 +450,14 @@ export const EuLabelForm = () => {
                 items={typeOfWineList}
                 isRequired
                 fullWidth
-                selectedValue={euLabelForm.formData.typeOfWine}
+                selectedValue={wineForm.formData.typeOfWine}
                 onSelect={(data: string) => {
-                  euLabelForm.formData.typeOfWine = data;
-                  updateEuLabelForm({
-                    ...euLabelForm,
+                  wineForm.formData.typeOfWine = data;
+                  updateWineForm({
+                    ...wineForm,
                     formData: {
-                      ...euLabelForm.formData,
-                      typeOfWine: euLabelForm.formData.typeOfWine,
+                      ...wineForm.formData,
+                      typeOfWine: wineForm.formData.typeOfWine,
                     },
                   });
                 }}
@@ -482,14 +472,14 @@ export const EuLabelForm = () => {
                 items={bottleSizeList}
                 isRequired
                 fullWidth
-                selectedValue={euLabelForm.formData.bottleSize}
+                selectedValue={wineForm.formData.bottleSize}
                 onSelect={(data: string) => {
-                  euLabelForm.formData.bottleSize = data;
-                  updateEuLabelForm({
-                    ...euLabelForm,
+                  wineForm.formData.bottleSize = data;
+                  updateWineForm({
+                    ...wineForm,
                     formData: {
-                      ...euLabelForm.formData,
-                      bottleSize: euLabelForm.formData.bottleSize,
+                      ...wineForm.formData,
+                      bottleSize: wineForm.formData.bottleSize,
                     },
                   });
                 }}
@@ -507,14 +497,14 @@ export const EuLabelForm = () => {
                 items={colourOfWineList}
                 isRequired
                 fullWidth
-                selectedValue={euLabelForm.formData.colourOfWine}
+                selectedValue={wineForm.formData.colourOfWine}
                 onSelect={(data: string) => {
-                  euLabelForm.formData.colourOfWine = data;
-                  updateEuLabelForm({
-                    ...euLabelForm,
+                  wineForm.formData.colourOfWine = data;
+                  updateWineForm({
+                    ...wineForm,
                     formData: {
-                      ...euLabelForm.formData,
-                      colourOfWine: euLabelForm.formData.colourOfWine,
+                      ...wineForm.formData,
+                      colourOfWine: wineForm.formData.colourOfWine,
                     },
                   });
                 }}
@@ -531,14 +521,14 @@ export const EuLabelForm = () => {
                   required
                   type="number"
                   placeholder=""
-                  value={euLabelForm.formData.alcoholLevel}
+                  value={wineForm.formData.alcoholLevel}
                   onChange={(event: any) => {
-                    euLabelForm.formData.alcoholLevel = event.target.value;
-                    updateEuLabelForm({
-                      ...euLabelForm,
+                    wineForm.formData.alcoholLevel = event.target.value;
+                    updateWineForm({
+                      ...wineForm,
                       formData: {
-                        ...euLabelForm.formData,
-                        alcoholLevel: euLabelForm.formData.alcoholLevel,
+                        ...wineForm.formData,
+                        alcoholLevel: wineForm.formData.alcoholLevel,
                       },
                     });
                   }}
@@ -564,16 +554,16 @@ export const EuLabelForm = () => {
               <input
                 type="text"
                 placeholder=""
-                value={euLabelForm.formData.controlledDesignationOfOrigin}
+                value={wineForm.formData.controlledDesignationOfOrigin}
                 onChange={(event: any) => {
-                  euLabelForm.formData.controlledDesignationOfOrigin =
+                  wineForm.formData.controlledDesignationOfOrigin =
                     event.target.value;
-                  updateEuLabelForm({
-                    ...euLabelForm,
+                  updateWineForm({
+                    ...wineForm,
                     formData: {
-                      ...euLabelForm.formData,
+                      ...wineForm.formData,
                       controlledDesignationOfOrigin:
-                        euLabelForm.formData.controlledDesignationOfOrigin,
+                        wineForm.formData.controlledDesignationOfOrigin,
                     },
                   });
                 }}
@@ -613,7 +603,7 @@ export const EuLabelForm = () => {
                 }
                 placeholder=""
                 required={true}
-                initialItems={euLabelForm.formData.ingredients.grapes.list}
+                initialItems={wineForm.formData.ingredients.grapes.list}
                 onItemsChange={(items: GrapesMapCoordinatesInterface[]) => {
                   const dataToUpdate = {
                     has: items.length > 0 ? true : false,
@@ -621,16 +611,16 @@ export const EuLabelForm = () => {
                   };
                   updateGrapesInEuLabel(
                     user?.uid as string,
-                    euLabelForm.formData.referenceNumber,
+                    wineForm.formData.referenceNumber,
                     dataToUpdate
                   );
 
-                  updateEuLabelForm({
-                    ...euLabelForm,
+                  updateWineForm({
+                    ...wineForm,
                     formData: {
-                      ...euLabelForm.formData,
+                      ...wineForm.formData,
                       ingredients: {
-                        ...euLabelForm.formData.ingredients,
+                        ...wineForm.formData.ingredients,
                         grapes: {
                           has: items.length > 0 ? true : false,
                           list: items,
@@ -646,16 +636,16 @@ export const EuLabelForm = () => {
                   };
                   updateGrapesInEuLabel(
                     user?.uid as string,
-                    euLabelForm.formData.referenceNumber,
+                    wineForm.formData.referenceNumber,
                     dataToUpdate
                   );
 
-                  updateEuLabelForm({
-                    ...euLabelForm,
+                  updateWineForm({
+                    ...wineForm,
                     formData: {
-                      ...euLabelForm.formData,
+                      ...wineForm.formData,
                       ingredients: {
-                        ...euLabelForm.formData.ingredients,
+                        ...wineForm.formData.ingredients,
                         grapes: {
                           has: items.length > 0 ? true : false,
                           list: items,
@@ -674,20 +664,19 @@ export const EuLabelForm = () => {
                 label="Name"
                 placeholder="e.g. Malic Acid"
                 initialItems={
-                  euLabelForm.formData.ingredients.acidityRegulators.list
+                  wineForm.formData.ingredients.acidityRegulators.list
                 }
                 onItemsChange={(items: string[]) => {
-                  euLabelForm.formData.ingredients.acidityRegulators.list =
-                    items;
-                  updateEuLabelForm({
-                    ...euLabelForm,
+                  wineForm.formData.ingredients.acidityRegulators.list = items;
+                  updateWineForm({
+                    ...wineForm,
                     formData: {
-                      ...euLabelForm.formData,
+                      ...wineForm.formData,
                       ingredients: {
-                        ...euLabelForm.formData.ingredients,
+                        ...wineForm.formData.ingredients,
                         acidityRegulators: {
                           allergens:
-                            euLabelForm.formData.ingredients.acidityRegulators
+                            wineForm.formData.ingredients.acidityRegulators
                               .allergens,
                           has: true,
                           list: items,
@@ -709,24 +698,23 @@ export const EuLabelForm = () => {
               <CheckBox
                 label="Sulphites"
                 checked={
-                  euLabelForm.formData.ingredients.preservatives.allergens.has
+                  wineForm.formData.ingredients.preservatives.allergens.has
                 }
                 onCheck={(state: boolean) => {
-                  updateEuLabelForm({
-                    ...euLabelForm,
+                  updateWineForm({
+                    ...wineForm,
                     formData: {
-                      ...euLabelForm.formData,
+                      ...wineForm.formData,
                       ingredients: {
-                        ...euLabelForm.formData.ingredients,
+                        ...wineForm.formData.ingredients,
                         preservatives: {
-                          has: euLabelForm.formData.ingredients.preservatives
-                            .has,
-                          list: euLabelForm.formData.ingredients.preservatives
+                          has: wineForm.formData.ingredients.preservatives.has,
+                          list: wineForm.formData.ingredients.preservatives
                             .list,
                           allergens: {
                             has: state,
                             list: [
-                              ...euLabelForm.formData.ingredients.preservatives
+                              ...wineForm.formData.ingredients.preservatives
                                 .allergens.list,
                               "Sulphites (Allergen)",
                             ],
@@ -740,19 +728,17 @@ export const EuLabelForm = () => {
               <TextInputCrud
                 label="Name"
                 placeholder="e.g. Sulphites"
-                initialItems={
-                  euLabelForm.formData.ingredients.preservatives.list
-                }
+                initialItems={wineForm.formData.ingredients.preservatives.list}
                 onItemsChange={(items: string[]) => {
-                  updateEuLabelForm({
-                    ...euLabelForm,
+                  updateWineForm({
+                    ...wineForm,
                     formData: {
-                      ...euLabelForm.formData,
+                      ...wineForm.formData,
                       ingredients: {
-                        ...euLabelForm.formData.ingredients,
+                        ...wineForm.formData.ingredients,
                         preservatives: {
                           allergens:
-                            euLabelForm.formData.ingredients.preservatives
+                            wineForm.formData.ingredients.preservatives
                               .allergens,
                           has: true,
                           list: items,
@@ -770,25 +756,24 @@ export const EuLabelForm = () => {
               <Container intent="flexRowLeft" gap="small" className="max-w-fit">
                 <CheckBox
                   label="Isinglass"
-                  checked={euLabelForm.formData.ingredients.finingAgents.allergens.list.includes(
+                  checked={wineForm.formData.ingredients.finingAgents.allergens.list.includes(
                     "Isinglass (Fish Allergen)"
                   )}
                   onCheck={(state: boolean) => {
-                    updateEuLabelForm({
-                      ...euLabelForm,
+                    updateWineForm({
+                      ...wineForm,
                       formData: {
-                        ...euLabelForm.formData,
+                        ...wineForm.formData,
                         ingredients: {
-                          ...euLabelForm.formData.ingredients,
+                          ...wineForm.formData.ingredients,
                           finingAgents: {
-                            has: euLabelForm.formData.ingredients.finingAgents
-                              .has,
-                            list: euLabelForm.formData.ingredients.finingAgents
+                            has: wineForm.formData.ingredients.finingAgents.has,
+                            list: wineForm.formData.ingredients.finingAgents
                               .list,
                             allergens: {
                               has: state,
                               list: [
-                                ...euLabelForm.formData.ingredients.finingAgents
+                                ...wineForm.formData.ingredients.finingAgents
                                   .allergens.list,
                                 "Isinglass (Fish Allergen)",
                               ],
@@ -801,25 +786,24 @@ export const EuLabelForm = () => {
                 />
                 <CheckBox
                   label="Casein"
-                  checked={euLabelForm.formData.ingredients.finingAgents.allergens.list.includes(
+                  checked={wineForm.formData.ingredients.finingAgents.allergens.list.includes(
                     "Casein (Milk Allergen)"
                   )}
                   onCheck={(state: boolean) => {
-                    updateEuLabelForm({
-                      ...euLabelForm,
+                    updateWineForm({
+                      ...wineForm,
                       formData: {
-                        ...euLabelForm.formData,
+                        ...wineForm.formData,
                         ingredients: {
-                          ...euLabelForm.formData.ingredients,
+                          ...wineForm.formData.ingredients,
                           finingAgents: {
-                            has: euLabelForm.formData.ingredients.finingAgents
-                              .has,
-                            list: euLabelForm.formData.ingredients.finingAgents
+                            has: wineForm.formData.ingredients.finingAgents.has,
+                            list: wineForm.formData.ingredients.finingAgents
                               .list,
                             allergens: {
                               has: state,
                               list: [
-                                ...euLabelForm.formData.ingredients.finingAgents
+                                ...wineForm.formData.ingredients.finingAgents
                                   .allergens.list,
                                 "Casein (Milk Allergen)",
                               ],
@@ -834,19 +818,17 @@ export const EuLabelForm = () => {
               <TextInputCrud
                 label="Name"
                 placeholder="e.g. Potassium sorbate"
-                initialItems={
-                  euLabelForm.formData.ingredients.finingAgents.list
-                }
+                initialItems={wineForm.formData.ingredients.finingAgents.list}
                 onItemsChange={(items: string[]) => {
-                  updateEuLabelForm({
-                    ...euLabelForm,
+                  updateWineForm({
+                    ...wineForm,
                     formData: {
-                      ...euLabelForm.formData,
+                      ...wineForm.formData,
                       ingredients: {
-                        ...euLabelForm.formData.ingredients,
+                        ...wineForm.formData.ingredients,
                         finingAgents: {
                           allergens:
-                            euLabelForm.formData.ingredients.finingAgents
+                            wineForm.formData.ingredients.finingAgents
                               .allergens,
                           has: true,
                           list: items,
@@ -869,19 +851,17 @@ export const EuLabelForm = () => {
                 <TextInputCrud
                   label="Name"
                   placeholder="e.g. Arabic Gum"
-                  initialItems={
-                    euLabelForm.formData.ingredients.stabilizers.list
-                  }
+                  initialItems={wineForm.formData.ingredients.stabilizers.list}
                   onItemsChange={(items: string[]) => {
-                    updateEuLabelForm({
-                      ...euLabelForm,
+                    updateWineForm({
+                      ...wineForm,
                       formData: {
-                        ...euLabelForm.formData,
+                        ...wineForm.formData,
                         ingredients: {
-                          ...euLabelForm.formData.ingredients,
+                          ...wineForm.formData.ingredients,
                           stabilizers: {
                             allergens:
-                              euLabelForm.formData.ingredients.stabilizers
+                              wineForm.formData.ingredients.stabilizers
                                 .allergens,
                             has: true,
                             list: items,
@@ -902,19 +882,17 @@ export const EuLabelForm = () => {
                 <TextInputCrud
                   label="Name"
                   placeholder="e.g. Gallic Acid (GA)"
-                  initialItems={
-                    euLabelForm.formData.ingredients.antioxidants.list
-                  }
+                  initialItems={wineForm.formData.ingredients.antioxidants.list}
                   onItemsChange={(items: string[]) => {
-                    updateEuLabelForm({
-                      ...euLabelForm,
+                    updateWineForm({
+                      ...wineForm,
                       formData: {
-                        ...euLabelForm.formData,
+                        ...wineForm.formData,
                         ingredients: {
-                          ...euLabelForm.formData.ingredients,
+                          ...wineForm.formData.ingredients,
                           antioxidants: {
                             allergens:
-                              euLabelForm.formData.ingredients.antioxidants
+                              wineForm.formData.ingredients.antioxidants
                                 .allergens,
                             has: true,
                             list: items,
@@ -939,16 +917,16 @@ export const EuLabelForm = () => {
                 type="number"
                 required
                 placeholder=""
-                value={euLabelForm.formData.ingredients.sugars}
+                value={wineForm.formData.ingredients.sugars}
                 onChange={(event: any) => {
-                  euLabelForm.formData.ingredients.sugars = event.target.value;
-                  updateEuLabelForm({
-                    ...euLabelForm,
+                  wineForm.formData.ingredients.sugars = event.target.value;
+                  updateWineForm({
+                    ...wineForm,
                     formData: {
-                      ...euLabelForm.formData,
+                      ...wineForm.formData,
                       ingredients: {
-                        ...euLabelForm.formData.ingredients,
-                        sugars: euLabelForm.formData.ingredients.sugars,
+                        ...wineForm.formData.ingredients,
+                        sugars: wineForm.formData.ingredients.sugars,
                       },
                     },
                   });

@@ -3,35 +3,35 @@
 import {
   Button,
   Container,
-  EuLabelGeneralViewer,
+  WineGeneralViewer,
   MapViewerSection,
   Text,
 } from "@/components";
-import { EuLabelInterface, WineryGeneralInfoInterface } from "@/typings/winery";
+import { WineInterface, WineryGeneralInfoInterface } from "@/typings/winery";
 import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { euLabelUrlComposerRef } from "@/utils/euLabelUrlComposerRef";
+import { wineUrlComposerRef } from "@/utils/wineUrlComposerRef";
 
-export interface EuLabelsAccordionProps {
+export interface WineAccordionProps {
   generalInfo: WineryGeneralInfoInterface;
-  data: EuLabelInterface[];
-  onEdit: (item: EuLabelInterface) => void;
+  data: WineInterface[];
+  onEdit: (item: WineInterface) => void;
 }
 
-export interface EuLabelsAccordionItemInterface {
+export interface WineAccordionItemInterface {
   generalInfo: WineryGeneralInfoInterface;
-  item: EuLabelInterface;
+  item: WineInterface;
   onEdit: () => void;
 }
 
-export const EuLabelsAccordion = ({
+export const WinesAccordion = ({
   generalInfo,
   data,
   onEdit,
-}: EuLabelsAccordionProps) => {
+}: WineAccordionProps) => {
   const [active, setActive] = useState(false);
 
   const handleToggle = () => {
@@ -61,7 +61,7 @@ const AccordionItem = ({
   generalInfo,
   item,
   onEdit,
-}: EuLabelsAccordionItemInterface) => {
+}: WineAccordionItemInterface) => {
   const [active, setActive] = useState(false);
 
   const handleToggle = () => {
@@ -161,7 +161,7 @@ const AccordionItem = ({
             active ? "block" : "hidden"
           }`}
         >
-          <EuLabelGeneralViewer item={item} />
+          <WineGeneralViewer item={item} />
           {item.ingredients.grapes.list.length > 0 &&
             item.ingredients.grapes.list[0].coordinates &&
             item.ingredients.grapes.list[0].coordinates.length > 0 && (
@@ -198,11 +198,11 @@ const AccordionItem = ({
               className="max-w-fit h-full bg-surface rounded-md"
             >
               <Link
-                href={euLabelUrlComposerRef(item.referenceNumber)}
+                href={wineUrlComposerRef(item.referenceNumber)}
                 target="__blank"
               >
                 <Text variant="dim">
-                  {euLabelUrlComposerRef(item.referenceNumber)}
+                  {wineUrlComposerRef(item.referenceNumber)}
                 </Text>
               </Link>
             </Container>

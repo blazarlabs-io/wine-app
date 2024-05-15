@@ -16,14 +16,14 @@ import { handleGridResponsiveness } from "@/utils/handleGridResponsiveness";
 import { useFilters } from "@/context/filtersContext";
 import { Icon } from "@iconify/react";
 import { useEffect, useState } from "react";
-import { EuLabelInterface } from "@/typings/winery";
+import { WineInterface } from "@/typings/winery";
 import { classNames } from "@/utils/classNames";
 
 export const ExplorePage = () => {
   const { responsiveSize } = useResponsive();
   const { showFilters, filtersLoading, filteredWines, allWines } = useFilters();
 
-  const [winesToShow, setWinesToShow] = useState<EuLabelInterface[]>([]);
+  const [winesToShow, setWinesToShow] = useState<WineInterface[]>([]);
 
   useEffect(() => {
     if (filteredWines.length > 0) {

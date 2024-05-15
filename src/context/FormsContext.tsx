@@ -1,12 +1,8 @@
 "use client";
 
-import { euLabelInitData } from "@/data/euLablelInitData";
+import { wineInitData } from "@/data/wineInitData";
 import { wineryInitialData } from "@/data/wineryInitialData";
-import {
-  EuLabelInterface,
-  WineryDataInterface,
-  WineryGeneralInfoInterface,
-} from "@/typings/winery";
+import { WineInterface, WineryGeneralInfoInterface } from "@/typings/winery";
 import { createContext, useContext, useState } from "react";
 
 export interface WineryFormInterface {
@@ -16,18 +12,18 @@ export interface WineryFormInterface {
   formData: WineryGeneralInfoInterface;
 }
 
-export interface EuLabelFormInterface {
+export interface WineFormInterface {
   title: string;
   description: string;
   isEditing: boolean;
-  formData: EuLabelInterface;
+  formData: WineInterface;
 }
 
 export interface FormsContextInterface {
   wineryForm: WineryFormInterface;
-  euLabelForm: EuLabelFormInterface;
+  wineForm: WineFormInterface;
   updateWineryForm: (data: WineryFormInterface) => void;
-  updateEuLabelForm: (data: EuLabelFormInterface) => void;
+  updateWineForm: (data: WineFormInterface) => void;
 }
 
 const contextInitialData: FormsContextInterface = {
@@ -37,14 +33,14 @@ const contextInitialData: FormsContextInterface = {
     isEditing: false,
     formData: wineryInitialData,
   },
-  euLabelForm: {
+  wineForm: {
     title: "",
     description: "",
     isEditing: false,
-    formData: euLabelInitData,
+    formData: wineInitData,
   },
   updateWineryForm: () => {},
-  updateEuLabelForm: () => {},
+  updateWineForm: () => {},
 };
 
 const FormsContext = createContext(contextInitialData);
@@ -63,23 +59,21 @@ export const FormsProvider = ({
   children,
 }: React.PropsWithChildren): JSX.Element => {
   const [wineryForm, setWineryForm] = useState(contextInitialData.wineryForm);
-  const [euLabelForm, setEuLabelForm] = useState(
-    contextInitialData.euLabelForm
-  );
+  const [wineForm, setWineForm] = useState(contextInitialData.wineForm);
 
   const updateWineryForm = (data: WineryFormInterface) => {
     setWineryForm(data);
   };
 
-  const updateEuLabelForm = (data: EuLabelFormInterface) => {
-    setEuLabelForm(data);
+  const updateWineForm = (data: WineFormInterface) => {
+    setWineForm(data);
   };
 
   const value = {
     wineryForm,
-    euLabelForm,
+    wineForm,
     updateWineryForm,
-    updateEuLabelForm,
+    updateWineForm,
   };
 
   return (

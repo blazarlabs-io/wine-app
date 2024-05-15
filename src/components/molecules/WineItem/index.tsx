@@ -4,19 +4,19 @@ import { Container, Text } from "@/components";
 import { useResponsive } from "@/hooks/useResponsive";
 import { classNames } from "@/utils/classNames";
 
-export interface EuLabelItemProps {
+export interface WineItemProps {
   title: string;
   value: string;
   centered?: boolean;
   variant?: "normal" | "surface";
 }
 
-export const EuLabelItem = ({
+export const WineItem = ({
   title,
   value,
   centered = false,
   variant = "normal",
-}: EuLabelItemProps) => {
+}: WineItemProps) => {
   const { responsiveSize } = useResponsive();
   return (
     <Container

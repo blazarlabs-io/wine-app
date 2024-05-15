@@ -3,7 +3,7 @@
 import {
   AllergenViewer,
   Container,
-  EuLabelItem,
+  WineItem,
   IngredientViewer,
   BounceLoader,
   Text,
@@ -11,16 +11,14 @@ import {
   GrapesViewerTable,
   IngredientViewerTable,
 } from "@/components";
-import { EuLabelInterface } from "@/typings/winery";
+import { WineInterface } from "@/typings/winery";
 import { useResponsive } from "@/hooks/useResponsive";
 
-export interface EuLabelGeneralViewerInterface {
-  item: EuLabelInterface;
+export interface WineGeneralViewerInterface {
+  item: WineInterface;
 }
 
-export const EuLabelGeneralViewer = ({
-  item,
-}: EuLabelGeneralViewerInterface) => {
+export const WineGeneralViewer = ({ item }: WineGeneralViewerInterface) => {
   const { responsiveSize } = useResponsive();
   return (
     <>
@@ -34,17 +32,17 @@ export const EuLabelGeneralViewer = ({
                 </Text>
               </Container>
               <Container intent="grid-4" gap="large">
-                <EuLabelItem
+                <WineItem
                   title="Wine Name"
                   variant="surface"
                   value={item.wineCollectionName}
                 />
-                <EuLabelItem
+                <WineItem
                   title="Harvest Year"
                   value={item.harvestYear}
                   variant="surface"
                 />
-                <EuLabelItem
+                <WineItem
                   title="Country"
                   value={item.country}
                   variant="surface"
@@ -52,22 +50,22 @@ export const EuLabelGeneralViewer = ({
               </Container>
 
               <Container intent="grid-4" gap="large">
-                <EuLabelItem
+                <WineItem
                   title="Type of Wine"
                   value={item.typeOfWine}
                   variant="surface"
                 />
-                <EuLabelItem
+                <WineItem
                   title="Colour of Wine"
                   value={item.colourOfWine}
                   variant="surface"
                 />
-                <EuLabelItem
+                <WineItem
                   title="Alcohol Level"
                   value={item.alcoholLevel + " %vol"}
                   variant="surface"
                 />
-                <EuLabelItem
+                <WineItem
                   title="Bottle Size"
                   value={item.bottleSize}
                   variant="surface"
@@ -75,8 +73,8 @@ export const EuLabelGeneralViewer = ({
               </Container>
 
               <Container intent="grid-4" gap="large">
-                <EuLabelItem title="UPC" value={item.upc} variant="surface" />
-                <EuLabelItem
+                <WineItem title="UPC" value={item.upc} variant="surface" />
+                <WineItem
                   title="Controlled Designation of Origin"
                   value={item.controlledDesignationOfOrigin}
                   variant="surface"
@@ -143,49 +141,49 @@ export const EuLabelGeneralViewer = ({
                   General Information
                 </Text>
               </Container>
-              <EuLabelItem
+              <WineItem
                 centered
                 title="Reference Number"
                 value={item.referenceNumber}
               />
               <Container intent="grid-2" gap="medium" className="">
-                <EuLabelItem
+                <WineItem
                   title="Wine Name"
                   value={item.wineCollectionName}
                   variant="surface"
                 />
-                <EuLabelItem title="UPC" value={item.upc} variant="surface" />
-                <EuLabelItem
+                <WineItem title="UPC" value={item.upc} variant="surface" />
+                <WineItem
                   title="Harvest Year"
                   value={item.harvestYear}
                   variant="surface"
                 />
-                <EuLabelItem
+                <WineItem
                   title="Country"
                   value={item.country}
                   variant="surface"
                 />
-                <EuLabelItem
+                <WineItem
                   title="Controlled Designation of Origin"
                   value={item.controlledDesignationOfOrigin}
                   variant="surface"
                 />
-                <EuLabelItem
+                <WineItem
                   title="Alcohol Level"
                   value={item.alcoholLevel + " %vol"}
                   variant="surface"
                 />
-                <EuLabelItem
+                <WineItem
                   title="Type of Wine"
                   value={item.typeOfWine}
                   variant="surface"
                 />
-                <EuLabelItem
+                <WineItem
                   title="Colour of Wine"
                   value={item.colourOfWine}
                   variant="surface"
                 />
-                <EuLabelItem
+                <WineItem
                   title="Bottle Size"
                   value={item.bottleSize}
                   variant="surface"

@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useResponsive } from "@/hooks/useResponsive";
 import { classNames } from "@/utils/classNames";
 import Link from "next/link";
-import { euLabelUrlComposerRef } from "@/utils/euLabelUrlComposerRef";
+import { wineUrlComposerRef } from "@/utils/wineUrlComposerRef";
 
 export interface WineCardProps {
   imageUrl: string;
@@ -138,7 +138,7 @@ export const WineCard = ({
         </Container>
         <Container intent="flexRowRight" px="medium" className="mb-[24px]">
           <Link
-            href={euLabelUrlComposerRef(referenceNumber)}
+            href={wineUrlComposerRef(referenceNumber)}
             className="border border-primary-light text-primary-light hover:border-primary hover:text-primary transition-all duration-300 ease-in-out rounded-md px-2 py-1"
           >
             <Text

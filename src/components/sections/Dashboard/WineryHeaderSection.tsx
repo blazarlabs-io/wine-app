@@ -6,8 +6,7 @@ import { useRealtimeDb } from "@/context/realtimeDbContext";
 import { Icon } from "@iconify/react/dist/iconify.js";
 
 export const WineryHeaderSection = () => {
-  const { wineryGeneralInfo, allowedEuLabels, wineryEuLabels } =
-    useRealtimeDb();
+  const { wineryGeneralInfo, allowedWines, wines } = useRealtimeDb();
 
   const wineryStats: WineryStatInterface[] = [
     {
@@ -54,7 +53,7 @@ export const WineryHeaderSection = () => {
             <div className="relative">
               <div className="absolute z-[100] top-[-16px] left-[-8px] bg-primary flex items-center justify-center rounded-full px-[6px] py-[4px]">
                 <p className="text-[10px] text-on-primary leading-none">
-                  {allowedEuLabels - wineryEuLabels.length}
+                  {allowedWines - wines.length}
                 </p>
               </div>
               <Icon
@@ -63,7 +62,7 @@ export const WineryHeaderSection = () => {
               />
             </div>
             <Text intent="p2" variant="dim" className="font-semibold">
-              {`${allowedEuLabels - wineryEuLabels.length} QR Codes left`}
+              {`${allowedWines - wines.length} QR Codes left`}
             </Text>
           </Container>
           <Container intent="flexRowRight" gap="small" className="max-w-fit">

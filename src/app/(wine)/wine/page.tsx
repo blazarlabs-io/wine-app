@@ -2,7 +2,7 @@
 
 import { WinePage } from "@/components";
 import {
-  EuLabelInterface,
+  WineInterface,
   WineryGeneralInfoInterface,
   WineryInterface,
 } from "@/typings/winery";
@@ -22,12 +22,12 @@ export default function WineExplorer() {
   const [ref, setRef] = useState<string | null>(searchParams.get("ref"));
   const [generalInfo, setGeneralInfo] =
     useState<WineryGeneralInfoInterface | null>(null);
-  const [euLabel, setEuLabel] = useState<DocumentData | null>(null);
+  const [wine, setWine] = useState<DocumentData | null>(null);
 
   useEffect(() => {
     if (ref) {
-      getWineByRefNumber(ref, (label: EuLabelInterface | null) => {
-        setEuLabel(label);
+      getWineByRefNumber(ref, (label: WineInterface | null) => {
+        setWine(label);
       });
       getWineryByWineRefNumber(ref, (data: WineryInterface | null) => {
         setGeneralInfo(data?.generalInfo as WineryGeneralInfoInterface);
@@ -41,10 +41,10 @@ export default function WineExplorer() {
   }, []);
   return (
     <>
-      {euLabel && generalInfo && (
+      {wine && generalInfo && (
         <WinePage
           generalInfo={generalInfo as WineryGeneralInfoInterface}
-          euLabel={euLabel as EuLabelInterface}
+          wine={wine as WineInterface}
         />
       )}
     </>

@@ -3,19 +3,19 @@
 import { Container, Text, Button } from "@/components";
 import { QRCode } from "react-qrcode-logo";
 
-export interface ReviewEuLabelProps {
+export interface ReviewWineProps {
   qrCodeValue: string;
   qrCodeId: string;
   onAccept: () => void;
   onCancel: () => void;
 }
 
-export const ReviewEuLabel = ({
+export const ReviewWine = ({
   qrCodeValue,
   qrCodeId,
   onAccept,
   onCancel,
-}: ReviewEuLabelProps) => {
+}: ReviewWineProps) => {
   return (
     <div className="flex items-center justify-center w-full h-full bg-surface/80 backdrop-blur-sm fixed z-[999] top-0 left-0">
       <Container

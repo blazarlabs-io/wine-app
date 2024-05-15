@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/firebase/client";
 import {
-  EuLabelInterface,
+  WineInterface,
   WineryGeneralInfoInterface,
   WineryInterface,
 } from "@/typings/winery";
@@ -19,12 +19,12 @@ export interface RealtimeDbContextInterface {
   level: string;
   maxPrice: number;
   availableLevels: AvailableLevels[] | null;
-  wineryEuLabels: EuLabelInterface[];
-  allowedEuLabels: number;
+  wines: WineInterface[];
+  allowedWines: number;
   updateWineryGeneralInfo: (data: WineryGeneralInfoInterface) => void;
   updateTier: (tier: string) => void;
   updateLevel: (level: string) => void;
-  regiterWineryEuLabels: (data: EuLabelInterface[]) => void;
+  regiterWines: (data: WineInterface[]) => void;
 }
 
 const contextInitialData: RealtimeDbContextInterface = {
@@ -33,12 +33,12 @@ const contextInitialData: RealtimeDbContextInterface = {
   level: "",
   maxPrice: 0,
   availableLevels: [],
-  wineryEuLabels: [],
-  allowedEuLabels: 0,
+  wines: [],
+  allowedWines: 0,
   updateWineryGeneralInfo: () => {},
   updateTier: () => {},
   updateLevel: () => {},
-  regiterWineryEuLabels: () => {},
+  regiterWines: () => {},
 };
 
 const RealtimeDbContext = createContext(contextInitialData);
@@ -68,13 +68,11 @@ export const RealtimeDbProvider = ({
     AvailableLevels[] | null
   >(null);
 
-  const [allowedEuLabels, setAllowedEuLabels] = useState(
-    contextInitialData.allowedEuLabels
+  const [allowedWines, setallowedWines] = useState(
+    contextInitialData.allowedWines
   );
 
-  const [wineryEuLabels, setWineryEuLabels] = useState(
-    contextInitialData.wineryEuLabels
-  );
+  const [wines, setWines] = useState(contextInitialData.wines);
 
   const [maxPrice, setMaxPrice] = useState(contextInitialData.maxPrice);
 
@@ -104,8 +102,8 @@ export const RealtimeDbProvider = ({
 
   const updateLevel = (level: string) => setLevel(level);
 
-  const regiterWineryEuLabels = (data: EuLabelInterface[]) => {
-    setWineryEuLabels(data);
+  const regiterWines = (data: WineInterface[]) => {
+    setWines(data);
   };
 
   useEffect(() => {
@@ -123,7 +121,7 @@ export const RealtimeDbProvider = ({
               levels.push({
                 name: k,
                 price: sorted[k]?.price as number,
-                euLabels: sorted[k]?.euLabels as number,
+                qrCodes: sorted[k]?.qrCodes as number,
               });
           });
           setAvailableLevels(levels);
@@ -151,7 +149,7 @@ export const RealtimeDbProvider = ({
 
         updateWineryGeneralInfo(generalInfo);
         console.log(generalInfo);
-        regiterWineryEuLabels(wineryData.euLabels as EuLabelInterface[]);
+        regiterWines(wineryData.wines as WineInterface[]);
         setTier(wineryData.tier as string);
         setLevel(wineryData.level as string);
       }
@@ -166,7 +164,7 @@ export const RealtimeDbProvider = ({
   useEffect(() => {
     if (level) {
       getWineryLevelDb(level as string).then((data) => {
-        if (data) setAllowedEuLabels(data.euLabels as number);
+        if (data) setallowedWines(data.qrCodes as number);
       });
     }
   }, [level]);
@@ -193,12 +191,12 @@ export const RealtimeDbProvider = ({
     level,
     maxPrice,
     availableLevels,
-    wineryEuLabels,
-    allowedEuLabels,
+    wines,
+    allowedWines,
     updateWineryGeneralInfo,
     updateTier,
     updateLevel,
-    regiterWineryEuLabels,
+    regiterWines,
   };
 
   return (

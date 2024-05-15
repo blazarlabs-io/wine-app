@@ -1,6 +1,6 @@
-import { EuLabelInterface } from "@/typings/winery";
+import { WineInterface } from "@/typings/winery";
 
-export const euLabelInitData: EuLabelInterface = {
+export const wineInitData: WineInterface = {
   referenceNumber: "",
   upc: "",
   wineryName: "",

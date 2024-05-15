@@ -5,16 +5,16 @@ import {
   Text,
   GrapesViewer,
   IngredientViewer,
-  EuLabelItem,
+  WineItem,
   GrapesViewerTable,
   IngredientViewerTable,
 } from "@/components";
 import { useResponsive } from "@/hooks/useResponsive";
-import { EuLabelInterface } from "@/typings/winery";
+import { WineInterface } from "@/typings/winery";
 import { Icon } from "@iconify/react";
 
 export interface IngredientsSectionProps {
-  item: EuLabelInterface;
+  item: WineInterface;
 }
 
 export const WineIngredientsSection = ({ item }: IngredientsSectionProps) => {
