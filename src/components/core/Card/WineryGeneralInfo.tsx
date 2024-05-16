@@ -136,7 +136,7 @@ export const WineryGeneralInfo = ({
         px="medium"
         py="medium"
         className={classNames(
-          "bg-surface rounded-md h-full",
+          "bg-surface-light rounded-md h-full",
           fullWidth ? "w-full" : "max-w-fit"
         )}
       >

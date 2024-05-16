@@ -12,6 +12,7 @@ import { useAuth } from "./authContext";
 import { wineryInitialData } from "@/data/wineryInitialData";
 import { getWineryLevelDb } from "@/utils/firestore";
 import { AvailableLevels, LevelsInterface } from "@/typings/systemVariables";
+import { useGetWineCharacteristics } from "@/hooks/useGetWineCharacteristics";
 
 export interface RealtimeDbContextInterface {
   wineryGeneralInfo: WineryGeneralInfoInterface;
@@ -21,6 +22,9 @@ export interface RealtimeDbContextInterface {
   availableLevels: AvailableLevels[] | null;
   wines: WineInterface[];
   allowedWines: number;
+  wineTypes: string[];
+  wineColours: string[];
+  wineBottleSizes: string[];
   updateWineryGeneralInfo: (data: WineryGeneralInfoInterface) => void;
   updateTier: (tier: string) => void;
   updateLevel: (level: string) => void;
@@ -35,6 +39,9 @@ const contextInitialData: RealtimeDbContextInterface = {
   availableLevels: [],
   wines: [],
   allowedWines: 0,
+  wineTypes: [],
+  wineColours: [],
+  wineBottleSizes: [],
   updateWineryGeneralInfo: () => {},
   updateTier: () => {},
   updateLevel: () => {},
@@ -57,6 +64,8 @@ export const RealtimeDbProvider = ({
   children,
 }: React.PropsWithChildren): JSX.Element => {
   const { user } = useAuth();
+  const { wineTypes, wineColours, wineBottleSizes } =
+    useGetWineCharacteristics();
 
   const [wineryGeneralInfo, setWineryGeneralInfo] = useState(
     contextInitialData.wineryGeneralInfo
@@ -107,6 +116,7 @@ export const RealtimeDbProvider = ({
   };
 
   useEffect(() => {
+    // Get system variables
     const unsubscribeSysteVariables = onSnapshot(
       doc(db, "utils", "systemVariables"),
       (snapshot) => {
@@ -131,8 +141,8 @@ export const RealtimeDbProvider = ({
 
     if (!user) return;
 
+    // Get winery data
     const docRef = doc(db, "wineries", user.uid as string);
-
     const unsubscribeWineries: Unsubscribe = onSnapshot(docRef, (snapshot) => {
       const wineryData = snapshot.data() as WineryInterface;
       if (wineryData) {
@@ -161,6 +171,7 @@ export const RealtimeDbProvider = ({
     };
   }, [user]);
 
+  // Winery levels
   useEffect(() => {
     if (level) {
       getWineryLevelDb(level as string).then((data) => {
@@ -169,6 +180,7 @@ export const RealtimeDbProvider = ({
     }
   }, [level]);
 
+  // Max price
   useEffect(() => {
     const findMaxPrice = (data: any) => {
       return Math.max.apply(
@@ -193,6 +205,9 @@ export const RealtimeDbProvider = ({
     availableLevels,
     wines,
     allowedWines,
+    wineTypes,
+    wineColours,
+    wineBottleSizes,
     updateWineryGeneralInfo,
     updateTier,
     updateLevel,

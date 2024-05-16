@@ -25,8 +25,8 @@ const config: Config = {
       },
       colors: {
         primary: {
-          DEFAULT: "#BA2E37",
-          dark: "#701C21",
+          DEFAULT: "#BE3144",
+          dark: "#872341",
           light: "#D68287",
         },
         secondary: {
@@ -37,6 +37,7 @@ const config: Config = {
         surface: {
           DEFAULT: "#212121",
           dark: "#292929",
+          darker: "#1A1A1A",
           light: "#2C2C2C",
         },
         status: {

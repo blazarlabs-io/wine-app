@@ -72,18 +72,6 @@ export const WinesListSection = () => {
               />
               Add wine for EU Label only
             </Button>
-            <Button
-              intent="primary"
-              size="medium"
-              disabled
-              className="flex items-center gap-[8px]"
-            >
-              <Icon
-                icon="carbon:add-filled"
-                className="h-[20px] w-[20px] mt-[-4px]"
-              />
-              Add wine for supply chain tracking
-            </Button>
           </Container>
           <div className="min-w-full">
             {wines &&
@@ -112,11 +100,11 @@ export const WinesListSection = () => {
         <Container
           intent="flexColCenter"
           gap="large"
-          className="min-w-full h-full min-h-[400px]"
+          className="min-w-full h-full min-h-[400px] bg-surface-light/20 border border-on-surface/20 rounded-lg"
         >
           <Container intent="flexColTop" gap="xsmall">
             <Text intent="h4" variant="normal" className="font-normal">
-              Register wine for EU label only
+              Register Wine
             </Text>
             <Button
               intent="primary"
@@ -142,23 +130,6 @@ export const WinesListSection = () => {
                 className="h-[20px] w-[20px] mt-[-4px]"
               />
               Add wine
-            </Button>
-          </Container>
-          <Container intent="flexColTop" gap="xsmall">
-            <Text intent="h4" variant="dim" className="font-normal">
-              Register wine for supply chain tracking
-            </Text>
-            <Button
-              intent="primary"
-              size="medium"
-              disabled
-              className="flex items-center gap-[8px]"
-            >
-              <Icon
-                icon="carbon:add-filled"
-                className="h-[20px] w-[20px] mt-[-4px]"
-              />
-              Add Wine
             </Button>
           </Container>
         </Container>

@@ -35,12 +35,11 @@ export const WineryHeaderSection = () => {
     <Container
       intent="flexRowBetween"
       py="large"
-      px="xlarge"
       gap="large"
-      className="bg-[#3F2929] min-w-full min-h-[320px] max-h-[320px]"
+      className="bg-surface min-w-full min-h-[320px] max-h-[320px]"
     >
       <WineryGeneralInfo />
-      <Container intent="flexColBetween" gap="large" className="w-full h-full">
+      <Container intent="flexColBetween" gap="medium" className="w-full h-full">
         <Container intent="flexRowBetween" gap="medium" className="h-full">
           {wineryStats.map((stat) => (
             <div key={stat.title} className="h-full">
@@ -49,7 +48,13 @@ export const WineryHeaderSection = () => {
           ))}
         </Container>
         <Container intent="flexRowBetween" gap="medium" className="h-full">
-          <Container intent="flexRowLeft" gap="xsmall" className="max-w-fit">
+          <Container
+            intent="flexRowLeft"
+            gap="xsmall"
+            px="small"
+            py="small"
+            className="max-w-fit"
+          >
             <div className="relative">
               <div className="absolute z-[100] top-[-16px] left-[-8px] bg-primary flex items-center justify-center rounded-full px-[6px] py-[4px]">
                 <p className="text-[10px] text-on-primary leading-none">
@@ -65,7 +70,12 @@ export const WineryHeaderSection = () => {
               {`${allowedWines - wines.length} QR Codes left`}
             </Text>
           </Container>
-          <Container intent="flexRowRight" gap="small" className="max-w-fit">
+          <Container
+            intent="flexRowRight"
+            px="small"
+            gap="small"
+            className="max-w-fit"
+          >
             <Container intent="flexRowLeft" gap="xsmall" className="max-w-fit">
               <Icon
                 icon="material-symbols:update"

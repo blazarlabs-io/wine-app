@@ -18,7 +18,7 @@ import {
   uploadLogoToStorage,
 } from "@/utils/firestore";
 import { useEffect, useRef, useState } from "react";
-import { validateFileSizeAndType } from "@/utils/validateFileSizeAndType";
+import { validateFileSizeAndType } from "@/utils/validators/validateFileSizeAndType";
 import { useModal } from "@/context/modalContext";
 import { useRouter } from "next/navigation";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
@@ -74,6 +74,7 @@ export const WineryForm = () => {
     setImageUploading(true);
 
     const newGeneralInfo: WineryGeneralInfoInterface = wineryGeneralInfo;
+    wineryGeneralInfo.lastUpdated = new Date().toLocaleDateString();
     updateWineryGeneralInfo(newGeneralInfo);
 
     // UPDATE TO DATABASE
@@ -87,7 +88,7 @@ export const WineryForm = () => {
     uploadLogoToStorage(user?.uid as string, logo as File, (url: string) => {
       setImageUploading(false);
       wineryGeneralInfo.logo = url;
-      wineryGeneralInfo.lastUpdated = new Date().toISOString();
+      wineryGeneralInfo.lastUpdated = new Date().toLocaleDateString();
 
       const newGeneralInfo: WineryGeneralInfoInterface = wineryGeneralInfo;
       updateWineryGeneralInfo(newGeneralInfo);

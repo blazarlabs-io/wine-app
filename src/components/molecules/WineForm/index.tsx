@@ -13,12 +13,7 @@ import {
   SpinnerLoader,
 } from "@/components";
 import { Icon } from "@iconify/react";
-import {
-  countryList,
-  bottleSizeList,
-  colourOfWineList,
-  typeOfWineList,
-} from "@/utils/data";
+import { countryList, vintageYearList } from "@/utils/data";
 import { GrapesMapCoordinatesInterface } from "@/typings/winery";
 import { dateToTimestamp } from "@/utils/dateToTimestamp";
 import { useEffect, useRef, useState } from "react";
@@ -31,13 +26,13 @@ import {
   registerWineryWine,
   uploadQrCodeToStorage,
   uploadWineImageToStorage,
-  updateWineryEuLabel,
-  updateGrapesInEuLabel,
+  updateWineryWine,
+  updateGrapesInWine,
 } from "@/utils/firestore";
 import { useAuth } from "@/context/authContext";
 import { wineUrlComposerRef } from "@/utils/wineUrlComposerRef";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
-import { validateFileSizeAndType } from "@/utils/validateFileSizeAndType";
+import { validateFileSizeAndType } from "@/utils/validators/validateFileSizeAndType";
 import { useModal } from "@/context/modalContext";
 import { httpsCallable } from "firebase/functions";
 import { functions } from "@/lib/firebase/client";
@@ -46,6 +41,7 @@ import { generateWineHtml } from "@/utils/generateWineHtml";
 import { fileToBase64 } from "@/utils/fileToBase64";
 import { useForms } from "@/context/FormsContext";
 import { useToast } from "@/context/toastContext";
+import { restrictNumberInput } from "@/utils/validators/restrictNumberInput";
 
 export const WineForm = () => {
   const router = useRouter();
@@ -56,7 +52,15 @@ export const WineForm = () => {
   const { updateModal } = useModal();
   const inputFileRef = useRef<any>(null);
 
-  const { wineryGeneralInfo, wines, tier, level } = useRealtimeDb();
+  const {
+    wineryGeneralInfo,
+    wines,
+    tier,
+    level,
+    wineColours,
+    wineTypes,
+    wineBottleSizes,
+  } = useRealtimeDb();
 
   const initialized = useRef(false);
   const { user } = useAuth();
@@ -169,7 +173,7 @@ export const WineForm = () => {
         }
       );
     } else {
-      updateWineryEuLabel(user?.uid as string, wineForm.formData);
+      updateWineryWine(user?.uid as string, wineForm.formData);
 
       router.replace("/home");
     }
@@ -399,7 +403,23 @@ export const WineForm = () => {
               <Text intent="p1" variant="dim" className="font-semibold">
                 * Harvest Year
               </Text>
-              <input
+              <DropDown
+                isRequired
+                items={vintageYearList}
+                fullWidth
+                selectedValue={wineForm.formData.country}
+                onSelect={(data: string) => {
+                  wineForm.formData.harvestYear = data;
+                  updateWineForm({
+                    ...wineForm,
+                    formData: {
+                      ...wineForm.formData,
+                      harvestYear: wineForm.formData.harvestYear,
+                    },
+                  });
+                }}
+              />
+              {/* <input
                 required
                 type="number"
                 placeholder=""
@@ -415,7 +435,7 @@ export const WineForm = () => {
                   });
                 }}
                 className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
-              />
+              /> */}
             </Container>
           </Container>
 
@@ -447,7 +467,7 @@ export const WineForm = () => {
                 * Type of Wine
               </Text>
               <DropDown
-                items={typeOfWineList}
+                items={wineTypes}
                 isRequired
                 fullWidth
                 selectedValue={wineForm.formData.typeOfWine}
@@ -469,7 +489,7 @@ export const WineForm = () => {
                 * Bottle Size
               </Text>
               <DropDown
-                items={bottleSizeList}
+                items={wineBottleSizes}
                 isRequired
                 fullWidth
                 selectedValue={wineForm.formData.bottleSize}
@@ -494,7 +514,7 @@ export const WineForm = () => {
                 * Wine Color
               </Text>
               <DropDown
-                items={colourOfWineList}
+                items={wineColours}
                 isRequired
                 fullWidth
                 selectedValue={wineForm.formData.colourOfWine}
@@ -520,10 +540,18 @@ export const WineForm = () => {
                 <input
                   required
                   type="number"
+                  min="0"
+                  max="100"
+                  step={0.5}
                   placeholder=""
                   value={wineForm.formData.alcoholLevel}
                   onChange={(event: any) => {
-                    wineForm.formData.alcoholLevel = event.target.value;
+                    const restrictedVal = restrictNumberInput(
+                      0,
+                      100,
+                      event.target.value
+                    );
+                    wineForm.formData.alcoholLevel = restrictedVal.toString();
                     updateWineForm({
                       ...wineForm,
                       formData: {
@@ -609,7 +637,7 @@ export const WineForm = () => {
                     has: items.length > 0 ? true : false,
                     list: items,
                   };
-                  updateGrapesInEuLabel(
+                  updateGrapesInWine(
                     user?.uid as string,
                     wineForm.formData.referenceNumber,
                     dataToUpdate
@@ -634,7 +662,7 @@ export const WineForm = () => {
                     has: items.length > 0 ? true : false,
                     list: items,
                   };
-                  updateGrapesInEuLabel(
+                  updateGrapesInWine(
                     user?.uid as string,
                     wineForm.formData.referenceNumber,
                     dataToUpdate

@@ -1,4 +1,4 @@
-export const generateEuLabelHtml = (url: string, image: string) => {
+export const generateWineHtml = (url: string, image: string) => {
   return `
         <div>
             <h1
