@@ -17,7 +17,7 @@ export const MapLocationViewer = ({
   initialPosition,
 }: MapLocationViewerProps) => {
   const INITIAL_CAMERA = {
-    center: { lat: initialPosition.latitude, lng: initialPosition.longitude },
+    center: { lat: initialPosition.lat, lng: initialPosition.lng },
     zoom: 15,
   };
 
@@ -46,10 +46,7 @@ export const MapLocationViewer = ({
 
   useEffect(() => {
     if (map) {
-      console.log(map);
-      map.overlayMapTypes.forEach((layer) => {
-        console.log(layer);
-      });
+      map.overlayMapTypes.forEach((layer) => {});
     }
   }, [map]);
 

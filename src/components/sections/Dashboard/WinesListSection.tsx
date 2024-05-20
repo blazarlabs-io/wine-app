@@ -3,7 +3,7 @@ import { Container, Button, Text, WinesAccordion } from "@/components";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/navigation";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
-import { WineInterface } from "@/typings/winery";
+import { Wine } from "@/typings/winery";
 import { useForms } from "@/context/FormsContext";
 import { wineInitData } from "@/data/wineInitData";
 import { useModal } from "@/context/modalContext";
@@ -53,9 +53,9 @@ export const WinesListSection = () => {
               onClick={() => {
                 if (wines.length < allowedWines) {
                   updateWineForm({
-                    title: "Create EU Label",
+                    title: "Create New Wine",
                     description:
-                      "Create a new EU label for your wine. All fields marked with * are mandatory.",
+                      "Create a new wine. All fields marked with * are mandatory.",
                     isEditing: false,
                     formData: wineInitData,
                   });
@@ -70,7 +70,7 @@ export const WinesListSection = () => {
                 icon="carbon:add-filled"
                 className="h-[20px] w-[20px] mt-[-4px]"
               />
-              Add wine for EU Label only
+              Add wine
             </Button>
           </Container>
           <div className="min-w-full">
@@ -81,11 +81,11 @@ export const WinesListSection = () => {
                 <WinesAccordion
                   generalInfo={wineryGeneralInfo}
                   data={wines}
-                  onEdit={(item: WineInterface) => {
+                  onEdit={(item: Wine) => {
                     updateWineForm({
-                      title: "Edit EU Label",
+                      title: "Edit Wine",
                       description:
-                        "Edit the EU label for your wine. All fields marked with * are mandatory.",
+                        "Edit your wine. All fields marked with * are mandatory.",
                       isEditing: true,
                       formData: item,
                     });
@@ -113,9 +113,9 @@ export const WinesListSection = () => {
               onClick={() => {
                 if (wines.length < allowedWines) {
                   updateWineForm({
-                    title: "Create EU Label",
+                    title: "Create New Wine",
                     description:
-                      "Create a new EU label for your wine. All fields marked with * are mandatory.",
+                      "Create a new wine. All fields marked with * are mandatory.",
                     isEditing: false,
                     formData: wineInitData,
                   });

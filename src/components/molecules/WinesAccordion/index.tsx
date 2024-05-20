@@ -7,23 +7,24 @@ import {
   MapViewerSection,
   Text,
 } from "@/components";
-import { WineInterface, WineryGeneralInfoInterface } from "@/typings/winery";
+import { Wine, WineryGeneralInfo } from "@/typings/winery";
 import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { wineUrlComposerRef } from "@/utils/wineUrlComposerRef";
-
+import { useModal } from "@/context/modalContext";
+import test from "node:test";
 export interface WineAccordionProps {
-  generalInfo: WineryGeneralInfoInterface;
-  data: WineInterface[];
-  onEdit: (item: WineInterface) => void;
+  generalInfo: WineryGeneralInfo;
+  data: Wine[];
+  onEdit: (item: Wine) => void;
 }
 
 export interface WineAccordionItemInterface {
-  generalInfo: WineryGeneralInfoInterface;
-  item: WineInterface;
+  generalInfo: WineryGeneralInfo;
+  item: Wine;
   onEdit: () => void;
 }
 
@@ -34,9 +35,6 @@ export const WinesAccordion = ({
 }: WineAccordionProps) => {
   const [active, setActive] = useState(false);
 
-  const handleToggle = () => {
-    setActive(!active);
-  };
   return (
     <div className="flex flex-col items-start justify-start">
       <div className="w-full">
@@ -44,7 +42,7 @@ export const WinesAccordion = ({
           <div className="flex flex-col items-center min-w-full gap-[12px]">
             {data.map((item) => (
               <AccordionItem
-                key={item.wineCollectionName}
+                key={item.generalInformation.wineCollectionName}
                 item={item}
                 generalInfo={generalInfo}
                 onEdit={() => onEdit(item)}
@@ -62,17 +60,68 @@ const AccordionItem = ({
   item,
   onEdit,
 }: WineAccordionItemInterface) => {
+  const { updateModal } = useModal();
+
   const [active, setActive] = useState(false);
 
   const handleToggle = () => {
     setActive(!active);
+  };
+
+  const uploadToPinata = async () => {
+    console.log(
+      "Uploading to Pinata...",
+      process.env.NEXT_PUBLIC_PINATA_API_KEY
+    );
+    try {
+      const res = await fetch(
+        "https://api.pinata.cloud/pinning/pinFileToIPFS",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_PINATA_API_KEY}`,
+          },
+          body: JSON.stringify({ test: "test" }),
+        }
+      );
+      const { IpfsHash } = await res.json();
+      console.log(IpfsHash);
+
+      console.log("File uploaded successfully", IpfsHash);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const handleTokenization = () => {
+    updateModal({
+      show: true,
+      title: "Tokenize Wine",
+      description:
+        "You are about to start a tokenization of your wine on the Cardano blockchain. Are you sure you want to proceed?",
+      action: {
+        label: "Tokenize",
+        onAction: () => {
+          uploadToPinata();
+          updateModal({
+            show: false,
+            title: "Modal Title",
+            description: "Modal Message",
+            action: {
+              label: "Action",
+              onAction: () => {},
+            },
+          });
+        },
+      },
+    });
   };
   return (
     <Container
       intent="flexColLeft"
       className={`flex min-w-full text-left py-[16px] bg-surface-dark`}
     >
-      <Container intent="grid-7" className="min-w-full">
+      <Container intent="grid-6" className="min-w-full">
         <div className="flex items-center justify-center">
           <button
             className={`flex text-left max-h-fit w-full`}
@@ -101,31 +150,36 @@ const AccordionItem = ({
         {/* Data to display when closed    */}
         <div className="flex items-center w-full justify-center">
           <Text intent="p1" className="font-normal text-on-surface">
-            {item.wineCollectionName}
+            {item.generalInformation.wineCollectionName}
           </Text>
         </div>
         <div className="flex items-center w-full justify-center">
           <Text intent="p1" className="font-normal text-on-surface">
-            {item.typeOfWine}
+            {item.characteristics.wineType}
           </Text>
         </div>
         <div className="flex items-center w-full justify-center">
           <Text intent="p1" className="font-normal text-on-surface">
-            {item.alcoholLevel} %vol
+            {item.characteristics.alcoholLevel} %vol
           </Text>
         </div>
         <div className="flex items-center w-full justify-center">
           <Text intent="p1" className="font-normal text-on-surface">
-            {item.harvestYear}
-          </Text>
-        </div>
-        <div className="flex items-center w-full justify-center">
-          <Text intent="p1" className="font-normal text-on-surface">
-            {item.country}
+            {item.generalInformation.country}
           </Text>
         </div>
 
         <div className="flex items-center w-full gap-[16px] justify-center">
+          <Button
+            intent="unstyled"
+            className="text-surface-dark bg-status-info px-[16px] py-[14px] rounded-md"
+            onClick={() => handleTokenization()}
+          >
+            <Icon
+              icon="hugeicons:blockchain-06"
+              className="w-[20px] h-[20px]"
+            />
+          </Button>
           <Button
             intent="unstyled"
             className="text-surface-dark bg-status-warning px-[16px] py-[14px] rounded-md"
@@ -161,15 +215,15 @@ const AccordionItem = ({
             active ? "block" : "hidden"
           }`}
         >
-          <WineGeneralViewer item={item} />
-          {item.ingredients.grapes.list.length > 0 &&
+          <WineGeneralViewer item={item} generalInfo={generalInfo} />
+          {/* {item.ingredients.grapes.list.length > 0 &&
             item.ingredients.grapes.list[0].coordinates &&
             item.ingredients.grapes.list[0].coordinates.length > 0 && (
               <MapViewerSection
                 initialPosition={generalInfo?.wineryHeadquarters as any}
                 initialItems={item.ingredients.grapes.list}
               />
-            )}
+            )} */}
           <Container intent="flexColLeft" className="max-w-fit">
             <Text intent="h6" variant="accent" className="font-semibold">
               QR Code & Url
@@ -180,13 +234,16 @@ const AccordionItem = ({
             gap="medium"
             className="flex items-start"
           >
-            <Link href={item.qrCodeUrl} target="__blank">
+            <Link
+              href={item.generalInformation.qrCodeUrl as string}
+              target="__blank"
+            >
               <div className="bg-surface p-[8px] rounded-md">
                 <Image
-                  src={item.qrCodeUrl}
+                  src={item.generalInformation.qrCodeUrl as string}
                   width={112}
                   height={112}
-                  alt={item.wineCollectionName}
+                  alt={item.generalInformation.wineCollectionName as string}
                   className="rounded-md"
                 />
               </div>
@@ -198,11 +255,11 @@ const AccordionItem = ({
               className="max-w-fit h-full bg-surface rounded-md"
             >
               <Link
-                href={wineUrlComposerRef(item.referenceNumber)}
+                href={wineUrlComposerRef(item.referenceNumber as string)}
                 target="__blank"
               >
                 <Text variant="dim">
-                  {wineUrlComposerRef(item.referenceNumber)}
+                  {wineUrlComposerRef(item.referenceNumber as string)}
                 </Text>
               </Link>
             </Container>

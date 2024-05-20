@@ -48,7 +48,6 @@ export const UpdatePasswordDialog = ({
         setPasswordsMatch(true);
         setErrorMessage(null);
       } else {
-        console.log("Passwords don't match!");
         setPasswordsMatch(false);
         setErrorMessage("Passwords don't match!");
       }

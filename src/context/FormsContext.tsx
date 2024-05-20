@@ -2,21 +2,21 @@
 
 import { wineInitData } from "@/data/wineInitData";
 import { wineryInitialData } from "@/data/wineryInitialData";
-import { WineInterface, WineryGeneralInfoInterface } from "@/typings/winery";
+import { Wine, WineryGeneralInfo } from "@/typings/winery";
 import { createContext, useContext, useState } from "react";
 
 export interface WineryFormInterface {
   title: string;
   description: string;
   isEditing: boolean;
-  formData: WineryGeneralInfoInterface;
+  formData: WineryGeneralInfo;
 }
 
 export interface WineFormInterface {
   title: string;
   description: string;
   isEditing: boolean;
-  formData: WineInterface;
+  formData: Wine;
 }
 
 export interface FormsContextInterface {

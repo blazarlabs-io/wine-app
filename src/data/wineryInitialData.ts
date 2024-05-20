@@ -1,6 +1,6 @@
-import { WineryGeneralInfoInterface } from "@/typings/winery";
+import { WineryGeneralInfo } from "@/typings/winery";
 
-export const wineryInitialData: WineryGeneralInfoInterface = {
+export const wineryInitialData: WineryGeneralInfo = {
   name: "",
   foundedOn: "",
   logo: "",
@@ -12,8 +12,8 @@ export const wineryInitialData: WineryGeneralInfoInterface = {
   lastUpdated: "",
   certifications: [],
   wineryHeadquarters: {
-    latitude: "",
-    longitude: "",
+    lat: "",
+    lng: "",
   },
   wineryRepresentative: {
     name: "",

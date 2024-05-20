@@ -6,15 +6,18 @@ export const useGetWineCharacteristics = () => {
   const [wineTypes, setWineTypes] = useState<string[]>([]);
   const [wineColours, setWineColours] = useState<string[]>([]);
   const [wineBottleSizes, setWineBottleSizes] = useState<string[]>([]);
+  const [aromaProfiles, setAromaProfiles] = useState<string[]>([]);
+  const [flavourProfiles, setFlavourProfiles] = useState<string[]>([]);
 
   const getWineTypesDb = httpsCallable(functions, "getWineTypesDb");
   const getWineColoursDb = httpsCallable(functions, "getWineColoursDb");
   const getWineBottleSizesDb = httpsCallable(functions, "getWineBottleSizesDb");
+  const getAromaProfilesDb = httpsCallable(functions, "getAromaProfilesDb");
+  const getFlavourProfilesDb = httpsCallable(functions, "getFlavourProfilesDb");
 
   useEffect(() => {
     getWineTypesDb()
       .then((result: any) => {
-        console.log("getWineTypesDb", result);
         setWineTypes(result.data.wineTypes);
       })
       .catch((error) => {
@@ -23,7 +26,6 @@ export const useGetWineCharacteristics = () => {
 
     getWineColoursDb()
       .then((result: any) => {
-        console.log("getWineColoursDb", result);
         setWineColours(result.data.wineColours);
       })
       .catch((error) => {
@@ -32,13 +34,34 @@ export const useGetWineCharacteristics = () => {
 
     getWineBottleSizesDb()
       .then((result: any) => {
-        console.log("getWineBottleSizesDb", result);
         setWineBottleSizes(result.data.wineBottleSizes);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+    getAromaProfilesDb()
+      .then((result: any) => {
+        setAromaProfiles(result.data.aromaProfiles);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+    getFlavourProfilesDb()
+      .then((result: any) => {
+        setFlavourProfiles(result.data.flavourProfiles);
       })
       .catch((error) => {
         console.error(error);
       });
   }, []);
 
-  return { wineTypes, wineColours, wineBottleSizes };
+  return {
+    wineTypes,
+    wineColours,
+    wineBottleSizes,
+    aromaProfiles,
+    flavourProfiles,
+  };
 };

@@ -10,20 +10,18 @@ import {
   Text,
   WineCard,
 } from "@/components";
-import { winesSample } from "@/data/winesSample";
 import { useResponsive } from "@/hooks/useResponsive";
 import { handleGridResponsiveness } from "@/utils/handleGridResponsiveness";
 import { useFilters } from "@/context/filtersContext";
-import { Icon } from "@iconify/react";
 import { useEffect, useState } from "react";
-import { WineInterface } from "@/typings/winery";
+import { Wine } from "@/typings/winery";
 import { classNames } from "@/utils/classNames";
 
 export const ExplorePage = () => {
   const { responsiveSize } = useResponsive();
   const { showFilters, filtersLoading, filteredWines, allWines } = useFilters();
 
-  const [winesToShow, setWinesToShow] = useState<WineInterface[]>([]);
+  const [winesToShow, setWinesToShow] = useState<Wine[]>([]);
 
   useEffect(() => {
     if (filteredWines.length > 0) {
@@ -48,21 +46,33 @@ export const ExplorePage = () => {
         <>
           {winesToShow.map((wine, index) => (
             <div
-              key={index + "-" + wine.upc + "-" + wine.wineCollectionName}
+              key={
+                index +
+                "-" +
+                wine.referenceNumber +
+                "-" +
+                wine.generalInformation.wineCollectionName
+              }
               className={classNames(
                 responsiveSize === "mobile" ? "px-[24px]" : ""
               )}
             >
               <WineCard
-                imageUrl={wine.wineImageUrl || "/wine-placeholder.png"}
-                wineCollectionName={wine.wineCollectionName}
-                upc={wine.upc}
-                wineryName={wine.wineryName}
-                country={wine.country}
-                harvestYear={wine.harvestYear}
+                imageUrl={
+                  wine.generalInformation.wineImageUrl ||
+                  "/wine-placeholder.png"
+                }
+                wineCollectionName={
+                  wine.generalInformation.wineCollectionName as string
+                }
+                upc={wine.packagingAndBranding.upc as string}
+                wineryName={wine.generalInformation.wineryName as string}
+                country={wine.generalInformation.country as string}
+                // harvestYear={wine.generalInformation.harvestYear}
+                harvestYear=""
                 referenceNumber={wine.referenceNumber}
-                alcoholLevel={wine.alcoholLevel}
-                typeOfWine={wine.typeOfWine}
+                alcoholLevel={wine.characteristics.alcoholLevel as string}
+                typeOfWine={wine.characteristics.wineType as string}
               />
             </div>
           ))}

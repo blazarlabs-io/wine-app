@@ -1,12 +1,13 @@
 "use client";
 
 import { Container, Text } from "@/components";
-import { useResponsive } from "@/hooks/useResponsive";
 import { classNames } from "@/utils/classNames";
 
 export interface WineItemProps {
   title: string;
   value: string;
+  extraVal?: string;
+  onEmpty?: string;
   centered?: boolean;
   variant?: "normal" | "surface";
 }
@@ -14,10 +15,11 @@ export interface WineItemProps {
 export const WineItem = ({
   title,
   value,
+  extraVal,
+  onEmpty,
   centered = false,
   variant = "normal",
 }: WineItemProps) => {
-  const { responsiveSize } = useResponsive();
   return (
     <Container
       intent={!centered ? "flexColLeft" : "flexColTop"}
@@ -30,7 +32,13 @@ export const WineItem = ({
       <Text intent="p1" variant="dim" className="font-semibold">
         {title}
       </Text>
-      <Text variant="dim">{value.length === 0 ? "No" : value}</Text>
+      <Text variant="dim">
+        {value == null || value === undefined || value.length === 0
+          ? onEmpty
+            ? onEmpty
+            : "No"
+          : value + (extraVal ? " " + extraVal : "")}
+      </Text>
     </Container>
   );
 };

@@ -8,12 +8,15 @@ import {
 } from "@vis.gl/react-google-maps";
 import { useEffect, useState } from "react";
 import { useDrawingManager } from "./useDrawingManager";
-import { GrapesMapCoordinatesInterface } from "@/typings/winery";
+import {
+  CoordinateInterface,
+  GrapesMapCoordinatesInterface,
+} from "@/typings/winery";
 import { getPolygonCenter } from "@/utils/getPolygonCenter";
 import { useResponsive } from "@/hooks/useResponsive";
 
 export interface MapVineyardsDrawProps {
-  initialPosition: any;
+  initialPosition: CoordinateInterface;
   initialItems?: any;
 }
 
@@ -24,7 +27,7 @@ export const MapVineyardsMultiGrapeView = ({
   const { responsiveSize } = useResponsive();
 
   const INITIAL_CAMERA = {
-    center: { lat: initialPosition.latitude, lng: initialPosition.longitude },
+    center: { lat: initialPosition.lat, lng: initialPosition.lng },
     zoom: 15,
   };
 

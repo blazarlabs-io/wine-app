@@ -6,18 +6,17 @@ import {
   GrapesViewer,
   IngredientViewer,
   WineItem,
+  WineItemList,
 } from "@/components";
 import { useResponsive } from "@/hooks/useResponsive";
-import { WineInterface } from "@/typings/winery";
+import { Wine } from "@/typings/winery";
 import { Icon } from "@iconify/react";
 
-export interface WineGeneralInformationSectionProps {
-  item: WineInterface;
+export interface WineSectionProps {
+  item: Wine;
 }
 
-export const WineGeneralInformationSection = ({
-  item,
-}: WineGeneralInformationSectionProps) => {
+export const WineGeneralInformationSection = ({ item }: WineSectionProps) => {
   const { responsiveSize } = useResponsive();
   return (
     <>
@@ -36,24 +35,33 @@ export const WineGeneralInformationSection = ({
           </Container>
           <Container intent="grid-2" gap="medium" className="">
             <WineItem
-              title="Harvest Year"
-              value={item.harvestYear}
+              title="Winery Name"
+              value={item.generalInformation.wineryName as string}
               variant="surface"
             />
             <WineItem
-              title="Colour of Wine"
-              value={item.colourOfWine}
+              title="Collection Name"
+              value={item.generalInformation.wineCollectionName as string}
               variant="surface"
             />
             <WineItem
-              title="Bottle Size"
-              value={item.bottleSize}
+              title="Country"
+              value={item.generalInformation.country as string}
               variant="surface"
             />
-            {/* <WineItem title="UPC" value={item.upc} variant="surface" /> */}
             <WineItem
-              title="Controlled Designation of Origin"
-              value={item.controlledDesignationOfOrigin}
+              title="Collection Size"
+              value={item.generalInformation.collectionSize as string}
+              variant="surface"
+            />
+            <WineItem
+              title="Bottling Year"
+              value={item.generalInformation.bottlingYear as string}
+              variant="surface"
+            />
+            <WineItemList
+              title="Awards and Recognitions"
+              list={item.generalInformation.awardsAndRecognitions as string[]}
               variant="surface"
             />
           </Container>
@@ -74,24 +82,33 @@ export const WineGeneralInformationSection = ({
           </Container>
           <Container intent="grid-2" gap="medium" className="w-full">
             <WineItem
-              title="Harvest Year"
-              value={item.harvestYear}
+              title="Winery Name"
+              value={item.generalInformation.wineryName as string}
               variant="surface"
             />
             <WineItem
-              title="Colour of Wine"
-              value={item.colourOfWine}
+              title="Collection Name"
+              value={item.generalInformation.wineCollectionName as string}
               variant="surface"
             />
             <WineItem
-              title="Bottle Size"
-              value={item.bottleSize}
+              title="Country"
+              value={item.generalInformation.country as string}
               variant="surface"
             />
-            {/* <WineItem title="UPC" value={item.upc} variant="surface" /> */}
             <WineItem
-              title="Controlled Designation of Origin"
-              value={item.controlledDesignationOfOrigin}
+              title="Collection Size"
+              value={item.generalInformation.collectionSize as string}
+              variant="surface"
+            />
+            <WineItem
+              title="Bottling Year"
+              value={item.generalInformation.bottlingYear as string}
+              variant="surface"
+            />
+            <WineItemList
+              title="Awards and Recognitions"
+              list={item.generalInformation.awardsAndRecognitions as string[]}
               variant="surface"
             />
           </Container>

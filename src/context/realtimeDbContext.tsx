@@ -1,11 +1,7 @@
 "use client";
 
 import { db } from "@/lib/firebase/client";
-import {
-  WineInterface,
-  WineryGeneralInfoInterface,
-  WineryInterface,
-} from "@/typings/winery";
+import { Wine, WineryGeneralInfo, Winery } from "@/typings/winery";
 import { Unsubscribe, doc, onSnapshot } from "firebase/firestore";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./authContext";
@@ -13,22 +9,30 @@ import { wineryInitialData } from "@/data/wineryInitialData";
 import { getWineryLevelDb } from "@/utils/firestore";
 import { AvailableLevels, LevelsInterface } from "@/typings/systemVariables";
 import { useGetWineCharacteristics } from "@/hooks/useGetWineCharacteristics";
+import { useGetWineMakingTechnique } from "@/hooks/useGetWineMakingTechnique";
+import { useGetPackagingAndBranding } from "@/hooks/useGetPackagingAndBranding";
+import { useGetVineyardsDetails } from "@/hooks/useGetVineyardsDetails";
 
 export interface RealtimeDbContextInterface {
-  wineryGeneralInfo: WineryGeneralInfoInterface;
+  wineryGeneralInfo: WineryGeneralInfo;
   tier: string;
   level: string;
   maxPrice: number;
   availableLevels: AvailableLevels[] | null;
-  wines: WineInterface[];
+  wines: Wine[];
   allowedWines: number;
   wineTypes: string[];
   wineColours: string[];
   wineBottleSizes: string[];
-  updateWineryGeneralInfo: (data: WineryGeneralInfoInterface) => void;
+  aromaProfiles: string[];
+  flavourProfiles: string[];
+  sustainabilityPractices: string[];
+  closureTypes: string[];
+  irrigationPractices: string[];
+  updateWineryGeneralInfo: (data: WineryGeneralInfo) => void;
   updateTier: (tier: string) => void;
   updateLevel: (level: string) => void;
-  regiterWines: (data: WineInterface[]) => void;
+  regiterWines: (data: Wine[]) => void;
 }
 
 const contextInitialData: RealtimeDbContextInterface = {
@@ -42,6 +46,11 @@ const contextInitialData: RealtimeDbContextInterface = {
   wineTypes: [],
   wineColours: [],
   wineBottleSizes: [],
+  aromaProfiles: [],
+  flavourProfiles: [],
+  sustainabilityPractices: [],
+  closureTypes: [],
+  irrigationPractices: [],
   updateWineryGeneralInfo: () => {},
   updateTier: () => {},
   updateLevel: () => {},
@@ -64,8 +73,19 @@ export const RealtimeDbProvider = ({
   children,
 }: React.PropsWithChildren): JSX.Element => {
   const { user } = useAuth();
-  const { wineTypes, wineColours, wineBottleSizes } =
-    useGetWineCharacteristics();
+  const {
+    wineTypes,
+    wineColours,
+    wineBottleSizes,
+    aromaProfiles,
+    flavourProfiles,
+  } = useGetWineCharacteristics();
+
+  const { sustainabilityPractices } = useGetWineMakingTechnique();
+
+  const { closureTypes } = useGetPackagingAndBranding();
+
+  const { irrigationPractices } = useGetVineyardsDetails();
 
   const [wineryGeneralInfo, setWineryGeneralInfo] = useState(
     contextInitialData.wineryGeneralInfo
@@ -103,7 +123,7 @@ export const RealtimeDbProvider = ({
     return sortedLevels;
   };
 
-  const updateWineryGeneralInfo = (data: WineryGeneralInfoInterface) => {
+  const updateWineryGeneralInfo = (data: WineryGeneralInfo) => {
     setWineryGeneralInfo(data);
   };
 
@@ -111,7 +131,7 @@ export const RealtimeDbProvider = ({
 
   const updateLevel = (level: string) => setLevel(level);
 
-  const regiterWines = (data: WineInterface[]) => {
+  const regiterWines = (data: Wine[]) => {
     setWines(data);
   };
 
@@ -144,23 +164,21 @@ export const RealtimeDbProvider = ({
     // Get winery data
     const docRef = doc(db, "wineries", user.uid as string);
     const unsubscribeWineries: Unsubscribe = onSnapshot(docRef, (snapshot) => {
-      const wineryData = snapshot.data() as WineryInterface;
+      const wineryData = snapshot.data() as Winery;
       if (wineryData) {
-        let generalInfo: WineryGeneralInfoInterface;
+        let generalInfo: WineryGeneralInfo;
 
         if (
-          Object.keys(wineryData.generalInfo as WineryGeneralInfoInterface)
-            .length === 0
+          Object.keys(wineryData.generalInfo as WineryGeneralInfo).length === 0
         ) {
           generalInfo = contextInitialData.wineryGeneralInfo;
         } else {
-          generalInfo = wineryData.generalInfo as WineryGeneralInfoInterface;
+          generalInfo = wineryData.generalInfo as WineryGeneralInfo;
         }
 
         updateWineryGeneralInfo(generalInfo);
-        console.log(generalInfo);
-        regiterWines(wineryData.wines as WineInterface[]);
-        setTier(wineryData.tier as string);
+        regiterWines(wineryData.wines as Wine[]);
+        setTier(wineryData.tier.toString() as string);
         setLevel(wineryData.level as string);
       }
     });
@@ -208,6 +226,11 @@ export const RealtimeDbProvider = ({
     wineTypes,
     wineColours,
     wineBottleSizes,
+    aromaProfiles,
+    flavourProfiles,
+    sustainabilityPractices,
+    closureTypes,
+    irrigationPractices,
     updateWineryGeneralInfo,
     updateTier,
     updateLevel,

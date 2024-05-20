@@ -1,16 +1,19 @@
 "use client";
 
 import { Container, Text, Button, MapVineyardsView } from "@/components";
+import {
+  CoordinateInterface,
+  GrapeAndVineyard,
+  VineyardGrapeGrownWithCoordinates,
+} from "@/typings/winery";
 export interface PolygonEditorMapProps {
-  initialPosition: any;
-  initialItems: any;
-  selectedItem: any;
+  initialPosition: CoordinateInterface;
+  initialItems: VineyardGrapeGrownWithCoordinates;
   onClose: () => void;
 }
 
 export const PolygonViewerMap = ({
   initialPosition,
-  selectedItem,
   initialItems,
   onClose,
 }: PolygonEditorMapProps) => {
@@ -22,24 +25,16 @@ export const PolygonViewerMap = ({
     >
       <MapVineyardsView
         initialPosition={initialPosition}
-        initialPolygon={
-          initialItems !== undefined
-            ? (
-                initialItems.filter(
-                  (item: any) => item.name === selectedItem?.name
-                ) as any
-              )[0]
-            : null
-        }
+        initialItems={initialItems as VineyardGrapeGrownWithCoordinates}
       />
       <Container intent="flexColLeft" gap="small">
         <Text intent="h6" className="">
           Currently viewing location where{" "}
           <span className="text-primary-light font-semibold">
-            {selectedItem?.name}
+            {initialItems?.grapeGrown?.name}
           </span>{" "}
           <span className="text-primary-light font-semibold">
-            ({selectedItem?.percentage}%)
+            ({initialItems?.grapeGrown?.percentage}%)
           </span>{" "}
           is grown.
         </Text>

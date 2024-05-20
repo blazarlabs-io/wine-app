@@ -1,12 +1,12 @@
 "use client";
 import { Button, Container, Text } from "@/components";
 import { useResponsive } from "@/hooks/useResponsive";
-import { WineInterface } from "@/typings/winery";
+import { Wine } from "@/typings/winery";
 import { classNames } from "@/utils/classNames";
 import { Icon } from "@iconify/react";
 
 export interface WineHeadSectionProps {
-  wine: WineInterface;
+  wine: Wine;
 }
 
 export const WineHeadSection = ({ wine }: WineHeadSectionProps) => {
@@ -27,7 +27,7 @@ export const WineHeadSection = ({ wine }: WineHeadSectionProps) => {
     >
       <Container intent="flexRowCenter" gap="xsmall" className="max-w-fit">
         <Text intent="h6" variant="dim" className="">
-          {wine?.wineryName}
+          {wine?.generalInformation.wineryName}
         </Text>
         <Button intent="unstyled" disabled={true}>
           <Icon
@@ -39,7 +39,7 @@ export const WineHeadSection = ({ wine }: WineHeadSectionProps) => {
         </Button>
       </Container>
       <Text intent="h3" variant="dim" className="">
-        {wine?.wineCollectionName}
+        {wine?.generalInformation.wineCollectionName}
       </Text>
       <Container intent={"flexRowCenter"} gap="medium" className="flex-wrap">
         <Container intent="flexRowCenter" gap="xsmall" className="max-w-fit">
@@ -50,7 +50,7 @@ export const WineHeadSection = ({ wine }: WineHeadSectionProps) => {
             className="text-primary-light mt-[-4px]"
           />
           <Text intent="p1" variant="dim" className="font-semibold">
-            {wine?.typeOfWine}
+            {wine?.characteristics.wineType}
           </Text>
         </Container>
         <Container intent="flexRowCenter" gap="xsmall" className="max-w-fit">
@@ -61,7 +61,7 @@ export const WineHeadSection = ({ wine }: WineHeadSectionProps) => {
             className="text-primary-light mt-[-4px]"
           />
           <Text intent="p1" variant="dim" className="font-semibold">
-            Alc. {wine?.alcoholLevel} % vol
+            Alc. {wine?.characteristics.alcoholLevel} % vol
           </Text>
         </Container>
         <Container intent="flexRowCenter" gap="xsmall" className="max-w-fit">
@@ -72,7 +72,7 @@ export const WineHeadSection = ({ wine }: WineHeadSectionProps) => {
             className="text-primary-light mt-[-4px]"
           />
           <Text intent="p1" variant="dim" className="font-semibold">
-            {wine?.country}
+            {wine?.generalInformation.country}
           </Text>
         </Container>
       </Container>

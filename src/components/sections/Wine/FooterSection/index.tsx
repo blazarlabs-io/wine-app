@@ -3,10 +3,10 @@
 import { Container, WineItem, NutritionTable } from "@/components/";
 import Image from "next/image";
 import { useResponsive } from "@/hooks/useResponsive";
-import { WineInterface } from "@/typings/winery";
+import { Wine } from "@/typings/winery";
 
 export interface WineFooterSectionProps {
-  wine: WineInterface;
+  wine: Wine;
 }
 
 export const WineFooterSection = ({ wine }: WineFooterSectionProps) => {
@@ -15,14 +15,6 @@ export const WineFooterSection = ({ wine }: WineFooterSectionProps) => {
     <>
       {responsiveSize === "mobile" && (
         <>
-          {wine.upc.length > 0 && (
-            <Container intent="flexRowCenter" px="medium" className="w-full">
-              <div>
-                <WineItem title="UPC" value={wine.upc} variant="surface" />
-              </div>
-            </Container>
-          )}
-
           <Container
             intent="flexColCenter"
             py="xsmall"
@@ -40,20 +32,17 @@ export const WineFooterSection = ({ wine }: WineFooterSectionProps) => {
                 objectPosition: "center",
               }}
             />
-            <Image src={wine?.qrCodeUrl} width={88} height={88} alt="" />
+            <Image
+              src={wine?.generalInformation.qrCodeUrl as string}
+              width={88}
+              height={88}
+              alt=""
+            />
           </Container>
         </>
       )}
       {responsiveSize === "desktop" && (
         <>
-          {wine.upc.length > 0 && (
-            <Container intent="flexRowLeft" className="w-full">
-              <div>
-                <WineItem title="UPC" value={wine.upc} variant="surface" />
-              </div>
-            </Container>
-          )}
-
           <Container intent="flexRowLeft" className="w-full">
             <Container
               intent="flexRowBetween"
@@ -61,7 +50,12 @@ export const WineFooterSection = ({ wine }: WineFooterSectionProps) => {
               gap="medium"
               className="bg-surface max-w-[400px]"
             >
-              <Image src={wine?.qrCodeUrl} width={88} height={88} alt="" />
+              <Image
+                src={wine?.generalInformation.qrCodeUrl as string}
+                width={88}
+                height={88}
+                alt=""
+              />
 
               <Image
                 src={"/wine-moderation.png"}

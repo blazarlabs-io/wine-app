@@ -10,9 +10,10 @@ import {
 } from "@vis.gl/react-google-maps";
 import { useEffect, useState } from "react";
 import { useDrawingManager } from "./useDrawingManager";
+import { CoordinateInterface } from "@/typings/winery";
 
 export interface MapVineyardsDrawProps {
-  initialPosition: any;
+  initialPosition: CoordinateInterface;
   isEditing: boolean;
   onMarkerSet: (marker: any[]) => void;
 }
@@ -23,7 +24,7 @@ export const MapLocationFinder = ({
   onMarkerSet,
 }: MapVineyardsDrawProps) => {
   const INITIAL_CAMERA = {
-    center: { lat: initialPosition.latitude, lng: initialPosition.longitude },
+    center: { lat: initialPosition.lat, lng: initialPosition.lng },
     zoom: 5,
   };
 

@@ -1,64 +1,65 @@
-import { WineInterface } from "@/typings/winery";
+import { Wine } from "@/typings/winery";
 
-export const wineInitData: WineInterface = {
-  referenceNumber: "",
-  upc: "",
-  wineryName: "",
-  wineCollectionName: "",
-  harvestYear: "",
-  controlledDesignationOfOrigin: "",
-  country: "",
-  alcoholLevel: "",
-  bottleSize: "",
-  typeOfWine: "",
-  colourOfWine: "",
-  qrCodeUrl: "",
-  wineImageUrl: "",
-  ingredients: {
-    grapes: {
-      has: false,
-      list: [],
-    },
-    acidityRegulators: {
-      allergens: {
-        has: false,
-        list: [],
-      },
-      has: false,
-      list: [],
-    },
-    antioxidants: {
-      allergens: {
-        has: false,
-        list: [],
-      },
-      has: false,
-      list: [],
-    },
-    preservatives: {
-      allergens: {
-        has: false,
-        list: [],
-      },
-      has: false,
-      list: [],
-    },
-    stabilizers: {
-      allergens: {
-        has: false,
-        list: [],
-      },
-      has: false,
-      list: [],
-    },
-    finingAgents: {
-      allergens: {
-        has: false,
-        list: [],
-      },
-      has: false,
-      list: [],
-    },
-    sugars: "",
+export const wineInitData: Wine = {
+  referenceNumber: null,
+  generalInformation: {
+    wineryName: null,
+    wineCollectionName: null,
+    country: null,
+    collectionSize: null,
+    bottlingYear: null,
+    awardsAndRecognitions: [],
+    wineImageUrl: null,
+    qrCodeUrl: null,
   },
+  characteristics: {
+    wineColour: null,
+    wineType: null,
+    alcoholLevel: null,
+    residualSugar: null,
+    acidityLevel: null,
+    tanningLevel: null,
+    aromaProfile: {
+      has: null,
+      list: [],
+    },
+    flavourProfile: {
+      has: null,
+      list: [],
+    },
+    sulphiteLevel: null,
+  },
+  wineMakingTechnique: {
+    wineMakingTechnique: null,
+    isWineVegan: null,
+    isWineOrganic: null,
+    isWineBioDynamic: null,
+    isWineNatural: null,
+    sustainablePractices: {
+      has: null,
+      list: [],
+    },
+  },
+  storageConditions: {
+    placeForInitialStorage: null,
+    storageTemperature: {
+      units: ["celcius", "fahrenheit"],
+      selected: {
+        unit: null,
+        value: null,
+      },
+    },
+    lightingConditions: null,
+    humidityLevel: null,
+    vibrationLevel: null,
+  },
+  packagingAndBranding: {
+    bottleSize: null,
+    bottleType: null,
+    closureType: [],
+    extraPackaging: null,
+    upc: null,
+  },
+  blendComponents: [],
+  marketingInfo: null,
 };
