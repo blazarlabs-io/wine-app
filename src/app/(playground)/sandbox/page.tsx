@@ -1,18 +1,13 @@
 "use client";
 
-import {
-  EuLabelsAccordion,
-  Container,
-  EuLabelForm,
-  EuLabelGeneralViewer,
-} from "@/components";
+import { WinesAccordion, Container } from "@/components";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
 
 export default function Sandbox() {
-  const { wineryEuLabels } = useRealtimeDb();
+  const { wines } = useRealtimeDb();
   return (
     <Container intent="flexRowCenter" className="">
-      {/* <EuLabelsAccordion data={wineryEuLabels} /> */}
+      {/* <WinesAccordion data={wines} /> */}
     </Container>
   );
 }

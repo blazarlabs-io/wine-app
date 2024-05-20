@@ -28,19 +28,21 @@ export { Toggle } from "./core/Toggle";
 export { PasswordInput } from "./core/Input/PasswordInput";
 export { Avatar } from "./core/Avatar";
 export { AvatarMenu } from "./core/Navigation/AvatarMenu";
+export { Banner } from "./core/Overlays/Banner";
 
 // Molecular components
 export { WineryForm } from "./molecules/WineryForm";
-export { EuLabelForm } from "./molecules/EuLabelForm";
+export { WineForm } from "./molecules/WineForm";
 export { TextInputCrud } from "./molecules/Crud/TextInputCrud";
 export { PolygonEditorMap } from "./molecules/Maps/PolygonEditorMap";
 export { PolygonViewerMap } from "./molecules/Maps/PolygonViewerMap";
-export { ReviewEuLabel } from "./molecules/ReviewEuLabel";
+export { ReviewWine } from "./molecules/ReviewWine";
 export { IngredientViewer } from "./molecules/IngredientViewer";
 export { AllergenViewer } from "./molecules/AllergenViewer";
-export { EuLabelItem } from "./molecules/EuLabelItem";
-export { EuLabelGeneralViewer } from "./molecules/EuLabelGeneralViewer";
-export { EuLabelsAccordion } from "./molecules/EuLabelsAccordion";
+export { WineItem } from "./molecules/WineItem";
+export { WineItemList } from "./molecules/WineItemList";
+export { WineGeneralViewer } from "./molecules/WineGeneralViewer";
+export { WinesAccordion } from "./molecules/WinesAccordion";
 export { TextAndNumberInputCrud } from "./molecules/Crud/TextAndNumberInputCrud";
 export { GrapesViewer } from "./molecules/GrapesViewer";
 export { GrapesViewerTable } from "./molecules/GrapesViewerTable";
@@ -52,6 +54,12 @@ export { Signup } from "./molecules/Signup";
 export { ConfirmDeleteDialog } from "./molecules/ConfirmDeleteDialog";
 export { ConfirmDisableDialog } from "./molecules/ConfirmDisableDialog";
 export { UpdatePasswordDialog } from "./molecules/UpdatePasswordDialog";
+export { SelectOrTextInputCrud } from "./molecules/Crud/SelectOrTextInputCrud";
+export { SelectAndTextInputCrud } from "./molecules/Crud/SelectAndTextInputCrud";
+export { SelectCrud } from "./molecules/Crud/SelectCrud";
+export { BlendComponentCrud } from "./molecules/Crud/BlendComponentCrud";
+export { VineyardCoordinatesCrud } from "./molecules/Crud/VineyardCoordinatesCrud";
+export { GrapeCrud } from "./molecules/Crud/GrapeCrud";
 
 // Layout components
 export { BaseLayout } from "./layouts/Base";
@@ -72,18 +80,22 @@ export { WineryHeaderSection } from "./sections/Dashboard/WineryHeaderSection";
 export { WinesListSection } from "./sections/Dashboard/WinesListSection";
 export { WineHeadSection } from "./sections/Wine/HeadSection";
 export { WineGeneralInformationSection } from "./sections/Wine/GeneralInformationSection";
-export { WineIngredientsSection } from "./sections/Wine/IngredientsSection";
 export { WineFooterSection } from "./sections/Wine/FooterSection";
 export { MapViewerSection } from "./sections/Wine/MapViewerSection";
 export { DangerZoneSection } from "./sections/UserAccount/DangerZoneSection";
 export { GeneralSection } from "./sections/UserAccount/GeneralSection";
+export { WineCharacteristicsSection } from "./sections/Wine/CharacteristicsSection";
+export { WineStorageConditionsSection } from "./sections/Wine/StorageConditionsSection";
+export { WineMakingTechniqueSection } from "./sections/Wine/WineMakingTechniqueSection";
+export { WinePackagingAndBrandingSection } from "./sections/Wine/WinePackagingAndBrandingSection";
+export { WineBlendComponentsSection } from "./sections/Wine/WineBlendComponentsSection";
 
 // Pages
 export { HomePage } from "./pages/HomePage";
 export { LoginPage } from "./pages/LoginPage";
 export { DashboardHomePage } from "./pages/DashboardHomePage";
 export { ProtectedPage } from "./pages/ProtectedPage";
-export { EuLabelFormPage } from "./pages/EuLabelFormPage";
+export { WineFormPage } from "./pages/WineFormPage";
 export { ExplorePage } from "./pages/ExplorePage";
 export { WinePage } from "./pages/WinePage";
 export { WineryFormPage } from "./pages/WineryFormPage";

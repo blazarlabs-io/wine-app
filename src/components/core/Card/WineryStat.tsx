@@ -12,7 +12,7 @@ export const WineryStat = ({ data }: WineryStatProps) => {
   return (
     <Container
       intent="flexColBetween"
-      className="bg-surface rounded-md shadow-sm p-[16px] min-w-[212px] max-w-[212px] h-full"
+      className="bg-surface-light rounded-md shadow-sm p-[16px] min-w-[212px] max-w-[212px] h-full"
       gap="medium"
     >
       <Container intent="flexColLeft" gap="xsmall" className="h-full">

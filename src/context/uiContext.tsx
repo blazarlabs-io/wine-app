@@ -34,7 +34,6 @@ export const UiContextProvider = ({
   const [topBar, setTopBar] = useState(contextInitialData.topBar);
 
   const updateTopBar = (newTopBar: Partial<UiContextInterface["topBar"]>) => {
-    console.log("newTopBar", newTopBar);
     setTopBar((prev) => ({ ...prev, ...newTopBar }));
   };
 

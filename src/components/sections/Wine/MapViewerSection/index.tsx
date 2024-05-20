@@ -16,8 +16,8 @@ export const MapViewerSection = ({
       initialPosition={
         (initialPosition.latitud !== undefined &&
           initialPosition.longitude !== undefined) || {
-          latitude: wineryGeneralInfo.wineryHeadquarters.latitude,
-          longitude: wineryGeneralInfo.wineryHeadquarters.longitude,
+          lat: wineryGeneralInfo.wineryHeadquarters.lat,
+          lng: wineryGeneralInfo.wineryHeadquarters.lng,
         }
       }
       initialItems={initialItems !== undefined ? initialItems : null}

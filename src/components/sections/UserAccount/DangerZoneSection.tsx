@@ -82,7 +82,6 @@ export const DangerZoneSection = () => {
       {showConfirmDisable && (
         <ConfirmDisableDialog
           onDisable={() => {
-            console.log("Delete Account");
             setShowConfirmDisable(false);
 
             updateAppLoading(true);
@@ -118,7 +117,6 @@ export const DangerZoneSection = () => {
                     (firebaseAuthErrors[errorCode] as string) ?? errorMessage,
                   timeout: 5000,
                 };
-                console.log(toastProps);
                 updateAppLoading(false);
                 updateToast(toastProps);
               });
@@ -131,7 +129,6 @@ export const DangerZoneSection = () => {
       {showConfirmDelete && (
         <ConfirmDeleteDialog
           onDelete={() => {
-            console.log("Delete Account");
             setShowConfirmDelete(false);
 
             updateAppLoading(true);
@@ -167,7 +164,6 @@ export const DangerZoneSection = () => {
                     (firebaseAuthErrors[errorCode] as string) ?? errorMessage,
                   timeout: 5000,
                 };
-                console.log(toastProps);
                 updateAppLoading(false);
                 updateToast(toastProps);
               });

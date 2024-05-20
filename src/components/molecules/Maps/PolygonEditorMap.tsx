@@ -1,15 +1,17 @@
 "use client";
 
 import { Container, Text, Button, MapVineyardsDraw } from "@/components";
-import { CoordinateInterface } from "@/typings/winery";
+import { CoordinateInterface, GrapeVariety } from "@/typings/winery";
 import Image from "next/image";
 import { useState } from "react";
 
 export interface PolygonEditorMapProps {
-  initialPosition: any;
-  initialItems: any;
+  initialPosition: CoordinateInterface;
   selectedItem: any;
-  onPolygonComplete: (item: any, polygon: any[]) => void;
+  onPolygonComplete: (
+    item: GrapeVariety,
+    polygon: CoordinateInterface[]
+  ) => void;
   onCancel: () => void;
   onSave: () => void;
 }
@@ -17,11 +19,11 @@ export interface PolygonEditorMapProps {
 export const PolygonEditorMap = ({
   initialPosition,
   selectedItem,
-  initialItems,
   onPolygonComplete,
   onCancel,
   onSave,
 }: PolygonEditorMapProps) => {
+  // console.log(initialPosition, initialItems, selectedItem);
   return (
     <Container
       intent="flexColLeft"
@@ -39,15 +41,6 @@ export const PolygonEditorMap = ({
       </Container>
       <MapVineyardsDraw
         initialPosition={initialPosition}
-        initialPolygon={
-          initialItems && initialItems !== undefined
-            ? (
-                initialItems.filter(
-                  (item: any) => item.name === selectedItem?.name
-                ) as any
-              )[0]
-            : null
-        }
         onPolygonComplete={(polygon: CoordinateInterface[]) => {
           onPolygonComplete(selectedItem, polygon);
         }}

@@ -22,8 +22,6 @@ export const IngredientViewerTable = ({
   variant = "normal",
   ingredient,
 }: IngredientViewerTableProps) => {
-  console.log("ViewerTable", ingredient);
-
   return (
     <Container
       intent="flexColLeft"

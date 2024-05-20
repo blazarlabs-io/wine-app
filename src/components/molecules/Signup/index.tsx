@@ -81,7 +81,6 @@ export const Signup = ({ title, description }: LoginProps) => {
         setPasswordsMatch(true);
         setErrorMessage(null);
       } else {
-        console.log("Passwords don't match!");
         setPasswordsMatch(false);
         setErrorMessage("Passwords don't match!");
       }
@@ -94,7 +93,6 @@ export const Signup = ({ title, description }: LoginProps) => {
     createUserWithEmailAndPassword(auth, wineryEmail as string, password)
       .then((userCredential) => {
         updateMasterLoading(true);
-        console.log("User created: ", userCredential);
 
         // sendEmail({
         //   data: {

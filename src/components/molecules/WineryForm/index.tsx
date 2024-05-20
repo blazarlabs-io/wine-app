@@ -11,14 +11,14 @@ import {
 } from "@/components";
 import { Icon } from "@iconify/react";
 import { useAuth } from "@/context/authContext";
-import { WineryGeneralInfoInterface } from "@/typings/winery";
+import { WineryGeneralInfo } from "@/typings/winery";
 import {
   registerWineryGeneralInfoToDb,
   updateWineryHeadquarters,
   uploadLogoToStorage,
 } from "@/utils/firestore";
 import { useEffect, useRef, useState } from "react";
-import { validateFileSizeAndType } from "@/utils/validateFileSizeAndType";
+import { validateFileSizeAndType } from "@/utils/validators/validateFileSizeAndType";
 import { useModal } from "@/context/modalContext";
 import { useRouter } from "next/navigation";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
@@ -73,7 +73,8 @@ export const WineryForm = () => {
     setIsLoading(true);
     setImageUploading(true);
 
-    const newGeneralInfo: WineryGeneralInfoInterface = wineryGeneralInfo;
+    const newGeneralInfo: WineryGeneralInfo = wineryGeneralInfo;
+    wineryGeneralInfo.lastUpdated = new Date().toLocaleDateString();
     updateWineryGeneralInfo(newGeneralInfo);
 
     // UPDATE TO DATABASE
@@ -87,9 +88,9 @@ export const WineryForm = () => {
     uploadLogoToStorage(user?.uid as string, logo as File, (url: string) => {
       setImageUploading(false);
       wineryGeneralInfo.logo = url;
-      wineryGeneralInfo.lastUpdated = new Date().toISOString();
+      wineryGeneralInfo.lastUpdated = new Date().toLocaleDateString();
 
-      const newGeneralInfo: WineryGeneralInfoInterface = wineryGeneralInfo;
+      const newGeneralInfo: WineryGeneralInfo = wineryGeneralInfo;
       updateWineryGeneralInfo(newGeneralInfo);
       setImageUploading(false);
     });
@@ -102,8 +103,8 @@ export const WineryForm = () => {
 
   useEffect(() => {
     setInitialMapPosition({
-      latitude: wineryGeneralInfo.wineryHeadquarters.latitude,
-      longitude: wineryGeneralInfo.wineryHeadquarters.longitude,
+      lat: wineryGeneralInfo.wineryHeadquarters.lat,
+      lng: wineryGeneralInfo.wineryHeadquarters.lng,
     });
   }, [wineryGeneralInfo]);
 
@@ -129,13 +130,13 @@ export const WineryForm = () => {
               <MapLocationFinder
                 isEditing={initialMapPosition ? true : false}
                 initialPosition={{
-                  latitude: initialMapPosition.latitude || 54.75198957490845,
-                  longitude: initialMapPosition.longitude || -2.135153202045415,
+                  lat: initialMapPosition.lat || 54.75198957490845,
+                  lng: initialMapPosition.lng || -2.135153202045415,
                 }}
                 onMarkerSet={(marker: any) => {
                   if (marker && marker.lat && marker.lng) {
-                    wineryGeneralInfo.wineryHeadquarters.latitude = marker.lat;
-                    wineryGeneralInfo.wineryHeadquarters.longitude = marker.lng;
+                    wineryGeneralInfo.wineryHeadquarters.lat = marker.lat;
+                    wineryGeneralInfo.wineryHeadquarters.lng = marker.lng;
                     setEnableMapSave(true);
                     updateWineryGeneralInfo(wineryGeneralInfo);
                   }
@@ -160,12 +161,8 @@ export const WineryForm = () => {
                       setShowLocationMap(false);
                       updateWineryHeadquarters(
                         user?.uid as string,
-                        parseFloat(
-                          wineryGeneralInfo.wineryHeadquarters.latitude
-                        ),
-                        parseFloat(
-                          wineryGeneralInfo.wineryHeadquarters.longitude
-                        )
+                        wineryGeneralInfo.wineryHeadquarters.lat,
+                        wineryGeneralInfo.wineryHeadquarters.lng
                       );
                     }}
                   >
@@ -429,15 +426,14 @@ export const WineryForm = () => {
                 </Text>
                 <input
                   type="text"
-                  value={wineryGeneralInfo.wineryHeadquarters.latitude}
+                  value={wineryGeneralInfo.wineryHeadquarters.lat}
                   placeholder=""
                   onChange={(event: any) => {
                     const newGeneralInfo = {
                       ...wineryGeneralInfo,
                       wineryHeadquarters: {
-                        latitude: event.target.value,
-                        longitude:
-                          wineryGeneralInfo.wineryHeadquarters.longitude,
+                        lat: event.target.value,
+                        lng: wineryGeneralInfo.wineryHeadquarters.lng,
                       },
                     };
                     updateWineryGeneralInfo(newGeneralInfo);
@@ -451,14 +447,14 @@ export const WineryForm = () => {
                 </Text>
                 <input
                   type="text"
-                  value={wineryGeneralInfo.wineryHeadquarters.longitude}
+                  value={wineryGeneralInfo.wineryHeadquarters.lng}
                   placeholder=""
                   onChange={(event: any) => {
                     const newGeneralInfo = {
                       ...wineryGeneralInfo,
                       wineryHeadquarters: {
-                        latitude: wineryGeneralInfo.wineryHeadquarters.latitude,
-                        longitude: event.target.value,
+                        lat: wineryGeneralInfo.wineryHeadquarters.lat,
+                        lng: event.target.value,
                       },
                     };
                     updateWineryGeneralInfo(newGeneralInfo);

@@ -1,32 +1,20 @@
 "use client";
 
-import { Container, EuLabelItem, NutritionTable } from "@/components/";
+import { Container, WineItem, NutritionTable } from "@/components/";
 import Image from "next/image";
 import { useResponsive } from "@/hooks/useResponsive";
-import { EuLabelInterface } from "@/typings/winery";
+import { Wine } from "@/typings/winery";
 
 export interface WineFooterSectionProps {
-  euLabel: EuLabelInterface;
+  wine: Wine;
 }
 
-export const WineFooterSection = ({ euLabel }: WineFooterSectionProps) => {
+export const WineFooterSection = ({ wine }: WineFooterSectionProps) => {
   const { responsiveSize } = useResponsive();
   return (
     <>
       {responsiveSize === "mobile" && (
         <>
-          {euLabel.upc.length > 0 && (
-            <Container intent="flexRowCenter" px="medium" className="w-full">
-              <div>
-                <EuLabelItem
-                  title="UPC"
-                  value={euLabel.upc}
-                  variant="surface"
-                />
-              </div>
-            </Container>
-          )}
-
           <Container
             intent="flexColCenter"
             py="xsmall"
@@ -44,24 +32,17 @@ export const WineFooterSection = ({ euLabel }: WineFooterSectionProps) => {
                 objectPosition: "center",
               }}
             />
-            <Image src={euLabel?.qrCodeUrl} width={88} height={88} alt="" />
+            <Image
+              src={wine?.generalInformation.qrCodeUrl as string}
+              width={88}
+              height={88}
+              alt=""
+            />
           </Container>
         </>
       )}
       {responsiveSize === "desktop" && (
         <>
-          {euLabel.upc.length > 0 && (
-            <Container intent="flexRowLeft" className="w-full">
-              <div>
-                <EuLabelItem
-                  title="UPC"
-                  value={euLabel.upc}
-                  variant="surface"
-                />
-              </div>
-            </Container>
-          )}
-
           <Container intent="flexRowLeft" className="w-full">
             <Container
               intent="flexRowBetween"
@@ -69,7 +50,12 @@ export const WineFooterSection = ({ euLabel }: WineFooterSectionProps) => {
               gap="medium"
               className="bg-surface max-w-[400px]"
             >
-              <Image src={euLabel?.qrCodeUrl} width={88} height={88} alt="" />
+              <Image
+                src={wine?.generalInformation.qrCodeUrl as string}
+                width={88}
+                height={88}
+                alt=""
+              />
 
               <Image
                 src={"/wine-moderation.png"}

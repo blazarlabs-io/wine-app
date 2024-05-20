@@ -5,19 +5,18 @@ import {
   Text,
   GrapesViewer,
   IngredientViewer,
-  EuLabelItem,
+  WineItem,
+  WineItemList,
 } from "@/components";
 import { useResponsive } from "@/hooks/useResponsive";
-import { EuLabelInterface } from "@/typings/winery";
+import { Wine } from "@/typings/winery";
 import { Icon } from "@iconify/react";
 
-export interface WineGeneralInformationSectionProps {
-  item: EuLabelInterface;
+export interface WineSectionProps {
+  item: Wine;
 }
 
-export const WineGeneralInformationSection = ({
-  item,
-}: WineGeneralInformationSectionProps) => {
+export const WineGeneralInformationSection = ({ item }: WineSectionProps) => {
   const { responsiveSize } = useResponsive();
   return (
     <>
@@ -35,25 +34,34 @@ export const WineGeneralInformationSection = ({
             </Text>
           </Container>
           <Container intent="grid-2" gap="medium" className="">
-            <EuLabelItem
-              title="Harvest Year"
-              value={item.harvestYear}
+            <WineItem
+              title="Winery Name"
+              value={item.generalInformation.wineryName as string}
               variant="surface"
             />
-            <EuLabelItem
-              title="Colour of Wine"
-              value={item.colourOfWine}
+            <WineItem
+              title="Collection Name"
+              value={item.generalInformation.wineCollectionName as string}
               variant="surface"
             />
-            <EuLabelItem
-              title="Bottle Size"
-              value={item.bottleSize}
+            <WineItem
+              title="Country"
+              value={item.generalInformation.country as string}
               variant="surface"
             />
-            {/* <EuLabelItem title="UPC" value={item.upc} variant="surface" /> */}
-            <EuLabelItem
-              title="Controlled Designation of Origin"
-              value={item.controlledDesignationOfOrigin}
+            <WineItem
+              title="Collection Size"
+              value={item.generalInformation.collectionSize as string}
+              variant="surface"
+            />
+            <WineItem
+              title="Bottling Year"
+              value={item.generalInformation.bottlingYear as string}
+              variant="surface"
+            />
+            <WineItemList
+              title="Awards and Recognitions"
+              list={item.generalInformation.awardsAndRecognitions as string[]}
               variant="surface"
             />
           </Container>
@@ -73,25 +81,34 @@ export const WineGeneralInformationSection = ({
             </Text>
           </Container>
           <Container intent="grid-2" gap="medium" className="w-full">
-            <EuLabelItem
-              title="Harvest Year"
-              value={item.harvestYear}
+            <WineItem
+              title="Winery Name"
+              value={item.generalInformation.wineryName as string}
               variant="surface"
             />
-            <EuLabelItem
-              title="Colour of Wine"
-              value={item.colourOfWine}
+            <WineItem
+              title="Collection Name"
+              value={item.generalInformation.wineCollectionName as string}
               variant="surface"
             />
-            <EuLabelItem
-              title="Bottle Size"
-              value={item.bottleSize}
+            <WineItem
+              title="Country"
+              value={item.generalInformation.country as string}
               variant="surface"
             />
-            {/* <EuLabelItem title="UPC" value={item.upc} variant="surface" /> */}
-            <EuLabelItem
-              title="Controlled Designation of Origin"
-              value={item.controlledDesignationOfOrigin}
+            <WineItem
+              title="Collection Size"
+              value={item.generalInformation.collectionSize as string}
+              variant="surface"
+            />
+            <WineItem
+              title="Bottling Year"
+              value={item.generalInformation.bottlingYear as string}
+              variant="surface"
+            />
+            <WineItemList
+              title="Awards and Recognitions"
+              list={item.generalInformation.awardsAndRecognitions as string[]}
               variant="surface"
             />
           </Container>

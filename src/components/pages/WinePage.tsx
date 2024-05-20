@@ -5,56 +5,71 @@ import {
   WineHeadSection,
   WineGeneralInformationSection,
   WineIngredientsSection,
+  WineCharacteristicsSection,
   GeneralLoaderOverlay,
   WineFooterSection,
   WineImage,
   NutritionTable,
   MapViewerSection,
+  WineStorageConditionsSection,
+  WineMakingTechniqueSection,
+  WinePackagingAndBrandingSection,
+  WineBlendComponentsSection,
 } from "@/components";
-import { EuLabelInterface, WineryGeneralInfoInterface } from "@/typings/winery";
+import { Wine, WineryGeneralInfo } from "@/typings/winery";
 import { classNames } from "@/utils/classNames";
 import { useEffect } from "react";
 import { useAppState } from "@/context/appStateContext";
 
 export interface WinePagePropsInterface {
-  generalInfo?: WineryGeneralInfoInterface;
-  euLabel: EuLabelInterface | null;
+  generalInfo?: WineryGeneralInfo;
+  wine: Wine | null;
 }
 
-export const WinePage = ({ generalInfo, euLabel }: WinePagePropsInterface) => {
+export const WinePage = ({ generalInfo, wine }: WinePagePropsInterface) => {
   const { updateAppLoading } = useAppState();
+
+  const mapData = {
+    initialPosition: generalInfo?.wineryHeadquarters as any,
+  };
+
   useEffect(() => {
-    console.log("euLabel", euLabel, "generalInfo", generalInfo);
     updateAppLoading(false);
   }, []);
   return (
     <>
-      {euLabel && generalInfo ? (
+      {wine && generalInfo ? (
         <div
           className={classNames(
-            "flex flex-col items-center justify-center gap-[48px] w-full max-w-[800px]"
+            "flex flex-col items-center justify-center gap-[48px] w-full max-w-[800px] mb-[48px]"
           )}
         >
-          <WineImage imageUrl={euLabel?.wineImageUrl} />
-          <WineHeadSection euLabel={euLabel as EuLabelInterface} />
-          <WineGeneralInformationSection item={euLabel as EuLabelInterface} />
-          <WineIngredientsSection item={euLabel as EuLabelInterface} />
-          <NutritionTable
+          <WineImage
+            imageUrl={wine?.generalInformation.wineImageUrl as string}
+          />
+          <WineHeadSection wine={wine as Wine} />
+          <WineGeneralInformationSection item={wine as Wine} />
+          <WineCharacteristicsSection item={wine as Wine} />
+          <WineStorageConditionsSection item={wine as Wine} />
+          <WineMakingTechniqueSection item={wine as Wine} />
+          <WinePackagingAndBrandingSection item={wine as Wine} />
+          <WineBlendComponentsSection item={wine as Wine} mapData={mapData} />
+          {/* <NutritionTable
             items={{
-              alcoholLevel: euLabel.alcoholLevel,
-              sugars: euLabel.ingredients.sugars,
-              bottleSize: euLabel.bottleSize,
+              alcoholLevel: wine.alcoholLevel,
+              sugars: wine.ingredients.sugars,
+              bottleSize: wine.bottleSize,
             }}
           />
-          {euLabel.ingredients.grapes.list.length > 0 &&
-            euLabel.ingredients.grapes.list[0].coordinates &&
-            euLabel.ingredients.grapes.list[0].coordinates.length > 0 && (
+          {wine.ingredients.grapes.list.length > 0 &&
+            wine.ingredients.grapes.list[0].coordinates &&
+            wine.ingredients.grapes.list[0].coordinates.length > 0 && (
               <MapViewerSection
                 initialPosition={generalInfo?.wineryHeadquarters as any}
-                initialItems={euLabel.ingredients.grapes.list}
+                initialItems={wine.ingredients.grapes.list}
               />
-            )}
-          <WineFooterSection euLabel={euLabel as EuLabelInterface} />
+            )} */}
+          <WineFooterSection wine={wine as Wine} />
         </div>
       ) : (
         <GeneralLoaderOverlay />
