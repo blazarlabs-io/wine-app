@@ -224,27 +224,6 @@ export const getWineByRefNumber = async (
   });
 };
 
-export const getWineByUpcCode = async (
-  upc: string,
-  callback: (wine: Wine | null) => void
-) => {
-  const wineries = query(collection(db, "wineries"));
-  const querySnapshot = await getDocs(wineries);
-  querySnapshot.forEach((doc) => {
-    if (doc.data().wines) {
-      doc.data().wines.forEach((wine: Wine) => {
-        if (wine.upc === upc) {
-          callback(wine);
-        } else {
-          // callback(null);
-        }
-      });
-    } else {
-      // callback(null);
-    }
-  });
-};
-
 export const getDocsInCollection = async (collectionName: string) => {
   const result = collection(db, collectionName);
   const querySnapshot = await getDocs(result);
@@ -306,24 +285,6 @@ export const getWinesByWineryName = async (wineryName: string) => {
     if (doc.data().wines.length > 0 && doc.data().disabled === false) {
       doc.data().wines.forEach((wine: Wine) => {
         items.push(wine);
-      });
-    }
-  });
-  return items;
-};
-
-export const getWinesByWineType = async (wineType: string) => {
-  const wineries = query(collection(db, "wineries"));
-  const querySnapshot = await getDocs(wineries);
-  const items: Wine[] = [];
-  querySnapshot.forEach((doc) => {
-    if (doc.data().wines.length > 0 && doc.data().disabled === false) {
-      doc.data().wines.forEach((wine: Wine) => {
-        if (
-          wine.typeOfWine.toLocaleLowerCase() === wineType.toLocaleLowerCase()
-        ) {
-          items.push(wine);
-        }
       });
     }
   });

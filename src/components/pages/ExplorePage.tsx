@@ -70,7 +70,7 @@ export const ExplorePage = () => {
                 country={wine.generalInformation.country as string}
                 // harvestYear={wine.generalInformation.harvestYear}
                 harvestYear=""
-                referenceNumber={wine.referenceNumber}
+                referenceNumber={wine.referenceNumber as string}
                 alcoholLevel={wine.characteristics.alcoholLevel as string}
                 typeOfWine={wine.characteristics.wineType as string}
               />

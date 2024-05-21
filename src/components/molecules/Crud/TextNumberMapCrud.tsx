@@ -92,7 +92,6 @@ export const TextNumberMapCrud = ({
             <PolygonEditorMap
               initialPosition={initialPosition}
               selectedItem={selectedItem}
-              initialItems={[]}
               onPolygonComplete={(item, polygon) => {
                 // console.log(item, polygon);
                 const newGrapeAndVineyard = {
@@ -166,7 +165,7 @@ export const TextNumberMapCrud = ({
           )}
         </div>
       )}
-      {showViewMap && (
+      {/* {showViewMap && (
         <div className="fixed top-0 left-0 z-[999] flex items-center justify-center bg-surface/80 backdrop-blur-sm w-full h-full">
           {initialPosition ? (
             <PolygonViewerMap
@@ -189,7 +188,7 @@ export const TextNumberMapCrud = ({
             </Container>
           )}
         </div>
-      )}
+      )} */}
       <Container intent="grid-4" gap="xsmall" className="w-full">
         <Container intent="flexColLeft" gap="xsmall" className="">
           <Text intent="p2" variant="dim" className="font-semibold">

@@ -1,10 +1,10 @@
 import { Container, Text } from "@/components";
-import { ItemWithPercentage } from "@/typings/winery";
+import { GrapeVariety } from "@/typings/winery";
 import { classNames } from "@/utils/classNames";
 
 export interface IngredientViewerProps {
   title: string;
-  ingredient: ItemWithPercentage[];
+  ingredient: GrapeVariety[];
   variant?: "normal" | "surface";
 }
 

@@ -53,6 +53,7 @@ export const ExploreModeSelect = ({}: ExploreModeSelectProps) => {
             <Text className="text-on-surface/40">Exploring</Text>
           </Container>
           <DropDown
+            id="exploring"
             disabled
             items={["wines", "wineries"]}
             selectedValue={"wines"}

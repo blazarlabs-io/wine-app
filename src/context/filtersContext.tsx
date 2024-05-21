@@ -2,11 +2,10 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { useResponsive } from "@/hooks/useResponsive";
-import { WineInterface } from "@/typings/winery";
+import { Wine } from "@/typings/winery";
 import {
   getAllWines,
   getAllWineryNames,
-  getWinesByWineType,
   getWinesByWineryName,
   getWineTypes,
 } from "@/utils/firestore";
@@ -26,8 +25,8 @@ export interface FiltersContextInterface {
   mobileFilters: boolean;
   showFilters: boolean;
   filters: FiltersInterface;
-  filteredWines: WineInterface[];
-  allWines: WineInterface[];
+  filteredWines: Wine[];
+  allWines: Wine[];
   filtersLoading: boolean;
   filtersMessage: string;
   updateShowFilters: (value: boolean) => void;
@@ -88,8 +87,8 @@ export const FiltersProvider = ({
     },
     byUpc: null,
   });
-  const [filteredWines, setFilteredWines] = useState<WineInterface[]>([]);
-  const [allWines, setAllWines] = useState<WineInterface[]>([]);
+  const [filteredWines, setFilteredWines] = useState<Wine[]>([]);
+  const [allWines, setAllWines] = useState<Wine[]>([]);
   const [filtersLoading, setFiltersLoading] = useState<boolean>(false);
   const [filtersMessage, setFiltersMessage] = useState<string>("");
 
@@ -117,16 +116,7 @@ export const FiltersProvider = ({
   useEffect(() => {
     if (filters.byWinery.result && !filters.byWineType.result) {
       getWinesByWineryName(filters.byWinery.result)
-        .then((wines: WineInterface[]) => {
-          setFilteredWines(wines);
-          setFiltersLoading(false);
-        })
-        .catch((error) => {});
-      return;
-    }
-    if (filters.byWineType.result && !filters.byWinery.result) {
-      getWinesByWineType(filters.byWineType.result)
-        .then((wines) => {
+        .then((wines: Wine[]) => {
           setFilteredWines(wines);
           setFiltersLoading(false);
         })

@@ -52,6 +52,11 @@ export const blendComonetnInitialData: BlendComponent = {
   },
   vineyardDetails: {
     id: null,
+    grapeGrown: {
+      vintageYear: null,
+      name: null,
+      percentage: null,
+    },
     controlledDesignationOfOrigin: null,
     coordinates: [],
     elevation: null,

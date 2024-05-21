@@ -46,23 +46,23 @@ export const WineStorageConditionsSection = ({ item }: WineSectionProps) => {
               <Text intent="p1" variant="dim" className="font-semibold">
                 Storage Temperature
               </Text>
-              {item.storageConditions.storageTemperature.celcius ===
+              {item.storageConditions.storageTemperature.selected?.unit ===
                 undefined ||
-              (item.storageConditions.storageTemperature.celcius === null &&
-                item.storageConditions.storageTemperature.fahrenheit ===
-                  undefined) ||
-              item.storageConditions.storageTemperature.fahrenheit === null ? (
-                <Text variant="dim">No</Text>
+              item.storageConditions.storageTemperature.selected.value ===
+                null ? (
+                <Text variant="dim">Not Specified</Text>
               ) : (
-                <>
+                <Container intent="flexColLeft" gap="xsmall">
                   <Text variant="dim">
-                    {item.storageConditions.storageTemperature.celcius + "°C"}
+                    {item.storageConditions.storageTemperature.selected.value}
                   </Text>
                   <Text variant="dim">
-                    {item.storageConditions.storageTemperature.fahrenheit +
-                      "°F"}
+                    {item.storageConditions.storageTemperature.selected.unit ===
+                    "celcius"
+                      ? "°C"
+                      : "°F"}
                   </Text>
-                </>
+                </Container>
               )}
             </Container>
             <WineItem
@@ -110,23 +110,23 @@ export const WineStorageConditionsSection = ({ item }: WineSectionProps) => {
               <Text intent="p1" variant="dim" className="font-semibold">
                 Storage Temperature
               </Text>
-              {item.storageConditions.storageTemperature.celcius ===
+              {item.storageConditions.storageTemperature.selected?.unit ===
                 undefined ||
-              (item.storageConditions.storageTemperature.celcius === null &&
-                item.storageConditions.storageTemperature.fahrenheit ===
-                  undefined) ||
-              item.storageConditions.storageTemperature.fahrenheit === null ? (
-                <Text variant="dim">No</Text>
+              item.storageConditions.storageTemperature.selected.value ===
+                null ? (
+                <Text variant="dim">Not Specified</Text>
               ) : (
-                <>
+                <Container intent="flexColLeft" gap="xsmall">
                   <Text variant="dim">
-                    {item.storageConditions.storageTemperature.celcius + "°C"}
+                    {item.storageConditions.storageTemperature.selected.value}
                   </Text>
                   <Text variant="dim">
-                    {item.storageConditions.storageTemperature.fahrenheit +
-                      "°F"}
+                    {item.storageConditions.storageTemperature.selected.unit ===
+                    "celcius"
+                      ? "°C"
+                      : "°F"}
                   </Text>
-                </>
+                </Container>
               )}
             </Container>
             <WineItem
