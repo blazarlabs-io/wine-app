@@ -120,9 +120,9 @@ export interface BlendComponent {
 
 // SINGLE GRAPE VARIETY
 export interface GrapeVariety {
-  name: string;
-  percentage: string;
-  vintageYear: number;
+  name: string | null;
+  percentage: string | null;
+  vintageYear: number | null;
 }
 
 // BLEND INGREDIENTS

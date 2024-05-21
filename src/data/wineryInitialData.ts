@@ -12,8 +12,8 @@ export const wineryInitialData: WineryGeneralInfo = {
   lastUpdated: "",
   certifications: [],
   wineryHeadquarters: {
-    lat: "",
-    lng: "",
+    lat: 0,
+    lng: 0,
   },
   wineryRepresentative: {
     name: "",

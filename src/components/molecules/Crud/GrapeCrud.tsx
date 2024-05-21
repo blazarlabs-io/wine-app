@@ -46,7 +46,7 @@ export const GrapeCrud = ({
           <input
             type="text"
             required={isRequired}
-            value={currentItem?.name}
+            value={currentItem?.name as string}
             onChange={(event: any) => {
               const newItem = {
                 name: event.target.value,
@@ -64,7 +64,7 @@ export const GrapeCrud = ({
           </Text>
           <input
             type="number"
-            value={currentItem?.percentage}
+            value={currentItem?.percentage as string}
             onChange={(event: any) => {
               const newItem = {
                 name: currentItem?.name,

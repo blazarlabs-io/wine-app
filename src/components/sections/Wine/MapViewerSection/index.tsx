@@ -13,13 +13,7 @@ export const MapViewerSection = ({
   const { wineryGeneralInfo } = useRealtimeDb();
   return (
     <MapVineyardsMultiGrapeView
-      initialPosition={
-        (initialPosition.latitud !== undefined &&
-          initialPosition.longitude !== undefined) || {
-          lat: wineryGeneralInfo.wineryHeadquarters.lat,
-          lng: wineryGeneralInfo.wineryHeadquarters.lng,
-        }
-      }
+      initialPosition={(initialPosition.lat, initialPosition.lng)}
       initialItems={initialItems !== undefined ? initialItems : null}
     />
   );

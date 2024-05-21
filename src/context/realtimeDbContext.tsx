@@ -72,6 +72,7 @@ export const useRealtimeDb = (): RealtimeDbContextInterface => {
 export const RealtimeDbProvider = ({
   children,
 }: React.PropsWithChildren): JSX.Element => {
+  // HOOKS
   const { user } = useAuth();
   const {
     wineTypes,
@@ -80,31 +81,26 @@ export const RealtimeDbProvider = ({
     aromaProfiles,
     flavourProfiles,
   } = useGetWineCharacteristics();
-
   const { sustainabilityPractices } = useGetWineMakingTechnique();
-
   const { closureTypes } = useGetPackagingAndBranding();
-
   const { irrigationPractices } = useGetVineyardsDetails();
 
+  // STATES
   const [wineryGeneralInfo, setWineryGeneralInfo] = useState(
     contextInitialData.wineryGeneralInfo
   );
-
   const [tier, setTier] = useState(contextInitialData.tier);
   const [level, setLevel] = useState(contextInitialData.level);
   const [availableLevels, setAvailableLevels] = useState<
     AvailableLevels[] | null
   >(null);
-
   const [allowedWines, setallowedWines] = useState(
     contextInitialData.allowedWines
   );
-
   const [wines, setWines] = useState(contextInitialData.wines);
-
   const [maxPrice, setMaxPrice] = useState(contextInitialData.maxPrice);
 
+  // METHODS
   const sortLevels = (levels: LevelsInterface) => {
     const sortedLevels: LevelsInterface = {
       bronze: null,
@@ -112,7 +108,6 @@ export const RealtimeDbProvider = ({
       gold: null,
       diamond: null,
     };
-
     Object.keys(levels)
       .sort()
       .forEach((key) => {
@@ -122,15 +117,11 @@ export const RealtimeDbProvider = ({
 
     return sortedLevels;
   };
-
   const updateWineryGeneralInfo = (data: WineryGeneralInfo) => {
     setWineryGeneralInfo(data);
   };
-
   const updateTier = (tier: string) => setTier(tier);
-
   const updateLevel = (level: string) => setLevel(level);
-
   const regiterWines = (data: Wine[]) => {
     setWines(data);
   };

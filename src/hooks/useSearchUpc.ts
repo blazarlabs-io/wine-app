@@ -1,4 +1,4 @@
-import { WineryDataInterface } from "@/typings/winery";
+import { Winery } from "@/typings/winery";
 import { getDocsInCollection } from "@/utils/firestore";
 import { useCallback, useEffect, useState } from "react";
 
@@ -9,7 +9,7 @@ export const useSearchUpc = () => {
   const [upcs, setUpcs] = useState<string[]>([]);
 
   const fetchUpcCodes = () => {
-    getDocsInCollection("wineries").then((wineries: WineryDataInterface[]) => {
+    getDocsInCollection("wineries").then((wineries: Winery[]) => {
       setWineries(wineries);
       wineries.forEach((winery) => {
         if (winery.wines && winery.wines.length > 0) {
