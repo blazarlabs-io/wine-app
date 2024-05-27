@@ -5,10 +5,10 @@ import {
   Winery,
   BlendComponent,
   VineyardDetails,
-  GrapeVariety,
+  Grape,
   GrapeAndVineyard,
   CoordinateInterface,
-  VineyardGrapeGrownWithCoordinates,
+  VineyardGrapeAndCoordinates,
 } from "@/typings/winery";
 import {
   DocumentData,
@@ -24,20 +24,9 @@ import {
   addDoc,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { db, storage } from "@/lib/firebase/client";
+import { db, functions, storage } from "@/lib/firebase/client";
 import { removeUndefinedValues } from "./removeUndefinedValues";
-
-export const initWineryInDb = async (docId: string) => {
-  try {
-    await setDoc(
-      doc(db, "wineries", docId),
-      { uid: docId, generalInfo: {}, wines: [] },
-      { merge: true }
-    );
-  } catch (e) {
-    console.error(e);
-  }
-};
+import { httpsCallable } from "firebase/functions";
 
 export const getWineryDataDb = async (
   docId: string
@@ -52,46 +41,6 @@ export const getWineryDataDb = async (
       resolve(null);
     }
   });
-};
-
-export const registerWineryGeneralInfoToDb = async (
-  docId: string,
-  wineryData: WineryGeneralInfo
-) => {
-  const docRef = doc(db, "wineries", docId as string);
-  setDoc(docRef, { generalInfo: wineryData }, { merge: true });
-};
-
-export const registerWineryWine = async (docId: string, wine: Wine) => {
-  try {
-    const docRef = doc(db, "wineries", docId as string);
-    const docSnap = await getDoc(docRef);
-    const data = docSnap.data();
-    const wines = data?.wines;
-
-    wines.push(removeUndefinedValues(wine));
-    await setDoc(docRef, { wines: wines }, { merge: true });
-    return true;
-  } catch (error: any) {
-    throw new Error(error);
-  }
-};
-
-export const updateWineryWine = async (docId: string, wine: Wine) => {
-  const docRef = doc(db, "wineries", docId as string);
-  const docSnap = await getDoc(docRef);
-  const data = docSnap.data();
-  const wines = data?.wines;
-  if (wines) {
-    const updatedWines = wines.map((w: Wine) => {
-      if (w.referenceNumber === wine.referenceNumber) {
-        return wine;
-      } else {
-        return w;
-      }
-    });
-    await updateDoc(docRef, { wines: updatedWines });
-  }
 };
 
 export const uploadLogoToStorage = async (
@@ -203,240 +152,114 @@ export const uploadWineImageToStorage = async (
   );
 };
 
-export const getWineByRefNumber = async (
-  refNumber: string,
-  callback: (wine: Wine | null) => void
-) => {
-  const wineries = query(collection(db, "wineries"));
-  const querySnapshot = await getDocs(wineries);
-  querySnapshot.forEach((doc) => {
-    if (doc.data().wines) {
-      doc.data().wines.forEach((wine: Wine) => {
-        if (wine.referenceNumber === refNumber) {
-          callback(wine);
-        } else {
-          // callback(null);
-        }
-      });
-    } else {
-      // callback(null);
-    }
-  });
-};
-
-export const getDocsInCollection = async (collectionName: string) => {
-  const result = collection(db, collectionName);
-  const querySnapshot = await getDocs(result);
-  const items: any[] = [];
-  querySnapshot.forEach((doc) => {
-    items.push(doc.data());
-  });
-  return items;
-};
-
-export const getAllWines = async () => {
-  const wineries = query(collection(db, "wineries"));
-  const querySnapshot = await getDocs(wineries);
-
-  const items: Wine[] = [];
-  await querySnapshot.forEach((doc) => {
-    if (doc.data().wines.length > 0 && doc.data().disabled === false) {
-      doc.data().wines.forEach((wine: Wine) => {
-        items.push(wine);
-      });
-    }
-  });
-  return items;
-};
-
-export const getWineryLevelDb = async (l: string) => {
-  try {
-    const docRef = doc(db, "utils", "systemVariables");
-    const docSnap = await getDoc(docRef);
-    const data = docSnap.data();
-    const level = data?.level[l];
-    return level;
-  } catch (e) {
-    console.error(e);
-    return null;
-  }
-};
-
-export const getAllWineryNames = async () => {
-  const wineries = query(collection(db, "wineries"));
-  const querySnapshot = await getDocs(wineries);
-  const items: string[] = [];
-  querySnapshot.forEach((doc) => {
-    if (doc.data().disabled === false) {
-      items.push(doc.data().generalInfo.name);
-    }
-  });
-  return items;
-};
-
-export const getWinesByWineryName = async (wineryName: string) => {
-  const wineries = query(
-    collection(db, "wineries"),
-    where("generalInfo.name", "==", wineryName)
-  );
-  const querySnapshot = await getDocs(wineries);
-  const items: Wine[] = [];
-  querySnapshot.forEach((doc) => {
-    if (doc.data().wines.length > 0 && doc.data().disabled === false) {
-      doc.data().wines.forEach((wine: Wine) => {
-        items.push(wine);
-      });
-    }
-  });
-  return items;
-};
-
-export const getWineTypes = async () => {
-  try {
-    const docRef = doc(db, "utils", "systemVariables");
-    const docSnap = await getDoc(docRef);
-    const data = docSnap.data();
-    return data?.wineTypes;
-  } catch (e) {
-    console.error(e);
-    return null;
-  }
-};
-
-export const overwriteWineryData = async (docId: string, data: Winery) => {
-  const docRef = doc(db, "wineries", docId);
-  try {
-    await updateDoc(docRef, { ...data });
-  } catch (e) {
-    console.error(e);
-    return false;
-  }
-};
-
-export const getWineryByWineRefNumber = async (
-  refNumber: string,
-  callback: (data: Winery | null) => void
-) => {
-  const wineries = query(collection(db, "wineries"));
-  try {
-    const querySnapshot = await getDocs(wineries);
-    let winery: Winery | null = null;
-    querySnapshot.forEach((doc) => {
-      if (doc.data().wines) {
-        doc.data().wines.forEach((wine: Wine) => {
-          if (wine.referenceNumber === refNumber) {
-            winery = doc.data() as Winery;
-          }
-        });
-      }
-    });
-    callback(winery);
-  } catch (e) {
-    console.error(e);
-    callback(null);
-  }
-};
-
-export const updateGrapesInWine = async (
-  docId: string,
-  refNumber: string,
-  blendComponents: BlendComponent[]
-) => {
-  const docRef = doc(db, "wineries", docId);
-  const docSnap = await getDoc(docRef);
-  const data = docSnap.data();
-  const wines = data?.wines;
-  if (wines) {
-    const updatedWines = wines.map((wine: Wine) => {
-      if (wine.referenceNumber === refNumber) {
-        wine.blendComponents = blendComponents;
-        return wine;
-      } else {
-        return wine;
-      }
-    });
-    await updateDoc(docRef, { wines: updatedWines });
-  }
-};
-
-export const getGrapeVarieties = async (docId: string) => {
+export const getGrapeVarieties = async (docId: string, ref: string) => {
   try {
     const docRef = doc(db, "wineries", docId);
     const docSnap = await getDoc(docRef);
     const data = docSnap.data();
     const wines = data?.wines;
-    let grapeVarieties: GrapeVariety[] = [];
-    await wines.forEach((wine: Wine) => {
-      wine.blendComponents.forEach((component: BlendComponent) => {
-        if (component.ingredients.grapesVarieties.has) {
-          grapeVarieties = component.ingredients.grapesVarieties.list;
-        }
-      });
-    });
-    return grapeVarieties as GrapeVariety[];
-  } catch (e) {
-    console.error(e);
-    return null;
-  }
-};
-
-export const getVineyardGrapeGrown = async (ref: string, docId: string) => {
-  try {
-    const docRef = doc(db, "wineries", docId);
-    const docSnap = await getDoc(docRef);
-    const data = docSnap.data();
-    const wines = data?.wines;
-
-    let grapeGrownWithCoordinates: VineyardGrapeGrownWithCoordinates = {
-      grapeGrown: null,
-      coordinates: null,
-    };
+    let grapeVarieties: Grape[] = [];
     await wines.forEach((wine: Wine) => {
       if (wine.referenceNumber === ref) {
         wine.blendComponents.forEach((component: BlendComponent) => {
-          if (component.vineyardDetails.grapeGrown) {
-            grapeGrownWithCoordinates.grapeGrown = component.vineyardDetails
-              .grapeGrown as GrapeVariety;
-            grapeGrownWithCoordinates.coordinates =
-              component.vineyardDetails.coordinates;
+          if (component.vineyardDetails.grape) {
+            grapeVarieties.push(component.vineyardDetails.grape as Grape);
           }
         });
       }
     });
-    return grapeGrownWithCoordinates;
+    return grapeVarieties as Grape[];
   } catch (e) {
     console.error(e);
     return null;
   }
 };
 
-export const updateWineryHeadquarters = async (
-  docId: string,
-  lat: number,
-  lng: number
-) => {
-  const docRef = doc(db, "wineries", docId);
-  const docSnap = await getDoc(docRef);
-  const data = docSnap.data();
-  const updatedGeneralInfo = data?.generalInfo;
-  updatedGeneralInfo.wineryHeadquarters.lat = lat;
-  updatedGeneralInfo.wineryHeadquarters.lng = lng;
-  await updateDoc(docRef, { generalInfo: updatedGeneralInfo });
-};
+/////////////////////////////////////////////////////
 
-export const createAdminNotification = async (
-  data: CreateAdminNotification
-) => {
-  return new Promise<boolean>(async (resolve, reject) => {
-    const id = data.wineryName.replace(/\s/g, "").toLocaleLowerCase();
-    const docRef = doc(db, "notifications", id);
-    const docSnap = await getDoc(docRef);
+// WINERY CALLABLES
+export const getWineryData = httpsCallable(functions, "winery-getWineryData");
+export const registerWineryGeneralInfo = httpsCallable(
+  functions,
+  "winery-registerWineryGeneralInfo"
+);
+export const registerWineryWine = httpsCallable(
+  functions,
+  "winery-registerWineryWine"
+);
+export const updateWineryHeadquarters = httpsCallable(
+  functions,
+  "winery-updateWineryHeadquarters"
+);
 
-    if (docSnap.exists()) {
-      resolve(true);
-    } else {
-      await setDoc(docRef, data);
-      resolve(false);
-    }
-  });
-};
+export const getWineryByWineRefNumber = httpsCallable(
+  functions,
+  "winery-getWineryByWineRefNumber"
+);
+
+export const getWineByRefNumber = httpsCallable(
+  functions,
+  "winery-getWineByRefNumber"
+);
+
+export const getWinesByWineryName = httpsCallable(
+  functions,
+  "winery-getWinesByWineryName"
+);
+
+export const getWineryLevel = httpsCallable(functions, "winery-getWineryLevel");
+
+export const getAllWineryNames = httpsCallable(
+  functions,
+  "winery-getAllWineryNames"
+);
+
+// DB CALLABLES
+export const createNotification = httpsCallable(
+  functions,
+  "db-createNotification"
+);
+
+export const updateWineryWine = httpsCallable(
+  functions,
+  "winery-updateWineryWine"
+);
+
+export const getDocsInCollection = httpsCallable(
+  functions,
+  "db-getDocsInCollection"
+);
+
+export const getAllWines = httpsCallable(functions, "winery-getAllWines");
+
+// AUTH CALLABLES
+export const deleteUser = httpsCallable(functions, "auth-deleteUser");
+export const disableUser = httpsCallable(functions, "auth-disableUser");
+export const updateUserPassword = httpsCallable(
+  functions,
+  "auth-updateUserPassword"
+);
+
+// UTILS CALLABLES
+export const getClosureTypesDb = httpsCallable(
+  functions,
+  "utils-getClosureTypes"
+);
+export const getIrrigationPractices = httpsCallable(
+  functions,
+  "utils-getIrrigationPractices"
+);
+export const getWineTypes = httpsCallable(functions, "utils-getWineTypes");
+export const getWineColours = httpsCallable(functions, "utils-getWineColours");
+export const getWineBottleSizes = httpsCallable(
+  functions,
+  "utils-getWineBottleSizes"
+);
+export const getAromaProfiles = httpsCallable(
+  functions,
+  "utils-getAromaProfiles"
+);
+export const getFlavourProfiles = httpsCallable(
+  functions,
+  "utils-getFlavourProfiles"
+);

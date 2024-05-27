@@ -6,7 +6,7 @@ import { Unsubscribe, doc, onSnapshot } from "firebase/firestore";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./authContext";
 import { wineryInitialData } from "@/data/wineryInitialData";
-import { getWineryLevelDb } from "@/utils/firestore";
+import { getWineryLevel } from "@/utils/firestore";
 import { AvailableLevels, LevelsInterface } from "@/typings/systemVariables";
 import { useGetWineCharacteristics } from "@/hooks/useGetWineCharacteristics";
 import { useGetWineMakingTechnique } from "@/hooks/useGetWineMakingTechnique";
@@ -94,7 +94,7 @@ export const RealtimeDbProvider = ({
   const [availableLevels, setAvailableLevels] = useState<
     AvailableLevels[] | null
   >(null);
-  const [allowedWines, setallowedWines] = useState(
+  const [allowedWines, setAllowedWines] = useState(
     contextInitialData.allowedWines
   );
   const [wines, setWines] = useState(contextInitialData.wines);
@@ -183,9 +183,13 @@ export const RealtimeDbProvider = ({
   // Winery levels
   useEffect(() => {
     if (level) {
-      getWineryLevelDb(level as string).then((data) => {
-        if (data) setallowedWines(data.qrCodes as number);
-      });
+      getWineryLevel({ l: level })
+        .then((data: any) => {
+          if (data) setAllowedWines(data.data.qrCodes as number);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   }, [level]);
 

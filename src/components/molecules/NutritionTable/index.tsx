@@ -15,6 +15,7 @@ export interface NutritionTableProps {
 
 export const NutritionTable = ({ items }: NutritionTableProps) => {
   const { responsiveSize } = useResponsive();
+
   return (
     <Container
       intent={responsiveSize === "mobile" ? "flexColCenter" : "flexColLeft"}
@@ -94,9 +95,15 @@ export const NutritionTable = ({ items }: NutritionTableProps) => {
             <Text intent="p1" variant="dim" className="font-bold">
               Calories (kcal)
             </Text>
-            <Text intent="p1" variant="dim">
-              {kcal(items.alcoholLevel, items.sugars).toString()}
-            </Text>
+            {items.sugars && items.sugars !== "" ? (
+              <Text intent="p1" variant="dim">
+                {kcal(items.alcoholLevel, items.sugars).toString()}
+              </Text>
+            ) : (
+              <Text intent="p1" variant="dim">
+                {kcal(items.alcoholLevel, "0").toString()}
+              </Text>
+            )}
           </Container>
           <Container
             intent="flexRowBetween"
@@ -105,17 +112,29 @@ export const NutritionTable = ({ items }: NutritionTableProps) => {
             <Text intent="p1" variant="dim" className="font-bold">
               Energy (kj)
             </Text>
-            <Text intent="p1" variant="dim">
-              {kj(items.alcoholLevel, items.sugars).toString()}
-            </Text>
+            {items.sugars && items.sugars !== "" ? (
+              <Text intent="p1" variant="dim">
+                {kj(items.alcoholLevel, items.sugars).toString()}
+              </Text>
+            ) : (
+              <Text intent="p1" variant="dim">
+                {kj(items.alcoholLevel, "0").toString()}
+              </Text>
+            )}
           </Container>
           <Container intent="flexRowBetween" className="w-full">
             <Text intent="p1" variant="dim" className="font-bold">
               Sugars (g)
             </Text>
-            <Text intent="p1" variant="dim">
-              {items.sugars}
-            </Text>
+            {items.sugars && items.sugars !== "" ? (
+              <Text intent="p1" variant="dim">
+                {items.sugars}
+              </Text>
+            ) : (
+              <Text intent="p1" variant="dim">
+                {"0"}
+              </Text>
+            )}
           </Container>
         </Container>
       </Container>

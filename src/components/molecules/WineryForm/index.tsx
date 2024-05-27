@@ -8,12 +8,14 @@ import {
   TextInputCrud,
   SpinnerLoader,
   MapLocationFinder,
+  WineThumbnail,
+  WineryLogoThumbnail,
 } from "@/components";
 import { Icon } from "@iconify/react";
 import { useAuth } from "@/context/authContext";
-import { WineryGeneralInfo } from "@/typings/winery";
+import { CoordinateInterface, WineryGeneralInfo } from "@/typings/winery";
 import {
-  registerWineryGeneralInfoToDb,
+  registerWineryGeneralInfo,
   updateWineryHeadquarters,
   uploadLogoToStorage,
 } from "@/utils/firestore";
@@ -26,6 +28,9 @@ import { useForms } from "@/context/FormsContext";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import { useMasterLoader } from "@/context/masterLoaderContext";
+import { useToast } from "@/context/toastContext";
+import { removeUndefinedValues } from "@/utils/removeUndefinedValues";
+import { useAppState } from "@/context/appStateContext";
 
 export const WineryForm = () => {
   const { user } = useAuth();
@@ -33,8 +38,9 @@ export const WineryForm = () => {
   const { updateModal } = useModal();
   const { updateMasterLoading } = useMasterLoader();
   const { wineryForm, updateWineryForm } = useForms();
-
   const { wineryGeneralInfo, updateWineryGeneralInfo } = useRealtimeDb();
+  const { updateToast } = useToast();
+  const { updateAppLoading } = useAppState();
 
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [imageUploading, setImageUploading] = useState<boolean>(false);
@@ -73,12 +79,37 @@ export const WineryForm = () => {
     setIsLoading(true);
     setImageUploading(true);
 
-    const newGeneralInfo: WineryGeneralInfo = wineryGeneralInfo;
     wineryGeneralInfo.lastUpdated = new Date().toLocaleDateString();
+    const newGeneralInfo: WineryGeneralInfo =
+      removeUndefinedValues(wineryGeneralInfo);
     updateWineryGeneralInfo(newGeneralInfo);
 
     // UPDATE TO DATABASE
-    registerWineryGeneralInfoToDb(user?.uid as string, newGeneralInfo);
+    updateAppLoading(true);
+    registerWineryGeneralInfo({
+      uid: user?.uid as string,
+      generalInfo: newGeneralInfo,
+    })
+      .then((result: any) => {
+        updateAppLoading(false);
+        updateToast({
+          show: true,
+          status: "success",
+          message: "Winery information saved successfully.",
+          timeout: 3000,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+        updateAppLoading(false);
+        updateToast({
+          show: true,
+          status: "error",
+          message: "An error occurred. Please try again.",
+          timeout: 3000,
+        });
+      });
+
     setIsLoading(false);
     router.replace("/home");
   };
@@ -159,11 +190,30 @@ export const WineryForm = () => {
                     disabled={!enableMapSave}
                     onClick={() => {
                       setShowLocationMap(false);
-                      updateWineryHeadquarters(
-                        user?.uid as string,
-                        wineryGeneralInfo.wineryHeadquarters.lat,
-                        wineryGeneralInfo.wineryHeadquarters.lng
-                      );
+
+                      const headquarters: CoordinateInterface = {
+                        lat: wineryGeneralInfo.wineryHeadquarters.lat,
+                        lng: wineryGeneralInfo.wineryHeadquarters.lng,
+                      };
+
+                      updateWineryHeadquarters({ uid: user?.uid, headquarters })
+                        .then((result: any) => {
+                          updateToast({
+                            show: true,
+                            status: "success",
+                            message: "Winery location saved successfully.",
+                            timeout: 3000,
+                          });
+                        })
+                        .catch((error) => {
+                          console.error(error);
+                          updateToast({
+                            show: true,
+                            status: "error",
+                            message: "An error occurred. Please try again.",
+                            timeout: 3000,
+                          });
+                        });
                     }}
                   >
                     Save
@@ -191,49 +241,14 @@ export const WineryForm = () => {
               </Container>
               <Text variant="dim">{wineryForm.description}</Text>
             </Container>
-            <Container intent="grid-2" gap="medium">
-              <Container intent="flexColLeft" gap="xsmall">
-                <Text intent="p1" variant="dim" className="font-semibold">
-                  * Winery Name
-                </Text>
-                <input
-                  required
-                  type="text"
-                  placeholder=""
-                  value={wineryGeneralInfo.name}
-                  onChange={(event: any) => {
-                    const newGeneralInfo = {
-                      ...wineryGeneralInfo,
-                      name: event.target.value,
-                    };
-                    updateWineryGeneralInfo(newGeneralInfo);
-                  }}
-                  className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
+            <Container intent="flexRowLeft" gap="xsmall">
+              <div className="bg-surface-light p-[4px] rounded-lg">
+                <WineryLogoThumbnail
+                  imageUrl={wineryForm.formData.logo}
+                  width={80}
+                  height={80}
                 />
-              </Container>
-              <Container intent="flexColLeft" gap="xsmall">
-                <Container intent="flexRowLeft" gap="xsmall">
-                  <Text intent="p1" variant="dim" className="font-semibold">
-                    Founded In
-                  </Text>
-                  <InfoTooltip text="The year your winery was founded." />
-                </Container>
-                <input
-                  type="number"
-                  placeholder=""
-                  value={wineryGeneralInfo.foundedOn}
-                  onChange={(event: any) => {
-                    const newGeneralInfo = {
-                      ...wineryGeneralInfo,
-                      foundedOn: event.target.value,
-                    };
-                    updateWineryGeneralInfo(newGeneralInfo);
-                  }}
-                  className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
-                />
-              </Container>
-            </Container>
-            <Container intent="grid-2" gap="medium">
+              </div>
               <Container intent="flexColLeft" gap="xsmall">
                 <Container intent="flexRowLeft" gap="xsmall">
                   <Text intent="p1" variant="dim" className="font-semibold">
@@ -286,6 +301,50 @@ export const WineryForm = () => {
                   className="file:mr-[8px] text-primary-light file:border-2 file:border-primary-light file:px-[36px] file:py-[10px] file:rounded-lg file:bg-transparent file:text-primary-light file:font-semibold transition-all duration-300 ease-in-out"
                 />
               </Container>
+            </Container>
+            <Container intent="grid-2" gap="medium">
+              <Container intent="flexColLeft" gap="xsmall">
+                <Text intent="p1" variant="dim" className="font-semibold">
+                  * Winery Name
+                </Text>
+                <input
+                  required
+                  type="text"
+                  placeholder=""
+                  value={wineryGeneralInfo.name}
+                  onChange={(event: any) => {
+                    const newGeneralInfo = {
+                      ...wineryGeneralInfo,
+                      name: event.target.value,
+                    };
+                    updateWineryGeneralInfo(newGeneralInfo);
+                  }}
+                  className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
+                />
+              </Container>
+              <Container intent="flexColLeft" gap="xsmall">
+                <Container intent="flexRowLeft" gap="xsmall">
+                  <Text intent="p1" variant="dim" className="font-semibold">
+                    Founded In
+                  </Text>
+                  <InfoTooltip text="The year your winery was founded." />
+                </Container>
+                <input
+                  type="number"
+                  placeholder=""
+                  value={wineryGeneralInfo.foundedOn}
+                  onChange={(event: any) => {
+                    const newGeneralInfo = {
+                      ...wineryGeneralInfo,
+                      foundedOn: event.target.value,
+                    };
+                    updateWineryGeneralInfo(newGeneralInfo);
+                  }}
+                  className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
+                />
+              </Container>
+            </Container>
+            <Container intent="grid-2" gap="medium">
               <Container intent="flexColLeft" gap="xsmall">
                 <Container intent="flexRowLeft" gap="xsmall">
                   <Text intent="p1" variant="dim" className="font-semibold">

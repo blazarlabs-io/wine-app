@@ -94,22 +94,6 @@ export const Signup = ({ title, description }: LoginProps) => {
       .then((userCredential) => {
         updateMasterLoading(true);
 
-        // sendEmail({
-        //   data: {
-        //     from: "it@blazarlabs.io",
-        //     to: userCredential.user.email,
-        //     subject: "Your new account has been created!",
-        //     text: `Congratulations, you have successfuly registered a new account.`,
-        //     html: "", //generateWelcomelHtml(),
-        //   },
-        // })
-        //   .then((result) => {
-        //     console.log("Email sent: ", result);
-        //   })
-        //   .catch((error) => {
-        //     console.log("Error: ", error);
-        //   });
-
         updateToast({
           show: true,
           status: "success",

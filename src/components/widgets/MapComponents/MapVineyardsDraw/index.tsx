@@ -28,19 +28,11 @@ export const MapVineyardsDraw = ({
   };
 
   const map = useMap();
-  const { drawingManager, polygon, startWithInitialPolygon } =
-    useDrawingManager();
+  const { drawingManager, polygon } = useDrawingManager();
   const [cameraProps, setCameraProps] =
     useState<MapCameraProps>(INITIAL_CAMERA);
   const handleCameraChange = (ev: MapCameraChangedEvent) =>
     setCameraProps(ev.detail);
-
-  useEffect(() => {
-    // console.log("MapVineyardDraw", initialPosition);
-    // if (initialPolygon) {
-    //   startWithInitialPolygon(initialPolygon.coordinates);
-    // }
-  }, []);
 
   useEffect(() => {
     // drawPolygon(polygon);
@@ -50,7 +42,7 @@ export const MapVineyardsDraw = ({
   return (
     <Map
       {...cameraProps}
-      style={{ width: 640, height: 400 }}
+      style={{ width: "100%", height: 400 }}
       onCameraChanged={handleCameraChange}
       gestureHandling={"greedy"}
       disableDefaultUI={true}

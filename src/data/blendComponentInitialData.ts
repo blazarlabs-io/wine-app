@@ -1,13 +1,10 @@
 import { BlendComponent } from "@/typings/winery";
 
-export const blendComonetnInitialData: BlendComponent = {
+export const blendComponentInitialData: BlendComponent = {
+  id: null,
   name: null,
   type: null,
   ingredients: {
-    grapesVarieties: {
-      has: false,
-      list: [],
-    },
     acidityRegulators: {
       allergens: {
         has: false,
@@ -48,15 +45,10 @@ export const blendComonetnInitialData: BlendComponent = {
       has: false,
       list: [],
     },
-    sugars: "",
   },
   vineyardDetails: {
-    id: null,
-    grapeGrown: {
-      vintageYear: null,
-      name: null,
-      percentage: null,
-    },
+    name: null,
+    grape: null,
     controlledDesignationOfOrigin: null,
     coordinates: [],
     elevation: null,

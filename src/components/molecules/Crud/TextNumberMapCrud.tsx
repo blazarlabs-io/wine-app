@@ -14,21 +14,21 @@ import { Icon } from "@iconify/react";
 import {
   CoordinateInterface,
   GrapeAndVineyard,
-  GrapeVariety,
+  Grape,
   VineyardDetails,
 } from "@/typings/winery";
 import { classNames } from "@/utils/classNames";
-import { vintageYearList } from "@/utils/data";
+import { vintageYearList } from "@/data";
 import { useRouter } from "next/navigation";
-import { useGetGrapeVarieties } from "@/hooks/useGetGrapeVarieties";
-import { useGrapeAndVineyards } from "@/hooks/useGrapeAndVineyards";
+// import { useGetGrapeVarieties } from "@/hooks/useGetGrapeVarieties";
+// import { useGrapeAndVineyards } from "@/hooks/useGrapeAndVineyards";
 
 export interface TextInputCrudProps {
   initialPosition: CoordinateInterface | null;
   placeholder: string;
   required?: boolean;
   isLoading?: boolean;
-  onItemsChange: (items: GrapeVariety[]) => void;
+  onItemsChange: (items: Grape[]) => void;
   onPolygonComplete: (items: GrapeAndVineyard) => void;
 }
 
@@ -41,17 +41,17 @@ export const TextNumberMapCrud = ({
   onPolygonComplete,
 }: TextInputCrudProps) => {
   const router = useRouter();
-  const { grapesVarieties } = useGetGrapeVarieties();
-  const { grapesAndVineyards } = useGrapeAndVineyards();
+  // const { grapesVarieties } = useGetGrapeVarieties();
+  // const { grapesAndVineyards } = useGrapeAndVineyards();
 
-  const [currentGrape, setCurrentGrape] = useState<GrapeVariety | null>(null);
+  const [currentGrape, setCurrentGrape] = useState<Grape | null>(null);
   const [currentVineyard, setCurrentVineyard] =
     useState<VineyardDetails | null>(null);
   const [disableButton, setDisableButton] = useState<boolean>(true);
   const [isRequired, setIsRequired] = useState<boolean>(required);
   const [showMap, setShowMap] = useState<boolean>(false);
   const [showViewMap, setShowViewMap] = useState<boolean>(false);
-  const [selectedItem, setSelectedItem] = useState<GrapeVariety | null>(null);
+  const [selectedItem, setSelectedItem] = useState<Grape | null>(null);
   const [singleGrapeAndVineyard, setSingleGrapeAndVineyard] =
     useState<GrapeAndVineyard | null>(null);
 
@@ -72,18 +72,6 @@ export const TextNumberMapCrud = ({
     }
   }, [currentGrape]);
 
-  useEffect(() => {
-    if (grapesVarieties && grapesVarieties.length > 0) {
-      setIsRequired(false);
-    }
-  }, [grapesVarieties]);
-
-  // useEffect(() => {
-  //   if (grapesAndVineyards && grapesAndVineyards.length > 0) {
-  //     console.log("grapesAndVineyards", grapesAndVineyards);
-  //   }
-  // }, [grapesAndVineyards]);
-
   return (
     <>
       {showMap && (
@@ -93,7 +81,6 @@ export const TextNumberMapCrud = ({
               initialPosition={initialPosition}
               selectedItem={selectedItem}
               onPolygonComplete={(item, polygon) => {
-                // console.log(item, polygon);
                 const newGrapeAndVineyard = {
                   grape: item,
                   vineyard: {
@@ -107,9 +94,6 @@ export const TextNumberMapCrud = ({
                     coordinates: polygon,
                   },
                 };
-                setSingleGrapeAndVineyard(
-                  newGrapeAndVineyard as GrapeAndVineyard
-                );
               }}
               onSave={() => {
                 polygonCompleteHandler();
@@ -200,12 +184,12 @@ export const TextNumberMapCrud = ({
             required={isRequired}
             value={(currentGrape?.name as string) || ""}
             onChange={(event: any) => {
-              const newItem: GrapeVariety = {
+              const newItem: Grape = {
                 name: event.target.value as string,
                 vintageYear: currentGrape?.vintageYear as number,
                 percentage: currentGrape?.percentage as string,
               };
-              setCurrentGrape(newItem as GrapeVariety);
+              setCurrentGrape(newItem as Grape);
             }}
             className="w-full placeholder:text-on-surface-dark/50 text-sm text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
           />
@@ -220,12 +204,12 @@ export const TextNumberMapCrud = ({
             placeholder={placeholder}
             value={(currentGrape?.percentage as string) || ""}
             onChange={(event: any) => {
-              const newItem: GrapeVariety = {
+              const newItem: Grape = {
                 name: currentGrape?.name as string,
                 vintageYear: currentGrape?.vintageYear as number,
                 percentage: event.target.value as string,
               };
-              setCurrentGrape(newItem as GrapeVariety);
+              setCurrentGrape(newItem as Grape);
             }}
             className="w-full placeholder:text-on-surface-dark/50 text-sm text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
           />
@@ -246,7 +230,7 @@ export const TextNumberMapCrud = ({
                 : ""
             }
             onSelect={(data: string) => {
-              const newItem: GrapeVariety = {
+              const newItem: Grape = {
                 name: currentGrape?.name as string,
                 vintageYear: parseInt(data as string),
                 percentage: currentGrape?.percentage as string,
@@ -262,23 +246,23 @@ export const TextNumberMapCrud = ({
           onClick={() => {
             // const its = grapeVarieties ? [...grapeVarieties] : [];
             // if (!items) {
-            //   setItems([currentGrape as GrapeVariety]);
-            //   onItemsChange([currentGrape as GrapeVariety]);
+            //   setItems([currentGrape as Grape]);
+            //   onItemsChange([currentGrape as Grape]);
             // } else {
-            //   setItems([...items, currentGrape as GrapeVariety]);
-            //   onItemsChange([...items, currentGrape as GrapeVariety]);
+            //   setItems([...items, currentGrape as Grape]);
+            //   onItemsChange([...items, currentGrape as Grape]);
             // }
 
             // setItems(its);
             // onItemsChange(its);
 
             // RESET CURRENT ITEM
-            const newItem: GrapeVariety = {
+            const newItem: Grape = {
               name: "",
               percentage: "",
               vintageYear: 0,
             };
-            setCurrentGrape(newItem as GrapeVariety);
+            setCurrentGrape(newItem as Grape);
           }}
           className={classNames(
             "border-[1.5px] border-primary-light mt-[32px] text-[16px] flex items-center justify-center max-w-fit px-[12px] gap-[4px] text-primary-light hover:text-primary transition-all duration-200 ease-in-out",
@@ -299,7 +283,7 @@ export const TextNumberMapCrud = ({
           </div>
         ) : (
           <>
-            {grapesAndVineyards !== null &&
+            {/* {grapesAndVineyards !== null &&
               grapesAndVineyards !== undefined &&
               grapesAndVineyards.length > 0 && (
                 <>
@@ -396,7 +380,7 @@ export const TextNumberMapCrud = ({
                     </div>
                   ))}
                 </>
-              )}
+              )} */}
           </>
         )}
       </Container>

@@ -9,8 +9,8 @@ export const useSearchUpc = () => {
   const [upcs, setUpcs] = useState<string[]>([]);
 
   const fetchUpcCodes = () => {
-    getDocsInCollection("wineries").then((wineries: Winery[]) => {
-      setWineries(wineries);
+    getDocsInCollection("wineries").then((data: any) => {
+      setWineries(data.docs);
       wineries.forEach((winery) => {
         if (winery.wines && winery.wines.length > 0) {
           winery.wines.forEach((wine: any) => {

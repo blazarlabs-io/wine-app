@@ -44,73 +44,94 @@ export interface WineryGeneralInfo {
 
 // SINGLE WINE
 export interface Wine {
-  referenceNumber: string | null;
+  referenceNumber: string;
+  isMinified: boolean;
   // wine general information
   generalInformation: {
-    wineryName: string | null;
-    wineCollectionName: string | null;
-    country: string | null;
-    collectionSize: string | null;
-    bottlingYear: string | null;
-    awardsAndRecognitions: string[] | null;
-    wineImageUrl: string | null;
-    qrCodeUrl: string | null;
+    wineryName: string;
+    wineCollectionName: string;
+    country: string;
+    collectionSize: string;
+    bottlingYear: string;
+    awardsAndRecognitions: string[];
+    wineImageUrl: string;
+    qrCodeUrl: string;
   };
   // wine characteristics
   characteristics: {
-    wineColour: string | null;
-    wineType: string | null;
-    alcoholLevel: string | null;
-    residualSugar: string | null;
-    acidityLevel: string | null;
-    tanningLevel: string | null;
+    wineColour: string;
+    wineType: string;
+    alcoholLevel: string;
+    residualSugar: string;
+    acidityLevel: string;
+    tanningLevel: string;
     aromaProfile: {
-      has: boolean | null;
-      list: string[] | null;
+      has: boolean;
+      list: string[];
     };
     flavourProfile: {
-      has: boolean | null;
-      list: string[] | null;
+      has: boolean;
+      list: string[];
     };
-    sulphiteLevel: string | null;
+    sulphiteLevel: string;
   };
   // wine-making technique
   wineMakingTechnique: {
-    wineMakingTechnique: string | null;
-    isWineVegan: boolean | null;
-    isWineOrganic: boolean | null;
-    isWineBioDynamic: boolean | null;
-    isWineNatural: boolean | null;
+    wineMakingTechnique: string;
+    isWineVegan: boolean;
+    isWineOrganic: boolean;
+    isWineBioDynamic: boolean;
+    isWineNatural: boolean;
     sustainablePractices: {
-      has: boolean | null;
-      list: string[] | null;
+      has: boolean;
+      list: string[];
     };
   };
   // wine storage conditions
   storageConditions: {
-    placeForInitialStorage: string | null;
+    placeForInitialStorage: string;
     storageTemperature: StorageTemperature;
-    lightingConditions: string | null;
-    humidityLevel: string | null;
-    vibrationLevel: string | null;
+    lightingConditions: string;
+    humidityLevel: string;
+    vibrationLevel: string;
   };
   // wine packaging and branding
   packagingAndBranding: {
-    bottleSize: string | null;
-    bottleType: string | null;
-    closureType: string[] | null;
-    extraPackaging: string | null;
-    upc: string | null;
+    bottleSize: string;
+    bottleType: string;
+    closureType: string[];
+    extraPackaging: string;
+    upc: string;
   };
   // Blend components
   blendComponents: BlendComponent[];
-  marketingInfo: string | null;
+  marketingInfo: string;
+  minifiedWine: MinifiedWine;
+}
+
+// MINIFIED WINE
+export interface MinifiedWine {
+  upc: string;
+  wineryName: string;
+  wineCollectionName: string;
+  country: string;
+  wineType: string;
+  bottleSize: string;
+  wineColour: string;
+  alcoholLevel: string;
+  controlledDesignationOfOrigin: string;
+  wineImageUrl: string;
+  qrCodeUrl: string;
+  grapes: Grape[];
+  blendIngredients: BlendIngredients;
+  residualSugar: string;
 }
 
 // BLEND COMPONENTS
 export interface BlendComponent {
-  name: string | null;
-  type: string | null;
+  id: string;
+  name: string;
+  type: string;
   ingredients: BlendIngredients;
   vineyardDetails: VineyardDetails;
   grapesHarvesting: GrapesHarvesting;
@@ -119,18 +140,14 @@ export interface BlendComponent {
 }
 
 // SINGLE GRAPE VARIETY
-export interface GrapeVariety {
-  name: string | null;
-  percentage: string | null;
-  vintageYear: number | null;
+export interface Grape {
+  name: string;
+  percentage: string;
+  vintageYear: number;
 }
 
 // BLEND INGREDIENTS
 export interface BlendIngredients {
-  grapesVarieties: {
-    has: boolean;
-    list: GrapeVariety[];
-  };
   acidityRegulators: {
     allergens: {
       has: boolean;
@@ -171,41 +188,40 @@ export interface BlendIngredients {
     has: boolean;
     list: string[];
   };
-  sugars: string;
 }
 
 // VINEYARD DETAILS
 export interface VineyardDetails {
-  id: string | null;
-  controlledDesignationOfOrigin: string | null;
-  grapeGrown: GrapeVariety;
-  coordinates: CoordinateInterface[] | null;
-  elevation: string | null;
-  orientation: string | null;
-  soilType: string | null;
-  vinesAge: string | null;
-  irrigationPractices: string[] | null;
+  name: string;
+  controlledDesignationOfOrigin: string;
+  grape: Grape;
+  coordinates: CoordinateInterface[];
+  elevation: string;
+  orientation: string;
+  soilType: string;
+  vinesAge: string;
+  irrigationPractices: string[];
 }
 
 // GRAPES HARVESTING
 export interface GrapesHarvesting {
-  vintageYear: number | null;
-  harvestMethod: string | null;
-  yieldPerHectare: string | null;
-  selectionProcess: string | null;
+  vintageYear: number;
+  harvestMethod: string;
+  yieldPerHectare: string;
+  selectionProcess: string;
 }
 
 // FERMENTATION PROCESS
 export interface FermentationProcess {
-  method: string | null;
-  yeastType: string | null;
-  time: string | null;
-  malolactic: boolean | null;
+  method: string;
+  yeastType: string;
+  time: string;
+  malolactic: boolean;
 }
 
 // AGING PROCESS
 export interface AgingProcess {
-  vesselType: string | null;
+  vesselType: string;
 }
 
 // COORDINATE INTERFACE
@@ -216,22 +232,23 @@ export interface CoordinateInterface {
 
 // GRAPES MAP COORDINATES INTERFACE
 export interface GrapeAndVineyard {
-  grape: GrapeVariety;
+  grape: Grape;
   vineyard: VineyardDetails;
 }
 
 // STORAGE TEMPERATURE
 export type TemperatureUnits = "celcius" | "fahrenheit";
+
 export interface SelectedTemperature {
-  unit: TemperatureUnits | null;
-  value: string | null;
+  unit: TemperatureUnits;
+  value: string;
 }
 export interface StorageTemperature {
   units: TemperatureUnits[];
-  selected: SelectedTemperature | null;
+  selected: SelectedTemperature;
 }
 
-export interface VineyardGrapeGrownWithCoordinates {
-  grapeGrown: GrapeVariety | null;
-  coordinates: CoordinateInterface[] | null;
+export interface VineyardGrapeAndCoordinates {
+  grape: Grape;
+  coordinates: CoordinateInterface[];
 }

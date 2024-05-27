@@ -11,14 +11,14 @@ import { useDrawingManager } from "./useDrawingManager";
 import {
   CoordinateInterface,
   GrapeAndVineyard,
-  VineyardGrapeGrownWithCoordinates,
+  VineyardGrapeAndCoordinates,
 } from "@/typings/winery";
 import { Container, Text } from "@/components";
 import { getPolygonCenter } from "@/utils/getPolygonCenter";
 
 export interface MapVineyardsDrawProps {
   initialPosition: CoordinateInterface;
-  initialItems: VineyardGrapeGrownWithCoordinates;
+  initialItems: VineyardGrapeAndCoordinates;
 }
 
 export const MapVineyardsView = ({
@@ -73,7 +73,7 @@ export const MapVineyardsView = ({
         position: getPolygonCenter(
           initialItems?.coordinates
         ) as CoordinateInterface,
-        title: initialItems?.grapeGrown?.name,
+        title: initialItems?.grape?.name,
       });
 
       mark.setMap(map);

@@ -7,30 +7,28 @@ import {
   Text,
   TextInputCrud,
   InfoTooltip,
-  CheckBox,
   SpinnerLoader,
-  TextAndNumberInputCrud,
   SelectOrTextInputCrud,
   SelectAndTextInputCrud,
   SelectCrud,
   BlendComponentCrud,
+  WineThumbnail,
 } from "@/components";
 import { useForms } from "@/context/FormsContext";
 import { useAuth } from "@/context/authContext";
 import { useModal } from "@/context/modalContext";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
-import { blendComonetnInitialData } from "@/data/blendComonetnInitialData";
+import { useIntegrateMinifiedAndExtendedWines } from "@/hooks/useIntegrateMinifiedAndExtendedWines";
+import { BlendComponent, SelectedTemperature } from "@/typings/winery";
 import {
-  BlendComponent,
-  GrapeVariety,
-  SelectedTemperature,
-} from "@/typings/winery";
-import { countryList, vintageYearList } from "@/utils/data";
+  countryList,
+  vintageYearList,
+  blendComponentInitialData,
+} from "@/data";
 import { uploadWineImageToStorage } from "@/utils/firestore";
 import { restrictNumberInput } from "@/utils/validators/restrictNumberInput";
 import { validateFileSizeAndType } from "@/utils/validators/validateFileSizeAndType";
 import { useEffect, useRef, useState } from "react";
-import { useGetGrapeVarieties } from "@/hooks/useGetGrapeVarieties";
 
 export interface BasicFormProps {
   onSave: () => void;
@@ -38,6 +36,7 @@ export interface BasicFormProps {
 }
 
 export const ExtendedForm = ({ onSave, onCancel }: BasicFormProps) => {
+  // * Hooks
   const { updateModal } = useModal();
   const {
     wineTypes,
@@ -50,15 +49,17 @@ export const ExtendedForm = ({ onSave, onCancel }: BasicFormProps) => {
     closureTypes,
   } = useRealtimeDb();
   const { wineForm, updateWineForm } = useForms();
-  const { grapesVarieties } = useGetGrapeVarieties();
-
-  const inputFileRef = useRef<any>(null);
-
+  const { formsIntegrated } = useIntegrateMinifiedAndExtendedWines();
   const { user } = useAuth();
 
+  // * Refs
+  const inputFileRef = useRef<any>(null);
+
+  // * States
   const [imageUploading, setImageUploading] = useState<boolean>(false);
   const [dataReady, setDataReady] = useState<boolean>(false);
 
+  // * Handle wine image upload
   const handleWineImageUpload = (wineImageFile: File) => {
     setImageUploading(true);
     uploadWineImageToStorage(
@@ -81,30 +82,18 @@ export const ExtendedForm = ({ onSave, onCancel }: BasicFormProps) => {
     );
   };
 
+  // * Handle form submission
   const handleSubmit = (event: any) => {
     event.preventDefault();
     onSave();
   };
 
+  // * Update the wine form with integrated data
   useEffect(() => {
-    // if empty push initial empty data to blend components
-    if (wineForm.formData.blendComponents.length === 0) {
-      const components: BlendComponent[] = [];
-      components.push(blendComonetnInitialData);
-
-      updateWineForm({
-        ...wineForm,
-        formData: {
-          ...wineForm.formData,
-          blendComponents: components,
-        },
-      });
-
-      setDataReady(true);
-    } else {
+    if (formsIntegrated) {
       setDataReady(true);
     }
-  }, [wineForm]);
+  }, [formsIntegrated]);
 
   return (
     <>
@@ -115,7 +104,7 @@ export const ExtendedForm = ({ onSave, onCancel }: BasicFormProps) => {
         </Text>
       </Container>
       {/* First Row */}
-      {dataReady && wineForm.formData.blendComponents.length > 0 && (
+      {dataReady && (
         <>
           <form onSubmit={handleSubmit}>
             <Container intent="flexColCenter" gap="medium">
@@ -148,71 +137,82 @@ export const ExtendedForm = ({ onSave, onCancel }: BasicFormProps) => {
                     className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
                   />
                 </Container>
-                <Container intent="flexColLeft" gap="xsmall" className="">
-                  <Container
-                    intent="flexRowLeft"
-                    gap="xsmall"
-                    className="max-w-fit"
-                  >
-                    <Text
-                      intent="p1"
-                      variant="dim"
-                      className="font-semibold min-w-fit"
-                    >
-                      Wine Image
-                    </Text>
-                    <InfoTooltip
-                      width={240}
-                      text="For optimal display, please upload a photo of your wine bottle against a single-color background. Ensure the bottle is vertical, occupies 80-90% of the photo's height, and is free from unnecessary elements. High or studio lighting is preferred. You can change this photo later if needed."
-                    />
-                    {imageUploading && (
-                      <div className="flex items-center justify-start gap-[8px] max-w-fit">
-                        <Text
-                          intent="p2"
-                          variant="dim"
-                          className="font-semibold"
-                        >
-                          Uploading
-                        </Text>
-                        <SpinnerLoader color="#ddd" />
-                      </div>
-                    )}
-                  </Container>
-                  <input
-                    id="files"
-                    ref={inputFileRef}
-                    type="file"
-                    accept="image/*"
-                    multiple={false}
-                    onChange={(event: any) => {
-                      const validFile = validateFileSizeAndType(
-                        event.target.files[0],
-                        2
-                      );
-                      if (!validFile) {
-                        inputFileRef.current.value = "";
-                        updateModal({
-                          show: true,
-                          title: "Error",
-                          description:
-                            "File size should be less than 2MB and image types accepted are jpeg and png.",
-                          action: {
-                            label: "OK",
-                            onAction: () =>
-                              updateModal({
-                                show: false,
-                                title: "",
-                                description: "",
-                                action: { label: "", onAction: () => {} },
-                              }),
-                          },
-                        });
-                      } else {
-                        handleWineImageUpload(event.target.files[0]);
+                <Container intent="flexRowLeft" gap="xsmall">
+                  <div className="bg-surface-light p-[4px] rounded-lg">
+                    <WineThumbnail
+                      imageUrl={
+                        wineForm.formData.generalInformation.wineImageUrl
                       }
-                    }}
-                    className="file:mr-[8px] text-primary-light file:border-2 file:border-primary-light file:px-[36px] file:py-[10px] file:rounded-lg file:bg-transparent file:text-primary-light file:font-semibold transition-all duration-300 ease-in-out"
-                  />
+                      width={80}
+                      height={80}
+                    />
+                  </div>
+                  <Container intent="flexColLeft" gap="xsmall" className="">
+                    <Container
+                      intent="flexRowLeft"
+                      gap="xsmall"
+                      className="max-w-fit"
+                    >
+                      <Text
+                        intent="p1"
+                        variant="dim"
+                        className="font-semibold min-w-fit"
+                      >
+                        Wine Image
+                      </Text>
+                      <InfoTooltip
+                        width={240}
+                        text="For optimal display, please upload a photo of your wine bottle against a single-color background. Ensure the bottle is vertical, occupies 80-90% of the photo's height, and is free from unnecessary elements. High or studio lighting is preferred. You can change this photo later if needed."
+                      />
+                      {imageUploading && (
+                        <div className="flex items-center justify-start gap-[8px] max-w-fit">
+                          <Text
+                            intent="p2"
+                            variant="dim"
+                            className="font-semibold"
+                          >
+                            Uploading
+                          </Text>
+                          <SpinnerLoader color="#ddd" />
+                        </div>
+                      )}
+                    </Container>
+                    <input
+                      id="files"
+                      ref={inputFileRef}
+                      type="file"
+                      accept="image/*"
+                      multiple={false}
+                      onChange={(event: any) => {
+                        const validFile = validateFileSizeAndType(
+                          event.target.files[0],
+                          2
+                        );
+                        if (!validFile) {
+                          inputFileRef.current.value = "";
+                          updateModal({
+                            show: true,
+                            title: "Error",
+                            description:
+                              "File size should be less than 2MB and image types accepted are jpeg and png.",
+                            action: {
+                              label: "OK",
+                              onAction: () =>
+                                updateModal({
+                                  show: false,
+                                  title: "",
+                                  description: "",
+                                  action: { label: "", onAction: () => {} },
+                                }),
+                            },
+                          });
+                        } else {
+                          handleWineImageUpload(event.target.files[0]);
+                        }
+                      }}
+                      className="file:mr-[8px] text-primary-light file:border-2 file:border-primary-light file:px-[36px] file:py-[10px] file:rounded-lg file:bg-transparent file:text-primary-light file:font-semibold transition-all duration-300 ease-in-out"
+                    />
+                  </Container>
                 </Container>
               </Container>
 
@@ -299,7 +299,7 @@ export const ExtendedForm = ({ onSave, onCancel }: BasicFormProps) => {
                   </Text>
                   <input
                     required
-                    type="text"
+                    type="number"
                     placeholder=""
                     value={
                       (wineForm.formData.generalInformation
@@ -357,7 +357,7 @@ export const ExtendedForm = ({ onSave, onCancel }: BasicFormProps) => {
               <Container intent="grid-3" gap="small" className="w-full">
                 <Container intent="flexColLeft" gap="xsmall" className="w-full">
                   <Text intent="p1" variant="dim" className="font-semibold">
-                    * Awards and Recognitions
+                    Awards and Recognitions
                   </Text>
                   <TextInputCrud
                     label="Name"
@@ -688,8 +688,6 @@ export const ExtendedForm = ({ onSave, onCancel }: BasicFormProps) => {
                     }
                     placeholder="e.g. Apple, Pear, Citrus"
                     onItemsChange={(items: string[]) => {
-                      console.log("items", items);
-
                       updateWineForm({
                         ...wineForm,
                         formData: {
@@ -723,8 +721,6 @@ export const ExtendedForm = ({ onSave, onCancel }: BasicFormProps) => {
                     }
                     placeholder="e.g. Apple, Pear, Citrus"
                     onItemsChange={(items: string[]) => {
-                      console.log("items", items);
-
                       updateWineForm({
                         ...wineForm,
                         formData: {
@@ -759,7 +755,7 @@ export const ExtendedForm = ({ onSave, onCancel }: BasicFormProps) => {
                       required
                       type="number"
                       min="0"
-                      max="100"
+                      max="999"
                       step={0.5}
                       placeholder=""
                       value={
@@ -1157,8 +1153,6 @@ export const ExtendedForm = ({ onSave, onCancel }: BasicFormProps) => {
                         .list as string[]
                     }
                     onItemsChange={(items: string[]) => {
-                      console.log("items", items);
-
                       updateWineForm({
                         ...wineForm,
                         formData: {
@@ -1233,8 +1227,6 @@ export const ExtendedForm = ({ onSave, onCancel }: BasicFormProps) => {
                         .closureType as string[]
                     }
                     onItemsChange={(items: string[]) => {
-                      console.log("items", items);
-
                       updateWineForm({
                         ...wineForm,
                         formData: {
@@ -1251,12 +1243,11 @@ export const ExtendedForm = ({ onSave, onCancel }: BasicFormProps) => {
                 <Container intent="flexColLeft" gap="xsmall">
                   <Container intent="flexRowLeft" gap="xsmall">
                     <Text intent="p1" variant="dim" className="font-semibold">
-                      * Extra Packaging
+                      Extra Packaging
                     </Text>
                   </Container>
 
                   <input
-                    required
                     type="text"
                     placeholder=""
                     value={
@@ -1290,7 +1281,7 @@ export const ExtendedForm = ({ onSave, onCancel }: BasicFormProps) => {
                   variant="accent"
                   className="mb-[8px] font-semibold"
                 >
-                  Blend Components
+                  Wine Blend
                 </Text>
                 <InfoTooltip
                   className="mt-[-8px]"
@@ -1298,24 +1289,24 @@ export const ExtendedForm = ({ onSave, onCancel }: BasicFormProps) => {
                 />
               </Container>
 
-              <Container intent="flexRowLeft" gap="xsmall">
-                <BlendComponentCrud
-                  referenceNumber={wineForm.formData.referenceNumber as string}
-                  components={
-                    wineForm.formData.blendComponents as BlendComponent[]
-                  }
-                  onSave={(component: BlendComponent) => {
-                    wineForm.formData.blendComponents[0] = component;
-                    updateWineForm({
-                      ...wineForm,
-                      formData: {
-                        ...wineForm.formData,
-                        blendComponents: wineForm.formData.blendComponents,
-                      },
-                    });
-                  }}
-                />
-              </Container>
+              {wineForm.formData.blendComponents.length > 0 && (
+                <Container intent="flexRowLeft" gap="xsmall">
+                  <BlendComponentCrud
+                    components={
+                      wineForm.formData.blendComponents as BlendComponent[]
+                    }
+                    onSave={() => {
+                      updateWineForm({
+                        ...wineForm,
+                        formData: {
+                          ...wineForm.formData,
+                          blendComponents: wineForm.formData.blendComponents,
+                        },
+                      });
+                    }}
+                  />
+                </Container>
+              )}
 
               {/* Buttons */}
 
@@ -1334,7 +1325,9 @@ export const ExtendedForm = ({ onSave, onCancel }: BasicFormProps) => {
                   intent="primary"
                   size="medium"
                   onClick={() => {
-                    onSave();
+                    // ? We need to make sure that the form is set to not MINIFIED before saving
+                    wineForm.isMinified = false;
+                    updateWineForm(wineForm);
                   }}
                 >
                   Save

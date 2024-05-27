@@ -57,6 +57,7 @@ export const WinesListSection = () => {
                     description:
                       "Create a new wine. All fields marked with * are mandatory.",
                     isEditing: false,
+                    isMinified: false,
                     formData: wineInitData,
                   });
                   router.push("/wine-form");
@@ -87,6 +88,7 @@ export const WinesListSection = () => {
                       description:
                         "Edit your wine. All fields marked with * are mandatory.",
                       isEditing: true,
+                      isMinified: false,
                       formData: item,
                     });
 
@@ -117,6 +119,7 @@ export const WinesListSection = () => {
                     description:
                       "Create a new wine. All fields marked with * are mandatory.",
                     isEditing: false,
+                    isMinified: false,
                     formData: wineInitData,
                   });
                   router.push("/wine-form");

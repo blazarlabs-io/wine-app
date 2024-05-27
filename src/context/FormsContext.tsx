@@ -16,6 +16,7 @@ export interface WineFormInterface {
   title: string;
   description: string;
   isEditing: boolean;
+  isMinified: boolean;
   formData: Wine;
 }
 
@@ -37,6 +38,7 @@ const contextInitialData: FormsContextInterface = {
     title: "",
     description: "",
     isEditing: false,
+    isMinified: false,
     formData: wineInitData,
   },
   updateWineryForm: () => {},

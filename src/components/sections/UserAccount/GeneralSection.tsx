@@ -14,10 +14,10 @@ import { useAuth } from "@/context/authContext";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
 import { useState } from "react";
 import { useAppState } from "@/context/appStateContext";
-import { httpsCallable } from "firebase/functions";
-import { auth, functions } from "@/lib/firebase/client";
+import { auth } from "@/lib/firebase/client";
 import { useToast } from "@/context/toastContext";
 import { signOut } from "firebase/auth";
+import { updateUserPassword } from "@/utils/firestore";
 
 export const GeneralSection = () => {
   const { user } = useAuth();
@@ -25,8 +25,6 @@ export const GeneralSection = () => {
   const { updateAppLoading } = useAppState();
   const { updateToast } = useToast();
   const [showUpdatePassword, setShowUpdatePassword] = useState<boolean>(false);
-
-  const updateUserPassword = httpsCallable(functions, "updateUserPassword");
 
   const handleUpdatePassword = (password: string) => {
     updateUserPassword({ data: { uid: user?.uid, password: password } })

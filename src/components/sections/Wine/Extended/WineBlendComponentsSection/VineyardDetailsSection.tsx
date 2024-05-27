@@ -1,13 +1,15 @@
+/* eslint-disable react/no-unescaped-entities */
 import {
   Container,
   Text,
   WineItem,
   WineItemList,
-  PolygonViewerMap,
   MapVineyardsView,
+  GrapesViewerTable,
 } from "@/components";
 import { VineyardDetails } from "@/typings/winery";
 import { Icon } from "@iconify/react";
+import { useEffect, useState } from "react";
 
 export interface VineyardDetailsSectionProps {
   item: VineyardDetails;
@@ -18,6 +20,28 @@ export const VineyardDetailsSection = ({
   item,
   mapData,
 }: VineyardDetailsSectionProps) => {
+  const [mapAllowed, setMapAllowed] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (
+      item.coordinates?.length &&
+      item.coordinates?.length > 0 &&
+      item.grape?.name !== "" &&
+      item.grape?.name !== null &&
+      item.grape?.name !== undefined &&
+      item.grape?.percentage !== "" &&
+      item.grape?.percentage !== null &&
+      item.grape?.percentage !== undefined &&
+      item.grape?.vintageYear !== 0 &&
+      item.grape?.vintageYear !== null &&
+      item.grape?.vintageYear !== undefined
+    ) {
+      setMapAllowed(true);
+    }
+  }, []);
+
+  console.log(item);
+
   return (
     <>
       <Container intent="flexRowLeft" gap="xsmall" className="mt-[24px]">
@@ -34,6 +58,11 @@ export const VineyardDetailsSection = ({
         </Container>
       </Container>
       <Container intent="grid-2" gap="medium" className="w-full mt-[12px]">
+        <GrapesViewerTable
+          title="Grapes Varieties"
+          variant="surface"
+          ingredient={item.grape}
+        />
         <WineItem
           title="Control Designation of Origin"
           value={item.controlledDesignationOfOrigin as string}
@@ -68,13 +97,35 @@ export const VineyardDetailsSection = ({
           variant="surface"
         />
       </Container>
-      <MapVineyardsView
-        initialPosition={mapData.initialPosition}
-        initialItems={{
-          coordinates: item.coordinates,
-          grapeGrown: item.grapeGrown,
-        }}
-      />
+      {mapAllowed ? (
+        <MapVineyardsView
+          initialPosition={mapData.initialPosition}
+          initialItems={{
+            coordinates: item.coordinates,
+            grape: item.grape,
+          }}
+        />
+      ) : (
+        <Container
+          intent="flexRowCenter"
+          px="medium"
+          py="xsmall"
+          gap="xsmall"
+          className="bg-status-info/30 rounded-md border border-status-info relative my-[24px]"
+        >
+          <Icon
+            icon="mdi:information-outline"
+            width={24}
+            height={24}
+            className="text-status-info mt-[-4px]"
+          />
+          <Text variant="info">
+            Vineyard map is not available for this blend component. Please edit
+            your wine's blend component by clicking on the yellow edit button
+            for this wine.
+          </Text>
+        </Container>
+      )}
     </>
   );
 };
