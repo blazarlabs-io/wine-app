@@ -79,7 +79,7 @@ export const TextNumberMapCrud = ({
           {initialPosition ? (
             <PolygonEditorMap
               initialPosition={initialPosition}
-              selectedItem={selectedItem}
+              selectedItem={selectedItem as Grape}
               onPolygonComplete={(item, polygon) => {
                 const newGrapeAndVineyard = {
                   grape: item,

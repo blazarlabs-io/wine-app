@@ -1,18 +1,59 @@
 import { MinifiedWine } from "@/typings/winery";
 
 export const minifiedWineInitData: MinifiedWine = {
-  upc: null,
-  wineryName: null,
-  wineCollectionName: null,
-  country: null,
-  wineType: null,
-  bottleSize: null,
-  wineColour: null,
-  alcoholLevel: null,
-  controlledDesignationOfOrigin: null,
-  wineImageUrl: null,
-  qrCodeUrl: null,
-  grapes: null,
-  blendIngredients: null,
-  residualSugar: null,
+  upc: "",
+  wineryName: "",
+  wineCollectionName: "",
+  country: "",
+  wineType: "",
+  bottleSize: "",
+  wineColour: "",
+  alcoholLevel: "",
+  controlledDesignationOfOrigin: "",
+  wineImageUrl: "",
+  qrCodeUrl: "",
+  grapes: [],
+  blendIngredients: {
+    acidityRegulators: {
+      allergens: {
+        has: false,
+        list: [],
+      },
+      has: false,
+      list: [],
+    },
+    antioxidants: {
+      allergens: {
+        has: false,
+        list: [],
+      },
+      has: false,
+      list: [],
+    },
+    preservatives: {
+      allergens: {
+        has: false,
+        list: [],
+      },
+      has: false,
+      list: [],
+    },
+    stabilizers: {
+      allergens: {
+        has: false,
+        list: [],
+      },
+      has: false,
+      list: [],
+    },
+    finingAgents: {
+      allergens: {
+        has: false,
+        list: [],
+      },
+      has: false,
+      list: [],
+    },
+  },
+  residualSugar: "",
 };

@@ -11,6 +11,7 @@ import {
   GrapesViewerTable,
   IngredientViewerTable,
   WineItemList,
+  MinifiedGrapesViewerTable,
 } from "@/components";
 import { Grape, Wine, WineryGeneralInfo } from "@/typings/winery";
 import { useResponsive } from "@/hooks/useResponsive";
@@ -101,7 +102,7 @@ export const WineGeneralMinifiedViewer = ({
               </Text>
             </Container>
             <Container intent="grid-4" gap="large">
-              <GrapesViewerTable
+              <MinifiedGrapesViewerTable
                 title="Grape Varieties"
                 ingredient={item.minifiedWine.grapes}
               />
