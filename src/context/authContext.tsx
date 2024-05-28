@@ -42,11 +42,9 @@ export const AuthProvider = ({
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       updateAppLoading(false);
       if (user) {
-        console.log("User", user);
         setUser(user);
         // router.push("/home");
       } else {
-        console.log("No user");
         setUser(null);
         updateAppLoading(false);
         // router.replace("/");

@@ -2,13 +2,11 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { useResponsive } from "@/hooks/useResponsive";
-import { EuLabelInterface } from "@/typings/winery";
+import { Wine } from "@/typings/winery";
 import {
-  getAllEuLabelWines,
+  getAllWines,
   getAllWineryNames,
-  getEuLabelWinesByWineType,
-  getEuLabelWinesByWineryName,
-  getWineByUpcCode,
+  getWinesByWineryName,
   getWineTypes,
 } from "@/utils/firestore";
 
@@ -27,8 +25,8 @@ export interface FiltersContextInterface {
   mobileFilters: boolean;
   showFilters: boolean;
   filters: FiltersInterface;
-  filteredWines: EuLabelInterface[];
-  allWines: EuLabelInterface[];
+  filteredWines: Wine[];
+  allWines: Wine[];
   filtersLoading: boolean;
   filtersMessage: string;
   updateShowFilters: (value: boolean) => void;
@@ -89,8 +87,8 @@ export const FiltersProvider = ({
     },
     byUpc: null,
   });
-  const [filteredWines, setFilteredWines] = useState<EuLabelInterface[]>([]);
-  const [allWines, setAllWines] = useState<EuLabelInterface[]>([]);
+  const [filteredWines, setFilteredWines] = useState<Wine[]>([]);
+  const [allWines, setAllWines] = useState<Wine[]>([]);
   const [filtersLoading, setFiltersLoading] = useState<boolean>(false);
   const [filtersMessage, setFiltersMessage] = useState<string>("");
 
@@ -117,18 +115,9 @@ export const FiltersProvider = ({
 
   useEffect(() => {
     if (filters.byWinery.result && !filters.byWineType.result) {
-      getEuLabelWinesByWineryName(filters.byWinery.result)
-        .then((wines: EuLabelInterface[]) => {
-          setFilteredWines(wines);
-          setFiltersLoading(false);
-        })
-        .catch((error) => {});
-      return;
-    }
-    if (filters.byWineType.result && !filters.byWinery.result) {
-      getEuLabelWinesByWineType(filters.byWineType.result)
-        .then((wines) => {
-          setFilteredWines(wines);
+      getWinesByWineryName(filters.byWinery.result)
+        .then((wines: any) => {
+          setFilteredWines(wines.data);
           setFiltersLoading(false);
         })
         .catch((error) => {});
@@ -140,29 +129,33 @@ export const FiltersProvider = ({
   }, [filters]);
 
   useEffect(() => {
-    getAllWineryNames().then((wineries) => {
+    getAllWineryNames().then((wineries: any) => {
       setFilters((filters) => ({
         ...filters,
         byWinery: {
-          list: wineries,
+          list: wineries.data,
           result: null,
         },
       }));
     });
     getWineTypes()
-      .then((wineTypes) => {
+      .then((wineTypes: any) => {
         setFilters((filters) => ({
           ...filters,
           byWineType: {
-            list: wineTypes,
+            list: wineTypes.data,
             result: null,
           },
         }));
       })
       .catch((error) => {});
-    getAllEuLabelWines().then((wines) => {
-      setAllWines(wines);
-    });
+    getAllWines()
+      .then((wines: any) => {
+        setAllWines(wines.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, []);
 
   const value = {

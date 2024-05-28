@@ -1,6 +1,29 @@
-import { Timestamp } from "firebase-admin/firestore";
+import { Timestamp } from "firebase/firestore";
 
-export interface WineryGeneralInfoInterface {
+export type Level = "bronze" | "silver" | "gold" | "platinum";
+
+// WINERY
+export interface Winery {
+  generalInfo: WineryGeneralInfo;
+  disabled: boolean;
+  isVerified: boolean;
+  id: string;
+  level: Level;
+  tier: number;
+  wines: Wine[];
+}
+
+// CREATE ADMIN NOTIFICATION
+export interface CreateAdminNotification {
+  requestDate: Timestamp;
+  wineryName: string;
+  wineryEmail: string;
+  wineryPhone: string;
+  wineryRepresentative: string;
+}
+
+// WINERY GENERAL INFORMATION
+export interface WineryGeneralInfo {
   name: string;
   foundedOn: string;
   logo: string;
@@ -11,10 +34,7 @@ export interface WineryGeneralInfoInterface {
   grapeVarieties: string;
   lastUpdated: string;
   certifications: string[];
-  wineryHeadquarters: {
-    latitude: string;
-    longitude: string;
-  };
+  wineryHeadquarters: CoordinateInterface;
   wineryRepresentative: {
     name: string;
     email: string;
@@ -22,152 +42,213 @@ export interface WineryGeneralInfoInterface {
   };
 }
 
-export interface WineGeneralInfoInterface {
-  collectionName: string;
-  bottlesProduced: string;
-  yearOfBottling: string;
-}
-
-export interface WineCharacteristicsInterface {
-  alcoholContent: string;
-  residualSugar: string;
-  acidityLevel: string;
-  tanningLevel: string;
-  wineColor: string;
-  aromaProfile: string;
-  flavorProfile: string;
-  sulfiteLevel: string;
-}
-
-export interface WineStorageConditionsInterface {
-  initialStorage: string;
-  temperature: string;
-  lightExposure: string;
-  humidityLevel: string;
-  vibrationLevel: string;
-}
-
-export interface WineMakingTechniquesInterface {
-  technique: "singleGrape" | "cepage" | "coupage";
-}
-
-export interface WinePackagingInterface {
-  bottleType: string;
-  bottleSizing: string;
-  closureType: string;
-  upcCode: string;
-}
-
-export interface WinesInterface {
-  generalInfo: WineGeneralInfoInterface;
-  characteristics: WineCharacteristicsInterface;
-  storageConditions: WineStorageConditionsInterface;
-  makingTechniques: WineMakingTechniquesInterface;
-  packaging: WinePackagingInterface;
-}
-
-export interface CoordinateInterface extends google.maps.LatLng {
-  lat: () => number;
-  lng: () => number;
-}
-
-export interface GrapesMapCoordinatesInterface {
-  name: string;
-  percentage: string;
-  coordinates: any[];
-}
-export interface ItemWithPercentage {
-  name: string;
-  percentage: string;
-}
-
-export interface GrapesInterface {
-  has: boolean;
-  list: GrapesMapCoordinatesInterface[];
-}
-
-export interface EuLabelInterface {
+// SINGLE WINE
+export interface Wine {
   referenceNumber: string;
+  isMinified: boolean;
+  // wine general information
+  generalInformation: {
+    wineryName: string;
+    wineCollectionName: string;
+    country: string;
+    collectionSize: string;
+    bottlingYear: string;
+    awardsAndRecognitions: string[];
+    wineImageUrl: string;
+    qrCodeUrl: string;
+  };
+  // wine characteristics
+  characteristics: {
+    wineColour: string;
+    wineType: string;
+    alcoholLevel: string;
+    residualSugar: string;
+    acidityLevel: string;
+    tanningLevel: string;
+    aromaProfile: {
+      has: boolean;
+      list: string[];
+    };
+    flavourProfile: {
+      has: boolean;
+      list: string[];
+    };
+    sulphiteLevel: string;
+  };
+  // wine-making technique
+  wineMakingTechnique: {
+    wineMakingTechnique: string;
+    isWineVegan: boolean;
+    isWineOrganic: boolean;
+    isWineBioDynamic: boolean;
+    isWineNatural: boolean;
+    sustainablePractices: {
+      has: boolean;
+      list: string[];
+    };
+  };
+  // wine storage conditions
+  storageConditions: {
+    placeForInitialStorage: string;
+    storageTemperature: StorageTemperature;
+    lightingConditions: string;
+    humidityLevel: string;
+    vibrationLevel: string;
+  };
+  // wine packaging and branding
+  packagingAndBranding: {
+    bottleSize: string;
+    bottleType: string;
+    closureType: string[];
+    extraPackaging: string;
+    upc: string;
+  };
+  // Blend components
+  blendComponents: BlendComponent[];
+  marketingInfo: string;
+  minifiedWine: MinifiedWine;
+}
+
+// MINIFIED WINE
+export interface MinifiedWine {
   upc: string;
   wineryName: string;
   wineCollectionName: string;
-  harvestYear: string;
-  controlledDesignationOfOrigin: string;
   country: string;
-  alcoholLevel: string;
+  wineType: string;
   bottleSize: string;
-  typeOfWine: string;
-  colourOfWine: string;
-  qrCodeUrl: string;
+  wineColour: string;
+  alcoholLevel: string;
+  controlledDesignationOfOrigin: string;
   wineImageUrl: string;
-  ingredients: {
-    grapes: GrapesInterface;
-    acidityRegulators: {
-      allergens: {
-        has: boolean;
-        list: string[];
-      };
+  qrCodeUrl: string;
+  grapes: Grape[];
+  blendIngredients: BlendIngredients;
+  residualSugar: string;
+}
+
+// BLEND COMPONENTS
+export interface BlendComponent {
+  id: string;
+  name: string;
+  type: string;
+  ingredients: BlendIngredients;
+  vineyardDetails: VineyardDetails;
+  grapesHarvesting: GrapesHarvesting;
+  fermentationProcess: FermentationProcess;
+  agingProcess: AgingProcess;
+}
+
+// SINGLE GRAPE VARIETY
+export interface Grape {
+  name: string;
+  percentage: string;
+  vintageYear: number;
+}
+
+// BLEND INGREDIENTS
+export interface BlendIngredients {
+  acidityRegulators: {
+    allergens: {
       has: boolean;
       list: string[];
     };
-    antioxidants: {
-      allergens: {
-        has: boolean;
-        list: string[];
-      };
+    has: boolean;
+    list: string[];
+  };
+  antioxidants: {
+    allergens: {
       has: boolean;
       list: string[];
     };
-    preservatives: {
-      allergens: {
-        has: boolean;
-        list: string[];
-      };
+    has: boolean;
+    list: string[];
+  };
+  preservatives: {
+    allergens: {
       has: boolean;
       list: string[];
     };
-    stabilizers: {
-      allergens: {
-        has: boolean;
-        list: string[];
-      };
+    has: boolean;
+    list: string[];
+  };
+  stabilizers: {
+    allergens: {
       has: boolean;
       list: string[];
     };
-    finingAgents: {
-      allergens: {
-        has: boolean;
-        list: string[];
-      };
+    has: boolean;
+    list: string[];
+  };
+  finingAgents: {
+    allergens: {
       has: boolean;
       list: string[];
     };
-    sugars: string;
+    has: boolean;
+    list: string[];
   };
 }
 
-// WINERY DATA PROPS
-export interface WineryDataInterface {
-  exists: boolean;
-  wineryGeneralInfo: WineryGeneralInfoInterface | null;
-  tier: string | null;
-  level: string | null;
-  wines: WinesInterface[] | null;
-  euLabels: EuLabelInterface[] | null;
+// VINEYARD DETAILS
+export interface VineyardDetails {
+  name: string;
+  controlledDesignationOfOrigin: string;
+  grape: Grape;
+  coordinates: CoordinateInterface[];
+  elevation: string;
+  orientation: string;
+  soilType: string;
+  vinesAge: string;
+  irrigationPractices: string[];
 }
 
-export interface WineryInterface {
-  generalInfo: WineryGeneralInfoInterface | null;
-  tier: string | null;
-  level: string | null;
-  wines: WinesInterface[] | null;
-  euLabels: EuLabelInterface[] | null;
+// GRAPES HARVESTING
+export interface GrapesHarvesting {
+  vintageYear: number;
+  harvestMethod: string;
+  yieldPerHectare: string;
+  selectionProcess: string;
 }
 
-export interface CreateAdminNotification {
-  requestDate: Timestamp;
-  wineryName: string;
-  wineryEmail: string;
-  wineryPhone: string;
-  wineryRepresentative: string;
+// FERMENTATION PROCESS
+export interface FermentationProcess {
+  method: string;
+  yeastType: string;
+  time: string;
+  malolactic: boolean;
+}
+
+// AGING PROCESS
+export interface AgingProcess {
+  vesselType: string;
+}
+
+// COORDINATE INTERFACE
+export interface CoordinateInterface {
+  lat: number;
+  lng: number;
+}
+
+// GRAPES MAP COORDINATES INTERFACE
+export interface GrapeAndVineyard {
+  grape: Grape;
+  vineyard: VineyardDetails;
+}
+
+// STORAGE TEMPERATURE
+export type TemperatureUnits = "celcius" | "fahrenheit";
+
+export interface SelectedTemperature {
+  unit: TemperatureUnits;
+  value: string;
+}
+export interface StorageTemperature {
+  units: TemperatureUnits[];
+  selected: SelectedTemperature;
+}
+
+export interface VineyardGrapeAndCoordinates {
+  grape: Grape;
+  coordinates: CoordinateInterface[];
 }

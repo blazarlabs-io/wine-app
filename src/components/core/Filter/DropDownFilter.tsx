@@ -24,6 +24,7 @@ export const DropDownFilter = ({
         </Text>
       </Container>
       <DropDown
+        id="filters"
         disabled={disabled}
         fullWidth
         items={items}

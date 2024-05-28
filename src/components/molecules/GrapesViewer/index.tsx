@@ -1,10 +1,10 @@
 import { Container, Text } from "@/components";
-import { ItemWithPercentage } from "@/typings/winery";
+import { Grape } from "@/typings/winery";
 import { classNames } from "@/utils/classNames";
 
 export interface IngredientViewerProps {
   title: string;
-  ingredient: ItemWithPercentage[];
+  ingredient: Grape[];
   variant?: "normal" | "surface";
 }
 
@@ -18,11 +18,11 @@ export const GrapesViewer = ({
       intent="flexColLeft"
       className={classNames(
         variant === "normal" && "bg-transparent",
-        variant === "surface" && "bg-surface-dark rounded-md p-[16px] w-full"
+        variant === "surface" && "bg-surface-dark/30 rounded-md p-[16px] w-full"
       )}
       gap="small"
     >
-      <Text intent="p2" variant="dim" className="">
+      <Text intent="p1" variant="dim" className="font-semibold">
         {title}
       </Text>
       {ingredient !== undefined ? (
@@ -33,11 +33,14 @@ export const GrapesViewer = ({
               // className="border border-primary-light rounded-full px-[12px] py-[6px]"
               className="flex items-center gap-[8px]"
             >
-              <Text intent="p2" variant="accent">
+              <Text intent="p1" variant="accent" className="font-semibold">
                 {item.name}
               </Text>
-              <Text intent="p2" variant="accent">
+              <Text intent="p1" variant="accent" className="font-semibold">
                 {item.percentage + "%"}
+              </Text>
+              <Text intent="p1" variant="accent" className="font-semibold">
+                Year {item.vintageYear}
               </Text>
             </div>
           ))}

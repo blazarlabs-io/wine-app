@@ -1,26 +1,23 @@
 "use client";
-import { Button, Container, Text } from "@/components";
+import { Button, Container, DropDown, Text } from "@/components";
 import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
-import { ItemWithPercentage } from "@/typings/winery";
+import { Grape } from "@/typings/winery";
+import { vintageYearList } from "@/data";
 
 export interface TextInputCrudProps {
-  placeholder: string;
-  initialItems: ItemWithPercentage[];
+  initialItems: Grape[];
   required?: boolean;
-  onItemsChange: (items: ItemWithPercentage[]) => void;
+  onItemsChange: (items: Grape[] | string[]) => void;
 }
 
 export const TextAndNumberInputCrud = ({
-  placeholder,
   initialItems,
   required = false,
   onItemsChange,
 }: TextInputCrudProps) => {
-  const [items, setItems] = useState<ItemWithPercentage[] | null>(initialItems);
-  const [currentItem, setCurrentItem] = useState<ItemWithPercentage | null>(
-    null
-  );
+  const [items, setItems] = useState<Grape[] | null>(initialItems);
+  const [currentItem, setCurrentItem] = useState<Grape | null>(null);
   const [disableButton, setDisableButton] = useState<boolean>(true);
   const [isRequired, setIsRequired] = useState<boolean>(required);
 
@@ -33,29 +30,29 @@ export const TextAndNumberInputCrud = ({
   }, [currentItem]);
 
   useEffect(() => {
-    if (items && items.length > 0) {
+    if (initialItems && initialItems.length > 0) {
+      setItems(initialItems);
       setIsRequired(false);
     }
-  }, [items]);
+  }, [initialItems]);
 
   return (
     <>
       <Container intent="grid-4" gap="xsmall" className="w-full">
-        <Container intent="flexColLeft" gap="xsmall" className="col-span-2">
+        <Container intent="flexColLeft" gap="xsmall" className="">
           <Text intent="p2" variant="dim" className="font-semibold">
             Name
           </Text>
           <input
             type="text"
-            placeholder={placeholder}
             required={isRequired}
-            value={currentItem?.name}
+            value={currentItem?.name as string}
             onChange={(event: any) => {
               const newItem = {
                 name: event.target.value,
                 percentage: currentItem?.percentage,
               };
-              setCurrentItem(newItem as ItemWithPercentage);
+              setCurrentItem(newItem as Grape);
             }}
             className="w-full placeholder:text-on-surface-dark/50 text-sm text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
           />
@@ -67,28 +64,50 @@ export const TextAndNumberInputCrud = ({
           </Text>
           <input
             type="number"
-            placeholder={placeholder}
-            value={currentItem?.percentage}
+            value={currentItem?.percentage as string}
             onChange={(event: any) => {
               const newItem = {
                 name: currentItem?.name,
                 percentage: event.target.value,
               };
-              setCurrentItem(newItem as ItemWithPercentage);
+              setCurrentItem(newItem as Grape);
             }}
             className="w-full placeholder:text-on-surface-dark/50 text-sm text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
           />
         </Container>
-
+        <Container intent="flexColLeft" gap="xsmall" className="w-full">
+          <Text intent="p2" variant="dim" className="font-semibold">
+            Vintage Year
+          </Text>
+          <DropDown
+            isRequired
+            id="vintageYear"
+            items={vintageYearList.sort()}
+            fullWidth
+            selectedValue={
+              currentItem?.vintageYear
+                ? currentItem?.vintageYear.toString()
+                : ""
+            }
+            onSelect={(data: string) => {
+              const newItem: Grape = {
+                name: currentItem?.name as string,
+                vintageYear: parseInt(data as string),
+                percentage: currentItem?.percentage as string,
+              };
+              setCurrentItem(newItem);
+            }}
+          />
+        </Container>
         <Button
           intent="unstyled"
           disabled={disableButton}
           onClick={() => {
-            let its: ItemWithPercentage[] = [];
+            let its: Grape[] = [];
             if (items !== null && items !== undefined && items.length > 0) {
-              its = [...items, currentItem as ItemWithPercentage];
+              its = [...items, currentItem as Grape];
             } else {
-              its = [currentItem as ItemWithPercentage];
+              its = [currentItem as Grape];
             }
             setItems(its);
             onItemsChange(its);
@@ -96,7 +115,7 @@ export const TextAndNumberInputCrud = ({
               name: "",
               percentage: "",
             };
-            setCurrentItem(newItem as ItemWithPercentage);
+            setCurrentItem(newItem as Grape);
           }}
           className="border-[1.5px] border-primary-light mt-[32px] text-[16px] flex items-center justify-center max-w-fit px-[12px] gap-[4px] text-primary-light hover:text-primary transition-all duration-200 ease-in-out"
         >
@@ -121,6 +140,9 @@ export const TextAndNumberInputCrud = ({
                   </Text>
                   <Text intent="p2" variant="accent">
                     {item.percentage + "%"}
+                  </Text>
+                  <Text intent="p2" variant="accent">
+                    {item.vintageYear}
                   </Text>
                   <Button
                     intent="unstyled"

@@ -63,12 +63,17 @@ export const IngredientViewerTable = ({
                 key={item}
                 className="flex items-center justify-between gap-[8px] w-full"
               >
-                <Text intent="p2" variant="dim" key={item}>
+                <Text intent="p1" variant="dim" key={item}>
                   {item}
                 </Text>
               </div>
             ))}
-            {!ingredient.has && !ingredient.allergens.has && <Text>No</Text>}
+            {ingredient.list.length === 0 &&
+              ingredient.allergens.list.length === 0 && (
+                <Text intent="p1" variant="dim">
+                  No
+                </Text>
+              )}
           </>
         </Container>
       )}

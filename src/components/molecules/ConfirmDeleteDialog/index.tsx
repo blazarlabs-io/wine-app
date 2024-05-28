@@ -15,13 +15,13 @@ export const ConfirmDeleteDialog = ({
   const [value, setValue] = useState("");
   const [isDisabled, setIsDisabled] = useState(true);
 
-  // useEffect(() => {
-  //   if (value === "DELETE") {
-  //     setIsDisabled(false);
-  //   } else {
-  //     setIsDisabled(true);
-  //   }
-  // }, [value]);
+  useEffect(() => {
+    if (value === "DELETE") {
+      setIsDisabled(false);
+    } else {
+      setIsDisabled(true);
+    }
+  }, [value]);
 
   return (
     <div className="flex items-center justify-center w-full h-full fixed top-0 left-0 bg-surface/80 backdrop-blur-sm">

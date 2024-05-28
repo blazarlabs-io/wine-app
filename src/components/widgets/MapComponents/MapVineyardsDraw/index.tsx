@@ -10,55 +10,29 @@ import {
 } from "@vis.gl/react-google-maps";
 import { useCallback, useEffect, useState } from "react";
 import { useDrawingManager } from "./useDrawingManager";
-import {
-  CoordinateInterface,
-  GrapesMapCoordinatesInterface,
-} from "@/typings/winery";
+import { CoordinateInterface } from "@/typings/winery";
 import { UndoRedoControl } from "./undoRedoControl";
 
 export interface MapVineyardsDrawProps {
   initialPosition: any;
-  initialPolygon?: GrapesMapCoordinatesInterface | null;
   onPolygonComplete: (polygon: any[]) => void;
 }
 
 export const MapVineyardsDraw = ({
   initialPosition,
-  initialPolygon,
   onPolygonComplete,
 }: MapVineyardsDrawProps) => {
   const INITIAL_CAMERA = {
-    center: { lat: initialPosition.latitude, lng: initialPosition.longitude },
+    center: { lat: initialPosition.lat, lng: initialPosition.lng },
     zoom: 15,
   };
 
   const map = useMap();
-  const { drawingManager, polygon, startWithInitialPolygon } =
-    useDrawingManager();
+  const { drawingManager, polygon } = useDrawingManager();
   const [cameraProps, setCameraProps] =
     useState<MapCameraProps>(INITIAL_CAMERA);
   const handleCameraChange = (ev: MapCameraChangedEvent) =>
     setCameraProps(ev.detail);
-
-  const drawPolygon = (polygon: CoordinateInterface[]) => {
-    const poly = new google.maps.Polygon({
-      paths: polygon,
-      strokeColor: "#FF0000",
-      strokeOpacity: 0.8,
-      strokeWeight: 2,
-      fillColor: "#FF0000",
-      fillOpacity: 0.35,
-    });
-
-    poly.setMap(map);
-    onPolygonComplete(polygon);
-  };
-
-  useEffect(() => {
-    if (initialPolygon) {
-      startWithInitialPolygon(initialPolygon.coordinates);
-    }
-  }, []);
 
   useEffect(() => {
     // drawPolygon(polygon);
@@ -68,7 +42,7 @@ export const MapVineyardsDraw = ({
   return (
     <Map
       {...cameraProps}
-      style={{ width: 800, height: 400 }}
+      style={{ width: "100%", height: 400 }}
       onCameraChanged={handleCameraChange}
       gestureHandling={"greedy"}
       disableDefaultUI={true}

@@ -1,3 +1,5 @@
+"use client";
+
 import { BaseLayout, HomePage } from "@/components";
 
 export default function Home() {

@@ -1,10 +1,10 @@
 import { Container, Text } from "@/components";
-import { ItemWithPercentage } from "@/typings/winery";
+import { Grape } from "@/typings/winery";
 import { classNames } from "@/utils/classNames";
 
 export interface IngredientViewerProps {
   title: string;
-  ingredient: ItemWithPercentage[];
+  ingredient: Grape;
   variant?: "normal" | "surface";
 }
 
@@ -27,25 +27,31 @@ export const GrapesViewerTable = ({
       <Text intent="p1" variant="dim" className="font-semibold">
         {title}
       </Text>
-      {ingredient !== undefined ? (
+      {ingredient !== undefined && ingredient !== null ? (
         <Container intent="flexColLeft" gap="xsmall" className="w-full">
-          {ingredient.map((item) => (
-            <div
-              key={item.name}
-              // className="border border-primary-light rounded-full px-[12px] py-[6px]"
-              className="flex items-center justify-between gap-[8px]  w-full"
-            >
-              <Text intent="p1" variant="dim">
-                {item.name}
-              </Text>
-              <Text intent="p1" variant="dim">
-                {item.percentage + "%"}
-              </Text>
-            </div>
-          ))}
+          <Container intent="grid-3">
+            <Text intent="p2" variant="dim" className="font-semibold">
+              Name
+            </Text>
+            <Text intent="p2" variant="dim" className="font-semibold">
+              Percentage
+            </Text>
+            <Text intent="p2" variant="dim" className="font-semibold">
+              Year
+            </Text>
+            <Text intent="p1" variant="dim">
+              {ingredient.name}
+            </Text>
+            <Text intent="p1" variant="dim">
+              {ingredient.percentage + "%"}
+            </Text>
+            <Text intent="p1" variant="dim">
+              {ingredient.vintageYear}
+            </Text>
+          </Container>
         </Container>
       ) : (
-        <Text>No</Text>
+        <Text variant="dim">No</Text>
       )}
     </Container>
   );

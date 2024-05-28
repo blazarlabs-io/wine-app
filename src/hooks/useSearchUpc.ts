@@ -1,3 +1,4 @@
+import { Winery } from "@/typings/winery";
 import { getDocsInCollection } from "@/utils/firestore";
 import { useCallback, useEffect, useState } from "react";
 
@@ -8,13 +9,13 @@ export const useSearchUpc = () => {
   const [upcs, setUpcs] = useState<string[]>([]);
 
   const fetchUpcCodes = () => {
-    getDocsInCollection("wineries").then((wineries) => {
-      setWineries(wineries);
+    getDocsInCollection("wineries").then((data: any) => {
+      setWineries(data.docs);
       wineries.forEach((winery) => {
-        if (winery.euLabels && winery.euLabels.length > 0) {
-          winery.euLabels.forEach((euLabel: any) => {
-            if (euLabel.upc && euLabel.upc !== undefined) {
-              setUpcs((upcs) => [...upcs, euLabel.upc]);
+        if (winery.wines && winery.wines.length > 0) {
+          winery.wines.forEach((wine: any) => {
+            if (wine.upc && wine.upc !== undefined) {
+              setUpcs((upcs) => [...upcs, wine.upc]);
             }
           });
         }

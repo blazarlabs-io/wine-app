@@ -76,7 +76,7 @@ export const AvatarMenu = ({
           className="flex flex-col items-start justify-start gap-[12px] absolute top-[40px] right-0 max-w-fit bg-surface-light shadow-lg rounded-lg p-4 z-50"
         >
           {userMenuItems?.map((item) => (
-            <div key="item.key">
+            <div key={item.key}>
               <Container intent="flexRowCenter" gap="small">
                 <button
                   onClick={() => {

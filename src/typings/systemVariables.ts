@@ -1,7 +1,7 @@
 export interface AvailableLevels {
   name: string;
   price: number;
-  euLabels: number;
+  qrCodes: number;
 }
 
 export interface LevelsInterface {
@@ -12,6 +12,6 @@ export interface LevelsInterface {
 }
 
 export interface SingleLevelInterface {
-  euLabels: number;
+  qrCodes: number;
   price: number;
 }

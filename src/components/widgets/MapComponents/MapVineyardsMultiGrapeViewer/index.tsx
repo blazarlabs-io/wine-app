@@ -8,12 +8,12 @@ import {
 } from "@vis.gl/react-google-maps";
 import { useEffect, useState } from "react";
 import { useDrawingManager } from "./useDrawingManager";
-import { GrapesMapCoordinatesInterface } from "@/typings/winery";
+import { CoordinateInterface } from "@/typings/winery";
 import { getPolygonCenter } from "@/utils/getPolygonCenter";
 import { useResponsive } from "@/hooks/useResponsive";
 
 export interface MapVineyardsDrawProps {
-  initialPosition: any;
+  initialPosition: CoordinateInterface;
   initialItems?: any;
 }
 
@@ -24,7 +24,7 @@ export const MapVineyardsMultiGrapeView = ({
   const { responsiveSize } = useResponsive();
 
   const INITIAL_CAMERA = {
-    center: { lat: initialPosition.latitude, lng: initialPosition.longitude },
+    center: { lat: initialPosition.lat, lng: initialPosition.lng },
     zoom: 15,
   };
 
@@ -47,29 +47,23 @@ export const MapVineyardsMultiGrapeView = ({
     "#aaFF00",
   ];
 
-  const drawPolygon = (
-    polygon: GrapesMapCoordinatesInterface,
-    color: string
-  ) => {
-    const poly = new google.maps.Polygon({
-      paths: polygon.coordinates,
-      strokeColor: color,
-      strokeOpacity: 0.75,
-      strokeWeight: 4,
-      fillColor: color,
-      fillOpacity: 0.25,
-      editable: false,
-    });
-
-    const mark = new google.maps.Marker({
-      position: getPolygonCenter(polygon.coordinates),
-      title: polygon?.name,
-    });
-
-    mark.setMap(map);
-    poly.setMap(map);
-
-    return mark;
+  const drawPolygon = (polygon: CoordinateInterface[], color: string) => {
+    //   const poly = new google.maps.Polygon({
+    //     paths: polygon.coordinates,
+    //     strokeColor: color,
+    //     strokeOpacity: 0.75,
+    //     strokeWeight: 4,
+    //     fillColor: color,
+    //     fillOpacity: 0.25,
+    //     editable: false,
+    //   });
+    //   const mark = new google.maps.Marker({
+    //     position: getPolygonCenter(polygon.coordinates),
+    //     title: polygon?.name,
+    //   });
+    //   mark.setMap(map);
+    //   poly.setMap(map);
+    //   return mark;
   };
 
   var infowindow = new google.maps.InfoWindow();
@@ -78,10 +72,10 @@ export const MapVineyardsMultiGrapeView = ({
     initialItems?.forEach((item: any, index: number) => {
       const centerMarker = drawPolygon(item as any, colors[index]);
 
-      google.maps.event.addListener(centerMarker, "click", function () {
-        infowindow.setContent(item.name + ": " + item.percentage + "%");
-        infowindow.open(map, centerMarker);
-      });
+      // google.maps.event.addListener(centerMarker, "click", function () {
+      //   infowindow.setContent(item.name + ": " + item.percentage + "%");
+      //   infowindow.open(map, centerMarker);
+      // });
 
       google.maps.event.addListener(item, "click", function (event: Event) {});
     });

@@ -14,7 +14,7 @@ export const Modal = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="flex items-center justify-center fixed inset-0 bg-black bg-opacity-60 z-[999] w-screen  h-screen backdrop-blur-sm"
+          className="flex items-center justify-center fixed inset-0 bg-black bg-opacity-60 z-[9999] w-screen  h-screen backdrop-blur-sm"
         >
           <motion.div
             initial={{ scale: 0.5 }}
@@ -27,7 +27,7 @@ export const Modal = () => {
               stiffness: 260,
               damping: 20,
             }}
-            className="relative flex flex-col items-start justify-center px-[32px] pt-[32px] pb-[16px] gap-[24px] bg-surface min-w-[420px] max-w-[520px] rounded-lg shadow-lg"
+            className="relative flex flex-col items-center justify-center px-[32px] pt-[32px] pb-[16px] gap-[24px] bg-surface min-w-[420px] max-w-[520px] rounded-lg shadow-lg"
           >
             <Button
               intent="unstyled"
@@ -51,16 +51,16 @@ export const Modal = () => {
                 className="text-on-surface-dark"
               />
             </Button>
-            <Container intent="flexRowLeft">
+            <Container intent="flexRowCenter">
               <Text intent="h4">{title}</Text>
             </Container>
-            <Container intent="flexRowLeft">
-              <Text intent="p1" variant="dim">
+            <Container intent="flexRowCenter">
+              <Text intent="p1" variant="dim" className="text-center">
                 {description}
               </Text>
             </Container>
             <div className="w-full h-[2px] bg-on-surface-dark/10" />
-            <Container intent="flexRowRight">
+            <Container intent="flexRowCenter">
               <Button
                 intent="primary"
                 size="medium"
