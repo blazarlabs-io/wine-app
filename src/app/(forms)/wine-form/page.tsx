@@ -1,5 +1,5 @@
 import { WineFormPage } from "@/components";
 
-export default function UpdateWine() {
+export default function WineForm() {
   return <WineFormPage />;
 }

@@ -1,11 +1,8 @@
-import { functions } from "@/lib/firebase/client";
-import { httpsCallable } from "firebase/functions";
+import { getClosureTypesDb } from "@/utils/firestore";
 import { useEffect, useState } from "react";
 
 export const useGetPackagingAndBranding = () => {
   const [closureTypes, setClosureTypes] = useState<string[]>([]);
-
-  const getClosureTypesDb = httpsCallable(functions, "getClosureTypesDb");
 
   useEffect(() => {
     getClosureTypesDb()

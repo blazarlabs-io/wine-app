@@ -1,13 +1,10 @@
 import { BlendComponent } from "@/typings/winery";
 
-export const blendComonetnInitialData: BlendComponent = {
-  name: null,
-  type: null,
+export const blendComponentInitialData: BlendComponent = {
+  id: "",
+  name: "",
+  type: "",
   ingredients: {
-    grapesVarieties: {
-      has: false,
-      list: [],
-    },
     acidityRegulators: {
       allergens: {
         has: false,
@@ -48,36 +45,35 @@ export const blendComonetnInitialData: BlendComponent = {
       has: false,
       list: [],
     },
-    sugars: "",
   },
   vineyardDetails: {
-    id: null,
-    grapeGrown: {
-      vintageYear: null,
-      name: null,
-      percentage: null,
+    name: "",
+    grape: {
+      name: "",
+      percentage: "",
+      vintageYear: 0,
     },
-    controlledDesignationOfOrigin: null,
+    controlledDesignationOfOrigin: "",
     coordinates: [],
-    elevation: null,
-    orientation: null,
-    soilType: null,
-    vinesAge: null,
+    elevation: "",
+    orientation: "",
+    soilType: "",
+    vinesAge: "",
     irrigationPractices: [],
   },
   grapesHarvesting: {
-    vintageYear: null,
-    harvestMethod: null,
-    yieldPerHectare: null,
-    selectionProcess: null,
+    vintageYear: 0,
+    harvestMethod: "",
+    yieldPerHectare: "",
+    selectionProcess: "",
   },
   fermentationProcess: {
-    method: null,
-    yeastType: null,
-    time: null,
-    malolactic: null,
+    method: "",
+    yeastType: "",
+    time: "",
+    malolactic: false,
   },
   agingProcess: {
-    vesselType: null,
+    vesselType: "",
   },
 };

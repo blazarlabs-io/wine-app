@@ -1,21 +1,30 @@
 "use client";
 
 import {
-  Container,
-  WineHeadSection,
-  WineGeneralInformationSection,
-  WineCharacteristicsSection,
+  ExtendedWineHeadSection,
+  MinifiedWineHeadSection,
+  ExtendedWineGeneralInformationSection,
+  ExtendedWineCharacteristicsSection,
   GeneralLoaderOverlay,
   WineFooterSection,
   WineImage,
   NutritionTable,
-  MapViewerSection,
-  WineStorageConditionsSection,
-  WineMakingTechniqueSection,
-  WinePackagingAndBrandingSection,
+  ExtendedWineStorageConditionsSection,
+  ExtendedWineMakingTechniqueSection,
+  ExtendedWinePackagingAndBrandingSection,
   WineBlendComponentsSection,
+  MinifiedWineGeneralInformationSection,
+  MinifiedWineCharacteristicsSection,
+  MinifiedWinePackagingAndBrandingSection,
+  MinifiedBlendIngredientsSection,
 } from "@/components";
-import { Wine, WineryGeneralInfo } from "@/typings/winery";
+import {
+  BlendIngredients,
+  Grape,
+  MinifiedWine,
+  Wine,
+  WineryGeneralInfo,
+} from "@/typings/winery";
 import { classNames } from "@/utils/classNames";
 import { useEffect } from "react";
 import { useAppState } from "@/context/appStateContext";
@@ -46,28 +55,54 @@ export const WinePage = ({ generalInfo, wine }: WinePagePropsInterface) => {
           <WineImage
             imageUrl={wine?.generalInformation.wineImageUrl as string}
           />
-          <WineHeadSection wine={wine as Wine} />
-          <WineGeneralInformationSection item={wine as Wine} />
-          <WineCharacteristicsSection item={wine as Wine} />
-          <WineStorageConditionsSection item={wine as Wine} />
-          <WineMakingTechniqueSection item={wine as Wine} />
-          <WinePackagingAndBrandingSection item={wine as Wine} />
-          <WineBlendComponentsSection item={wine as Wine} mapData={mapData} />
-          {/* <NutritionTable
-            items={{
-              alcoholLevel: wine.alcoholLevel,
-              sugars: wine.ingredients.sugars,
-              bottleSize: wine.bottleSize,
-            }}
-          />
-          {wine.ingredients.grapes.list.length > 0 &&
-            wine.ingredients.grapes.list[0].coordinates &&
-            wine.ingredients.grapes.list[0].coordinates.length > 0 && (
-              <MapViewerSection
-                initialPosition={generalInfo?.wineryHeadquarters as any}
-                initialItems={wine.ingredients.grapes.list}
+
+          {wine?.isMinified ? (
+            <>
+              <MinifiedWineHeadSection
+                wine={wine.minifiedWine as MinifiedWine}
               />
-            )} */}
+              <MinifiedWineGeneralInformationSection
+                item={wine.minifiedWine as MinifiedWine}
+              />
+              <MinifiedWineCharacteristicsSection
+                item={wine.minifiedWine as MinifiedWine}
+              />
+              <MinifiedWinePackagingAndBrandingSection
+                item={wine.minifiedWine as MinifiedWine}
+              />
+              <MinifiedBlendIngredientsSection
+                item={wine.minifiedWine.blendIngredients as BlendIngredients}
+                grapes={wine.minifiedWine.grapes as Grape[]}
+              />
+              <NutritionTable
+                items={{
+                  alcoholLevel: wine.minifiedWine.alcoholLevel,
+                  sugars: wine.minifiedWine.residualSugar,
+                  bottleSize: wine.minifiedWine.bottleSize,
+                }}
+              />
+            </>
+          ) : (
+            <>
+              <ExtendedWineHeadSection wine={wine as Wine} />
+              <ExtendedWineGeneralInformationSection item={wine as Wine} />
+              <ExtendedWineCharacteristicsSection item={wine as Wine} />
+              <ExtendedWineStorageConditionsSection item={wine as Wine} />
+              <ExtendedWineMakingTechniqueSection item={wine as Wine} />
+              <ExtendedWinePackagingAndBrandingSection item={wine as Wine} />
+              <WineBlendComponentsSection
+                item={wine as Wine}
+                mapData={mapData}
+              />
+              <NutritionTable
+                items={{
+                  alcoholLevel: wine.characteristics.alcoholLevel,
+                  sugars: wine.characteristics.residualSugar,
+                  bottleSize: wine.packagingAndBranding.bottleSize,
+                }}
+              />
+            </>
+          )}
           <WineFooterSection wine={wine as Wine} />
         </div>
       ) : (

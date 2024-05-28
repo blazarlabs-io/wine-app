@@ -4,11 +4,11 @@ import { Container, Text, Button, MapVineyardsView } from "@/components";
 import {
   CoordinateInterface,
   GrapeAndVineyard,
-  VineyardGrapeGrownWithCoordinates,
+  VineyardGrapeAndCoordinates,
 } from "@/typings/winery";
 export interface PolygonEditorMapProps {
   initialPosition: CoordinateInterface;
-  initialItems: VineyardGrapeGrownWithCoordinates;
+  initialItems: VineyardGrapeAndCoordinates;
   onClose: () => void;
 }
 
@@ -17,24 +17,25 @@ export const PolygonViewerMap = ({
   initialItems,
   onClose,
 }: PolygonEditorMapProps) => {
+  console.log("initialItems", initialItems);
   return (
     <Container
       intent="flexColLeft"
       gap="small"
-      className="bg-surface-light p-[24px] rounded-md max-w-[848px]"
+      className="bg-surface-light p-[24px] rounded-md w-full"
     >
       <MapVineyardsView
         initialPosition={initialPosition}
-        initialItems={initialItems as VineyardGrapeGrownWithCoordinates}
+        initialItems={initialItems as VineyardGrapeAndCoordinates}
       />
       <Container intent="flexColLeft" gap="small">
         <Text intent="h6" className="">
           Currently viewing location where{" "}
           <span className="text-primary-light font-semibold">
-            {initialItems?.grapeGrown?.name}
+            {initialItems?.grape?.name}
           </span>{" "}
           <span className="text-primary-light font-semibold">
-            ({initialItems?.grapeGrown?.percentage}%)
+            ({initialItems?.grape?.percentage}%)
           </span>{" "}
           is grown.
         </Text>

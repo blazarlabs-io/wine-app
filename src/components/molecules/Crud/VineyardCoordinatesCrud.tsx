@@ -3,118 +3,207 @@
 import {
   Button,
   Container,
-  InfoTooltip,
   PolygonEditorMap,
   PolygonViewerMap,
   Text,
 } from "@/components";
 import {
+  BlendComponent,
   CoordinateInterface,
-  GrapeVariety,
-  VineyardGrapeGrownWithCoordinates,
+  Grape,
+  VineyardGrapeAndCoordinates,
 } from "@/typings/winery";
 import { Icon } from "@iconify/react";
 import { useEffect, useState } from "react";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
-import { getVineyardGrapeGrown } from "@/utils/firestore";
-import { useAuth } from "@/context/authContext";
+import { useModal } from "@/context/modalContext";
 
 export interface VineyardCoordinatesCrudProps {
-  referenceNumber: string;
+  blendComponent: BlendComponent;
+  grape: Grape;
   onCancel: () => void;
-  onSave: (item: VineyardGrapeGrownWithCoordinates) => void;
+  onSave: (gap: VineyardGrapeAndCoordinates) => void;
+  onDelete?: () => void;
 }
 
 export const VineyardCoordinatesCrud = ({
-  referenceNumber,
+  grape,
+  blendComponent,
   onSave,
   onCancel,
+  onDelete,
 }: VineyardCoordinatesCrudProps) => {
   const { wineryGeneralInfo } = useRealtimeDb();
-  const { user } = useAuth();
+  const { updateModal } = useModal();
+
   const [showMapEditor, setShowMapEditor] = useState<boolean>(false);
   const [showMapViewer, setShowMapViewer] = useState<boolean>(false);
-  const [vineyardGrapesGrown, setVineyardGrapesGrown] =
-    useState<VineyardGrapeGrownWithCoordinates | null>(null);
+  const [grapeAndCoordinates, setGrapeAndCoordinates] =
+    useState<VineyardGrapeAndCoordinates>({} as VineyardGrapeAndCoordinates);
+  const [isDone, setIsDone] = useState<boolean>(false);
+
+  const handleFindOnMap = () => {
+    if (
+      blendComponent.vineyardDetails?.grape?.name === null ||
+      blendComponent.vineyardDetails?.grape?.percentage === null ||
+      blendComponent.vineyardDetails?.grape?.vintageYear === null
+    ) {
+      updateModal({
+        show: true,
+        title: "Grape Details Not Set",
+        description:
+          "To set your vineyard coordinates, you must set your grape details first (name, percentage and vintage year).",
+        action: {
+          label: "Ok",
+          onAction: () => {
+            updateModal({
+              show: false,
+              title: "",
+              description: "",
+              action: {
+                label: "",
+                onAction: () => {},
+              },
+            });
+          },
+        },
+      });
+      return;
+    } else {
+      setShowMapEditor(true);
+    }
+  };
 
   useEffect(() => {
-    getVineyardGrapeGrown(referenceNumber, user?.uid as string)
-      .then((data: any) => {
-        console.log(data);
-        setVineyardGrapesGrown(data);
-      })
-      .catch((error) => {
-        console.error(error);
+    if (isDone === true) {
+      if (grapeAndCoordinates && Object.keys(grapeAndCoordinates).length > 0) {
+        // console.log("grapeAndCoordinates", grapeAndCoordinates);
+        onSave(grapeAndCoordinates as VineyardGrapeAndCoordinates);
+        setIsDone(false);
+      }
+    }
+
+    if (
+      showMapEditor &&
+      wineryGeneralInfo.wineryHeadquarters.lat === null &&
+      wineryGeneralInfo.wineryHeadquarters.lng === null
+    ) {
+      console.log("wineryGeneralInfo.wineryHeadquarters");
+      updateModal({
+        show: true,
+        title: "Winery Headquarters Not Set",
+        description:
+          "To set your vineyard coordinates, you must set your winery headquarters coordinates first. Please go to the winery settings on your dashboard and set your winery headquarters.",
+        action: {
+          label: "Ok",
+          onAction: () => {
+            updateModal({
+              show: false,
+              title: "",
+              description: "",
+              action: {
+                label: "",
+                onAction: () => {},
+              },
+            });
+          },
+        },
       });
-  }, []);
+    }
+  }, [
+    isDone,
+    grapeAndCoordinates,
+    showMapEditor,
+    wineryGeneralInfo.wineryHeadquarters.lat,
+    wineryGeneralInfo.wineryHeadquarters.lng,
+  ]);
+
+  useEffect(() => {
+    if (
+      blendComponent.vineyardDetails?.grape &&
+      blendComponent.vineyardDetails?.coordinates &&
+      blendComponent.vineyardDetails?.coordinates.length > 0
+    ) {
+      setGrapeAndCoordinates({
+        grape: blendComponent.vineyardDetails.grape,
+        coordinates: blendComponent.vineyardDetails.coordinates,
+      });
+    }
+  }, [blendComponent]);
+
   return (
     <>
-      {showMapViewer && (
-        <PolygonViewerMap
-          initialPosition={
-            wineryGeneralInfo.wineryHeadquarters as CoordinateInterface
-          }
-          initialItems={
-            vineyardGrapesGrown as VineyardGrapeGrownWithCoordinates
-          }
-          onClose={() => setShowMapViewer(false)}
-        />
-      )}
-      {showMapEditor && (
-        <PolygonEditorMap
-          initialPosition={
-            wineryGeneralInfo.wineryHeadquarters as CoordinateInterface
-          }
-          selectedItem={vineyardGrapesGrown?.grapeGrown as any}
-          onPolygonComplete={(
-            item: GrapeVariety,
-            polygon: CoordinateInterface[]
-          ) => {
-            if (vineyardGrapesGrown) {
-              vineyardGrapesGrown.coordinates = polygon;
-              vineyardGrapesGrown.grapeGrown = item;
-              setVineyardGrapesGrown(vineyardGrapesGrown);
-            }
-          }}
-          onCancel={() => setShowMapEditor(false)}
-          onSave={() => {
-            if (vineyardGrapesGrown) {
-              setVineyardGrapesGrown(vineyardGrapesGrown);
-              setShowMapEditor(false);
-            }
-          }}
-        />
-      )}
-      <Container intent="flexColLeft" gap="small">
-        <Container intent="flexRowLeft" gap="xsmall" className="">
-          <Container intent="flexRowBetween" gap="xsmall" className="">
-            <Container intent="flexRowLeft" gap="xsmall" className="">
-              <Text
-                intent="p1"
-                variant="dim"
-                className="font-semibold min-w-fit"
-              >
-                * Vineyard Coordinates
-              </Text>
-              <InfoTooltip text="What is the amount of sugar per 100g of wine?" />
-            </Container>
-            {vineyardGrapesGrown?.coordinates &&
-              vineyardGrapesGrown?.coordinates?.length > 0 && (
+      <Container intent="flexRowLeft" py="small" gap="xsmall" className="">
+        <Container intent="flexRowRight" gap="xsmall" className="">
+          {grapeAndCoordinates?.coordinates &&
+            grapeAndCoordinates?.coordinates?.length > 0 && (
+              <div className="flex items-center justify-center gap-[24px]">
                 <Button
                   intent="text"
                   onClick={() => setShowMapViewer(true)}
-                  className="min-w-fit"
+                  className="min-w-fit flex items-center justify-center gap-[4px]"
                 >
-                  Edit coordinates
+                  <Icon icon="hugeicons:view" className="mt-[-4px]" />
+                  View
                 </Button>
-              )}
-          </Container>
+                <Button
+                  intent="text"
+                  onClick={() => {
+                    setGrapeAndCoordinates({} as VineyardGrapeAndCoordinates);
+                    onDelete && onDelete();
+                  }}
+                  className="min-w-fit flex items-center justify-center gap-[4px]"
+                >
+                  <Icon icon="ph:trash" className="mt-[-4px]" />
+                  Delete
+                </Button>
+              </div>
+            )}
         </Container>
+      </Container>
+      {showMapViewer && (
+        <div className="w-full">
+          <PolygonViewerMap
+            initialPosition={
+              wineryGeneralInfo.wineryHeadquarters as CoordinateInterface
+            }
+            initialItems={grapeAndCoordinates as VineyardGrapeAndCoordinates}
+            onClose={() => setShowMapViewer(false)}
+          />
+        </div>
+      )}
+      {showMapEditor &&
+        wineryGeneralInfo.wineryHeadquarters.lat !== null &&
+        wineryGeneralInfo.wineryHeadquarters.lng !== null && (
+          <div className="w-full">
+            <PolygonEditorMap
+              initialPosition={
+                wineryGeneralInfo.wineryHeadquarters as CoordinateInterface
+              }
+              selectedItem={blendComponent.vineyardDetails?.grape as any}
+              onPolygonComplete={(
+                item: Grape,
+                polygon: CoordinateInterface[]
+              ) => {
+                console.log("polygon", polygon, item);
+                grapeAndCoordinates.coordinates = polygon;
+                grapeAndCoordinates.grape = item;
+                setGrapeAndCoordinates(grapeAndCoordinates);
+              }}
+              onCancel={() => setShowMapEditor(false)}
+              onSave={() => {
+                setIsDone(true);
+                setShowMapEditor(false);
+              }}
+            />
+          </div>
+        )}
+      <Container intent="flexColLeft" gap="small">
         <Container intent="flexRowLeft" gap="xsmall" className="">
-          {vineyardGrapesGrown?.coordinates &&
-          vineyardGrapesGrown.coordinates.length > 0 ? (
+          {grapeAndCoordinates?.coordinates &&
+          grapeAndCoordinates.coordinates.length > 0 ? (
             <>
-              {vineyardGrapesGrown.coordinates.map((coordinate, index) => (
+              {grapeAndCoordinates.coordinates.map((coordinate, index) => (
                 <div
                   key={index}
                   className="border border-primary-light rounded-lg p-[12px] bg-surface-dark flex items-center gap-[8px]"
@@ -129,7 +218,7 @@ export const VineyardCoordinatesCrud = ({
                 </div>
               ))}
             </>
-          ) : vineyardGrapesGrown?.grapeGrown ? (
+          ) : grapeAndCoordinates?.grape ? (
             <button
               type="button"
               onClick={() => setShowMapEditor(true)}
@@ -144,13 +233,13 @@ export const VineyardCoordinatesCrud = ({
                 variant="dim"
                 className="font-semibold min-w-fit text-primary-light"
               >
-                Set Map for {vineyardGrapesGrown.grapeGrown.name}
+                Set Map for {grapeAndCoordinates.grape.name}
               </Text>
             </button>
           ) : (
             <button
               type="button"
-              onClick={() => setShowMapEditor(true)}
+              onClick={() => handleFindOnMap()}
               className="flex items-center justify-center gap-[4px] border border-primary-light rounded-md p-[12px]"
             >
               <Icon
@@ -162,36 +251,10 @@ export const VineyardCoordinatesCrud = ({
                 variant="dim"
                 className="font-semibold min-w-fit text-primary-light"
               >
-                New Vineyard Coordinates
+                Find on Map
               </Text>
             </button>
           )}
-        </Container>
-        <Container intent="flexRowRight" py="medium" gap="small">
-          <Button
-            intent="secondary"
-            size="medium"
-            onClick={() => {
-              setShowMapEditor(false);
-              setShowMapViewer(false);
-              onCancel();
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            intent="primary"
-            size="medium"
-            onClick={() => {
-              if (vineyardGrapesGrown) {
-                onSave(vineyardGrapesGrown);
-                setShowMapEditor(false);
-                setShowMapViewer(false);
-              }
-            }}
-          >
-            Save
-          </Button>
         </Container>
       </Container>
     </>

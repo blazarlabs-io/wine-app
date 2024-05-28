@@ -14,7 +14,7 @@ export const Modal = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="flex items-center justify-center fixed inset-0 bg-black bg-opacity-60 z-[999] w-screen  h-screen backdrop-blur-sm"
+          className="flex items-center justify-center fixed inset-0 bg-black bg-opacity-60 z-[9999] w-screen  h-screen backdrop-blur-sm"
         >
           <motion.div
             initial={{ scale: 0.5 }}

@@ -11,19 +11,25 @@ import {
   SpinnerLoader,
   TextAndNumberInputCrud,
   GrapeCrud,
+  MinifiedGrapeCrud,
+  WineThumbnail,
 } from "@/components";
 import { useForms } from "@/context/FormsContext";
 import { useAuth } from "@/context/authContext";
 import { useModal } from "@/context/modalContext";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
-import { blendComonetnInitialData } from "@/data/blendComonetnInitialData";
-import { BlendComponent, GrapeVariety } from "@/typings/winery";
-import { countryList } from "@/utils/data";
+import {
+  BlendComponent,
+  BlendIngredients,
+  Grape,
+  MinifiedWine,
+} from "@/typings/winery";
+import { countryList, blendComponentInitialData } from "@/data";
 import { uploadWineImageToStorage } from "@/utils/firestore";
 import { restrictNumberInput } from "@/utils/validators/restrictNumberInput";
 import { validateFileSizeAndType } from "@/utils/validators/validateFileSizeAndType";
 import { useEffect, useRef, useState } from "react";
-import { useGetGrapeVarieties } from "@/hooks/useGetGrapeVarieties";
+import { minifiedWineInitData } from "@/data/minifiedWineInitData";
 
 export interface BasicFormProps {
   onSave: () => void;
@@ -35,7 +41,6 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
   const { wineTypes, wineBottleSizes, wineColours, wineryGeneralInfo } =
     useRealtimeDb();
   const { wineForm, updateWineForm } = useForms();
-  const { grapesVarieties } = useGetGrapeVarieties();
 
   const inputFileRef = useRef<any>(null);
 
@@ -55,6 +60,10 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
           ...wineForm,
           formData: {
             ...wineForm.formData,
+            minifiedWine: {
+              ...wineForm.formData.minifiedWine,
+              wineImageUrl: url,
+            },
             generalInformation: {
               ...wineForm.formData.generalInformation,
               wineImageUrl: url,
@@ -72,24 +81,21 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
   };
 
   useEffect(() => {
-    // if empty push initial empty data to blend components
-    if (wineForm.formData.blendComponents.length === 0) {
-      const components: BlendComponent[] = [];
-      components.push(blendComonetnInitialData);
-
-      updateWineForm({
-        ...wineForm,
-        formData: {
-          ...wineForm.formData,
-          blendComponents: components,
-        },
-      });
+    if (!wineForm.isEditing) {
+      // minifiedWineInitData.wineryName = wineryGeneralInfo.name;
+      // updateWineForm({
+      //   ...wineForm,
+      //   formData: {
+      //     ...wineForm.formData,
+      //     minifiedWine: minifiedWineInitData,
+      //   },
+      // });
 
       setDataReady(true);
     } else {
       setDataReady(true);
     }
-  }, [wineForm]);
+  }, []);
 
   return (
     <>
@@ -100,7 +106,7 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
         </Text>
       </Container>
       {/* First Row */}
-      {dataReady && wineForm.formData.blendComponents.length > 0 && (
+      {wineForm.formData.minifiedWine && (
         <>
           <form onSubmit={handleSubmit}>
             <Container intent="flexColCenter" gap="medium">
@@ -112,20 +118,15 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
                   <input
                     type="text"
                     placeholder=""
-                    value={
-                      (wineForm.formData.packagingAndBranding.upc as string) ||
-                      ""
-                    }
+                    value={wineForm.formData.minifiedWine.upc || ""}
                     onChange={(event: any) => {
-                      wineForm.formData.packagingAndBranding.upc =
-                        event.target.value;
                       updateWineForm({
                         ...wineForm,
                         formData: {
                           ...wineForm.formData,
-                          packagingAndBranding: {
-                            ...wineForm.formData.packagingAndBranding,
-                            upc: wineForm.formData.packagingAndBranding.upc,
+                          minifiedWine: {
+                            ...wineForm.formData.minifiedWine,
+                            upc: event.target.value,
                           },
                         },
                       });
@@ -133,71 +134,80 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
                     className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
                   />
                 </Container>
-                <Container intent="flexColLeft" gap="xsmall" className="">
-                  <Container
-                    intent="flexRowLeft"
-                    gap="xsmall"
-                    className="max-w-fit"
-                  >
-                    <Text
-                      intent="p1"
-                      variant="dim"
-                      className="font-semibold min-w-fit"
-                    >
-                      Wine Image
-                    </Text>
-                    <InfoTooltip
-                      width={240}
-                      text="For optimal display, please upload a photo of your wine bottle against a single-color background. Ensure the bottle is vertical, occupies 80-90% of the photo's height, and is free from unnecessary elements. High or studio lighting is preferred. You can change this photo later if needed."
+                <Container intent="flexRowLeft" gap="xsmall">
+                  <div className="bg-surface-light p-[4px] rounded-lg">
+                    <WineThumbnail
+                      imageUrl={wineForm.formData.minifiedWine.wineImageUrl}
+                      width={80}
+                      height={80}
                     />
-                    {imageUploading && (
-                      <div className="flex items-center justify-start gap-[8px] max-w-fit">
-                        <Text
-                          intent="p2"
-                          variant="dim"
-                          className="font-semibold"
-                        >
-                          Uploading
-                        </Text>
-                        <SpinnerLoader color="#ddd" />
-                      </div>
-                    )}
+                  </div>
+                  <Container intent="flexColLeft" gap="xsmall" className="">
+                    <Container
+                      intent="flexRowLeft"
+                      gap="xsmall"
+                      className="max-w-fit"
+                    >
+                      <Text
+                        intent="p1"
+                        variant="dim"
+                        className="font-semibold min-w-fit"
+                      >
+                        Wine Image
+                      </Text>
+                      <InfoTooltip
+                        width={240}
+                        text="For optimal display, please upload a photo of your wine bottle against a single-color background. Ensure the bottle is vertical, occupies 80-90% of the photo's height, and is free from unnecessary elements. High or studio lighting is preferred. You can change this photo later if needed."
+                      />
+                      {imageUploading && (
+                        <div className="flex items-center justify-start gap-[8px] max-w-fit">
+                          <Text
+                            intent="p2"
+                            variant="warning"
+                            className="font-semibold"
+                          >
+                            Uploading
+                          </Text>
+                          <SpinnerLoader color="#FEDD68" />
+                        </div>
+                      )}
+                    </Container>
+                    <input
+                      id="files"
+                      ref={inputFileRef}
+                      type="file"
+                      accept="image/*"
+                      multiple={false}
+                      onChange={(event: any) => {
+                        const validFile = validateFileSizeAndType(
+                          event.target.files[0],
+                          2
+                        );
+                        if (!validFile) {
+                          inputFileRef.current.value = "";
+                          updateModal({
+                            show: true,
+                            title: "Error",
+                            description:
+                              "File size should be less than 2MB and image types accepted are jpeg and png.",
+                            action: {
+                              label: "OK",
+                              onAction: () =>
+                                updateModal({
+                                  show: false,
+                                  title: "",
+                                  description: "",
+                                  action: { label: "", onAction: () => {} },
+                                }),
+                            },
+                          });
+                        } else {
+                          handleWineImageUpload(event.target.files[0]);
+                        }
+                      }}
+                      className="file:mr-[8px] text-primary-light file:border-2 file:border-primary-light file:px-[36px] file:py-[10px] file:rounded-lg file:bg-transparent file:text-primary-light file:font-semibold transition-all duration-300 ease-in-out"
+                    />
                   </Container>
-                  <input
-                    id="files"
-                    ref={inputFileRef}
-                    type="file"
-                    accept="image/*"
-                    multiple={false}
-                    onChange={(event: any) => {
-                      const validFile = validateFileSizeAndType(
-                        event.target.files[0],
-                        2
-                      );
-                      if (!validFile) {
-                        inputFileRef.current.value = "";
-                        updateModal({
-                          show: true,
-                          title: "Error",
-                          description:
-                            "File size should be less than 2MB and image types accepted are jpeg and png.",
-                          action: {
-                            label: "OK",
-                            onAction: () =>
-                              updateModal({
-                                show: false,
-                                title: "",
-                                description: "",
-                                action: { label: "", onAction: () => {} },
-                              }),
-                          },
-                        });
-                      } else {
-                        handleWineImageUpload(event.target.files[0]);
-                      }
-                    }}
-                    className="file:mr-[8px] text-primary-light file:border-2 file:border-primary-light file:px-[36px] file:py-[10px] file:rounded-lg file:bg-transparent file:text-primary-light file:font-semibold transition-all duration-300 ease-in-out"
-                  />
                 </Container>
               </Container>
 
@@ -211,10 +221,7 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
                     readOnly
                     type="text"
                     placeholder=""
-                    value={
-                      (wineForm.formData.generalInformation
-                        .wineryName as string) || ""
-                    }
+                    value={wineForm.formData.minifiedWine.wineryName || ""}
                     onChange={(event: any) => {}}
                     className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
                   />
@@ -228,21 +235,16 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
                     type="text"
                     placeholder=""
                     value={
-                      (wineForm.formData.generalInformation
-                        .wineCollectionName as string) || ""
+                      wineForm.formData.minifiedWine.wineCollectionName || ""
                     }
                     onChange={(event: any) => {
-                      wineForm.formData.generalInformation.wineCollectionName =
-                        event.target.value;
                       updateWineForm({
                         ...wineForm,
                         formData: {
                           ...wineForm.formData,
-                          generalInformation: {
-                            ...wineForm.formData.generalInformation,
-                            wineCollectionName:
-                              wineForm.formData.generalInformation
-                                .wineCollectionName,
+                          minifiedWine: {
+                            ...wineForm.formData.minifiedWine,
+                            wineCollectionName: event.target.value,
                           },
                         },
                       });
@@ -259,17 +261,15 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
                     id="country"
                     items={countryList}
                     fullWidth
-                    selectedValue={wineForm.formData.generalInformation.country}
+                    selectedValue={wineForm.formData.minifiedWine.country}
                     onSelect={(data: string) => {
-                      wineForm.formData.generalInformation.country = data;
                       updateWineForm({
                         ...wineForm,
                         formData: {
                           ...wineForm.formData,
-                          generalInformation: {
-                            ...wineForm.formData.generalInformation,
-                            country:
-                              wineForm.formData.generalInformation.country,
+                          minifiedWine: {
+                            ...wineForm.formData.minifiedWine,
+                            country: data,
                           },
                         },
                       });
@@ -289,19 +289,15 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
                     id="typeOfWine"
                     isRequired
                     fullWidth
-                    selectedValue={
-                      wineForm.formData.characteristics.wineType as string
-                    }
+                    selectedValue={wineForm.formData.minifiedWine.wineType}
                     onSelect={(data: string) => {
-                      wineForm.formData.characteristics.wineType = data;
                       updateWineForm({
                         ...wineForm,
                         formData: {
                           ...wineForm.formData,
-                          characteristics: {
-                            ...wineForm.formData.characteristics,
-                            wineType:
-                              wineForm.formData.characteristics.wineType,
+                          minifiedWine: {
+                            ...wineForm.formData.minifiedWine,
+                            wineType: data,
                           },
                         },
                       });
@@ -318,19 +314,15 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
                     id="wineBottleSizes"
                     isRequired
                     fullWidth
-                    selectedValue={
-                      wineForm.formData.packagingAndBranding.bottleSize
-                    }
+                    selectedValue={wineForm.formData.minifiedWine.bottleSize}
                     onSelect={(data: string) => {
-                      wineForm.formData.packagingAndBranding.bottleSize = data;
                       updateWineForm({
                         ...wineForm,
                         formData: {
                           ...wineForm.formData,
-                          packagingAndBranding: {
-                            ...wineForm.formData.packagingAndBranding,
-                            bottleSize:
-                              wineForm.formData.packagingAndBranding.bottleSize,
+                          minifiedWine: {
+                            ...wineForm.formData.minifiedWine,
+                            bottleSize: data,
                           },
                         },
                       });
@@ -346,19 +338,15 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
                     id="wineColours"
                     isRequired
                     fullWidth
-                    selectedValue={
-                      wineForm.formData.characteristics.wineColour as string
-                    }
+                    selectedValue={wineForm.formData.minifiedWine.wineColour}
                     onSelect={(data: string) => {
-                      wineForm.formData.characteristics.wineColour = data;
                       updateWineForm({
                         ...wineForm,
                         formData: {
                           ...wineForm.formData,
-                          characteristics: {
-                            ...wineForm.formData.characteristics,
-                            wineColour:
-                              wineForm.formData.characteristics.wineColour,
+                          minifiedWine: {
+                            ...wineForm.formData.minifiedWine,
+                            wineColour: data,
                           },
                         },
                       });
@@ -387,26 +375,20 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
                       max="100"
                       step={0.5}
                       placeholder=""
-                      value={
-                        (wineForm.formData.characteristics
-                          .alcoholLevel as string) || ""
-                      }
+                      value={wineForm.formData.minifiedWine.alcoholLevel || ""}
                       onChange={(event: any) => {
                         const restrictedVal = restrictNumberInput(
                           0,
                           100,
                           event.target.value
                         );
-                        wineForm.formData.characteristics.alcoholLevel =
-                          restrictedVal.toString();
                         updateWineForm({
                           ...wineForm,
                           formData: {
                             ...wineForm.formData,
-                            characteristics: {
-                              ...wineForm.formData.characteristics,
-                              alcoholLevel:
-                                wineForm.formData.characteristics.alcoholLevel,
+                            minifiedWine: {
+                              ...wineForm.formData.minifiedWine,
+                              alcoholLevel: restrictedVal.toString(),
                             },
                           },
                         });
@@ -434,29 +416,18 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
                     type="text"
                     placeholder=""
                     value={
-                      (wineForm.formData.blendComponents[0].vineyardDetails
-                        .controlledDesignationOfOrigin as string) || ""
+                      wineForm.formData.minifiedWine
+                        .controlledDesignationOfOrigin || ""
                     }
                     onChange={(event: any) => {
-                      wineForm.formData.blendComponents[0].vineyardDetails.controlledDesignationOfOrigin =
-                        event.target.value;
                       updateWineForm({
                         ...wineForm,
                         formData: {
                           ...wineForm.formData,
-                          blendComponents: [
-                            {
-                              ...wineForm.formData.blendComponents[0],
-                              vineyardDetails: {
-                                ...wineForm.formData.blendComponents[0]
-                                  .vineyardDetails,
-                                controlledDesignationOfOrigin:
-                                  wineForm.formData.blendComponents[0]
-                                    .vineyardDetails
-                                    .controlledDesignationOfOrigin,
-                              },
-                            },
-                          ],
+                          minifiedWine: {
+                            ...wineForm.formData.minifiedWine,
+                            controlledDesignationOfOrigin: event.target.value,
+                          },
                         },
                       });
                     }}
@@ -487,34 +458,31 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
                   </Text>
                   <InfoTooltip text="Add each grape variety and its percentage in the wine" />
                 </Container>
-                <GrapeCrud
-                  initialItem={grapesVarieties[0] as GrapeVariety}
-                  onItemsChange={(item: GrapeVariety | null) => {
-                    wineForm.formData.blendComponents[0].ingredients.grapesVarieties.list[0] =
-                      item as GrapeVariety;
+                <MinifiedGrapeCrud
+                  initialItems={
+                    wineForm.formData.minifiedWine.grapes as Grape[]
+                  }
+                  onItemAdd={(items: Grape[] | null) => {
                     updateWineForm({
                       ...wineForm,
                       formData: {
                         ...wineForm.formData,
-                        blendComponents: [
-                          {
-                            ...wineForm.formData.blendComponents[0],
-                            ingredients: {
-                              ...wineForm.formData.blendComponents[0]
-                                .ingredients,
-                              grapesVarieties: {
-                                ...wineForm.formData.blendComponents[0]
-                                  .ingredients.grapesVarieties,
-                                list: [item as GrapeVariety],
-                              },
-                            },
-                            vineyardDetails: {
-                              ...wineForm.formData.blendComponents[0]
-                                .vineyardDetails,
-                              grapeGrown: item as GrapeVariety,
-                            },
-                          },
-                        ],
+                        minifiedWine: {
+                          ...wineForm.formData.minifiedWine,
+                          grapes: items as Grape[],
+                        },
+                      },
+                    });
+                  }}
+                  onItemDelete={(item: Grape[] | null) => {
+                    updateWineForm({
+                      ...wineForm,
+                      formData: {
+                        ...wineForm.formData,
+                        minifiedWine: {
+                          ...wineForm.formData.minifiedWine,
+                          grapes: item as Grape[],
+                        },
                       },
                     });
                   }}
@@ -531,33 +499,33 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
                     label="Name"
                     placeholder="e.g. Malic Acid"
                     initialItems={
-                      wineForm.formData.blendComponents[0].ingredients
-                        .acidityRegulators.list
+                      wineForm.formData.minifiedWine.blendIngredients
+                        ?.acidityRegulators?.list
                     }
                     onItemsChange={(items: string[]) => {
-                      wineForm.formData.blendComponents[0].ingredients.acidityRegulators.list =
-                        items;
-
                       updateWineForm({
                         ...wineForm,
                         formData: {
                           ...wineForm.formData,
-                          blendComponents: [
-                            {
-                              ...wineForm.formData.blendComponents[0],
-                              ingredients: {
-                                ...wineForm.formData.blendComponents[0]
-                                  .ingredients,
-                                acidityRegulators: {
-                                  allergens:
-                                    wineForm.formData.blendComponents[0]
-                                      .ingredients.acidityRegulators.allergens,
-                                  has: true,
-                                  list: items,
+                          minifiedWine: {
+                            ...wineForm.formData.minifiedWine,
+                            blendIngredients: {
+                              ...wineForm.formData.minifiedWine
+                                .blendIngredients,
+                              acidityRegulators: {
+                                allergens: {
+                                  has: wineForm.formData.minifiedWine
+                                    .blendIngredients?.acidityRegulators
+                                    ?.allergens.has,
+                                  list: wineForm.formData.minifiedWine
+                                    .blendIngredients?.acidityRegulators
+                                    ?.allergens.list,
                                 },
+                                has: true,
+                                list: items,
                               },
                             },
-                          ],
+                          },
                         },
                       });
                     }}
@@ -576,30 +544,33 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
                       label="Name"
                       placeholder="e.g. Arabic Gum"
                       initialItems={
-                        wineForm.formData.blendComponents[0].ingredients
-                          .stabilizers.list
+                        wineForm.formData.minifiedWine.blendIngredients
+                          ?.stabilizers.list
                       }
                       onItemsChange={(items: string[]) => {
                         updateWineForm({
                           ...wineForm,
                           formData: {
                             ...wineForm.formData,
-                            blendComponents: [
-                              {
-                                ...wineForm.formData.blendComponents[0],
-                                ingredients: {
-                                  ...wineForm.formData.blendComponents[0]
-                                    .ingredients,
-                                  stabilizers: {
-                                    allergens:
-                                      wineForm.formData.blendComponents[0]
-                                        .ingredients.stabilizers.allergens,
-                                    has: true,
-                                    list: items,
+                            minifiedWine: {
+                              ...wineForm.formData.minifiedWine,
+                              blendIngredients: {
+                                ...wineForm.formData.minifiedWine
+                                  .blendIngredients,
+                                stabilizers: {
+                                  allergens: {
+                                    has: wineForm.formData.minifiedWine
+                                      .blendIngredients?.stabilizers?.allergens
+                                      .has,
+                                    list: wineForm.formData.minifiedWine
+                                      .blendIngredients?.stabilizers?.allergens
+                                      .list,
                                   },
+                                  has: true,
+                                  list: items,
                                 },
                               },
-                            ],
+                            },
                           },
                         });
                       }}
@@ -621,80 +592,101 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
                   >
                     <CheckBox
                       label="Isinglass"
-                      checked={wineForm.formData.blendComponents[0].ingredients.finingAgents.allergens.list.includes(
+                      checked={wineForm.formData.minifiedWine.blendIngredients?.finingAgents?.allergens.list.includes(
                         "Isinglass (Fish Allergen)"
                       )}
                       onCheck={(state: boolean) => {
+                        if (state) {
+                          wineForm.formData.minifiedWine.blendIngredients?.finingAgents?.allergens?.list.push(
+                            "Isinglass (Fish Allergen)"
+                          );
+                        } else {
+                          const index =
+                            wineForm.formData.minifiedWine.blendIngredients?.finingAgents?.allergens?.list.indexOf(
+                              "Isinglass (Fish Allergen)"
+                            );
+                          if (index > -1) {
+                            wineForm.formData.minifiedWine.blendIngredients?.finingAgents?.allergens?.list.splice(
+                              index,
+                              1
+                            );
+                          }
+                        }
                         updateWineForm({
                           ...wineForm,
                           formData: {
                             ...wineForm.formData,
-                            blendComponents: [
-                              {
-                                ...wineForm.formData.blendComponents[0],
-                                ingredients: {
-                                  ...wineForm.formData.blendComponents[0]
-                                    .ingredients,
-                                  finingAgents: {
-                                    allergens: {
-                                      has: state,
-                                      list: [
-                                        ...wineForm.formData.blendComponents[0]
-                                          .ingredients.finingAgents.allergens
-                                          .list,
-                                        "Isinglass (Fish Allergen)",
-                                      ],
-                                    },
-                                    has: true,
-                                    list: [
-                                      ...wineForm.formData.blendComponents[0]
-                                        .ingredients.finingAgents.list,
-                                      "Isinglass",
-                                    ],
+                            minifiedWine: {
+                              ...wineForm.formData.minifiedWine,
+                              blendIngredients: {
+                                ...wineForm.formData.minifiedWine
+                                  .blendIngredients,
+                                finingAgents: {
+                                  allergens: {
+                                    has: state,
+                                    list: wineForm.formData.minifiedWine
+                                      .blendIngredients?.finingAgents?.allergens
+                                      ?.list,
                                   },
+                                  has: true,
+                                  list: [
+                                    ...wineForm.formData.minifiedWine
+                                      .blendIngredients?.finingAgents?.list,
+                                  ],
                                 },
                               },
-                            ],
+                            },
                           },
                         });
                       }}
                     />
                     <CheckBox
                       label="Casein"
-                      checked={wineForm.formData.blendComponents[0].ingredients.finingAgents.allergens.list.includes(
+                      checked={wineForm.formData.minifiedWine.blendIngredients?.finingAgents.allergens?.list.includes(
                         "Casein (Milk Allergen)"
                       )}
                       onCheck={(state: boolean) => {
+                        if (state) {
+                          wineForm.formData.minifiedWine.blendIngredients?.finingAgents?.allergens?.list.push(
+                            "Casein (Milk Allergen)"
+                          );
+                        } else {
+                          const index =
+                            wineForm.formData.minifiedWine.blendIngredients?.finingAgents?.allergens?.list.indexOf(
+                              "Casein (Milk Allergen)"
+                            );
+                          if (index > -1) {
+                            wineForm.formData.minifiedWine.blendIngredients?.finingAgents?.allergens?.list.splice(
+                              index,
+                              1
+                            );
+                          }
+                        }
+
                         updateWineForm({
                           ...wineForm,
                           formData: {
                             ...wineForm.formData,
-                            blendComponents: [
-                              {
-                                ...wineForm.formData.blendComponents[0],
-                                ingredients: {
-                                  ...wineForm.formData.blendComponents[0]
-                                    .ingredients,
-                                  finingAgents: {
-                                    allergens: {
-                                      has: state,
-                                      list: [
-                                        ...wineForm.formData.blendComponents[0]
-                                          .ingredients.finingAgents.allergens
-                                          .list,
-                                        "Casein (Milk Allergen)",
-                                      ],
-                                    },
-                                    has: true,
-                                    list: [
-                                      ...wineForm.formData.blendComponents[0]
-                                        .ingredients.finingAgents.list,
-                                      "Casein",
-                                    ],
+                            minifiedWine: {
+                              ...wineForm.formData.minifiedWine,
+                              blendIngredients: {
+                                ...wineForm.formData.minifiedWine
+                                  .blendIngredients,
+                                finingAgents: {
+                                  allergens: {
+                                    has: state,
+                                    list: wineForm.formData.minifiedWine
+                                      .blendIngredients?.finingAgents?.allergens
+                                      ?.list,
                                   },
+                                  has: true,
+                                  list: [
+                                    ...wineForm.formData.minifiedWine
+                                      .blendIngredients?.finingAgents?.list,
+                                  ],
                                 },
                               },
-                            ],
+                            },
                           },
                         });
                       }}
@@ -704,30 +696,33 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
                     label="Name"
                     placeholder="e.g. Potassium sorbate"
                     initialItems={
-                      wineForm.formData.blendComponents[0].ingredients
-                        .finingAgents.list
+                      wineForm.formData.minifiedWine.blendIngredients
+                        ?.finingAgents?.list
                     }
                     onItemsChange={(items: string[]) => {
                       updateWineForm({
                         ...wineForm,
                         formData: {
                           ...wineForm.formData,
-                          blendComponents: [
-                            {
-                              ...wineForm.formData.blendComponents[0],
-                              ingredients: {
-                                ...wineForm.formData.blendComponents[0]
-                                  .ingredients,
-                                finingAgents: {
-                                  allergens:
-                                    wineForm.formData.blendComponents[0]
-                                      .ingredients.finingAgents.allergens,
-                                  has: true,
-                                  list: items,
+                          minifiedWine: {
+                            ...wineForm.formData.minifiedWine,
+                            blendIngredients: {
+                              ...wineForm.formData.minifiedWine
+                                .blendIngredients,
+                              finingAgents: {
+                                allergens: {
+                                  has: wineForm.formData.minifiedWine
+                                    .blendIngredients?.finingAgents?.allergens
+                                    ?.has,
+                                  list: wineForm.formData.minifiedWine
+                                    .blendIngredients?.finingAgents?.allergens
+                                    ?.list,
                                 },
+                                has: true,
+                                list: items,
                               },
                             },
-                          ],
+                          },
                         },
                       });
                     }}
@@ -740,40 +735,51 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
                   <CheckBox
                     label="Sulphites"
                     checked={
-                      wineForm.formData.blendComponents[0].ingredients
-                        .preservatives.allergens.has
+                      wineForm.formData.minifiedWine.blendIngredients
+                        ?.preservatives.allergens.has
                     }
                     onCheck={(state: boolean) => {
+                      if (state) {
+                        wineForm.formData.minifiedWine.blendIngredients?.preservatives?.allergens?.list.push(
+                          "Sulphites"
+                        );
+                      } else {
+                        const index =
+                          wineForm.formData.minifiedWine.blendIngredients?.preservatives?.allergens?.list.indexOf(
+                            "Sulphites"
+                          );
+                        if (index > -1) {
+                          wineForm.formData.minifiedWine.blendIngredients?.preservatives?.allergens?.list.splice(
+                            index,
+                            1
+                          );
+                        }
+                      }
+
                       updateWineForm({
                         ...wineForm,
                         formData: {
                           ...wineForm.formData,
-                          blendComponents: [
-                            {
-                              ...wineForm.formData.blendComponents[0],
-                              ingredients: {
-                                ...wineForm.formData.blendComponents[0]
-                                  .ingredients,
-                                preservatives: {
-                                  allergens: {
-                                    has: state,
-                                    list: [
-                                      ...wineForm.formData.blendComponents[0]
-                                        .ingredients.preservatives.allergens
-                                        .list,
-                                      "Sulphites",
-                                    ],
-                                  },
-                                  has: true,
-                                  list: [
-                                    ...wineForm.formData.blendComponents[0]
-                                      .ingredients.preservatives.list,
-                                    "Sulphites",
-                                  ],
+                          minifiedWine: {
+                            ...wineForm.formData.minifiedWine,
+                            blendIngredients: {
+                              ...wineForm.formData.minifiedWine
+                                .blendIngredients,
+                              preservatives: {
+                                allergens: {
+                                  has: state,
+                                  list: wineForm.formData.minifiedWine
+                                    .blendIngredients?.preservatives?.allergens
+                                    ?.list,
                                 },
+                                has: true,
+                                list: [
+                                  ...wineForm.formData.minifiedWine
+                                    .blendIngredients?.preservatives?.list,
+                                ],
                               },
                             },
-                          ],
+                          },
                         },
                       });
                     }}
@@ -782,30 +788,33 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
                     label="Name"
                     placeholder="e.g. Sulphites"
                     initialItems={
-                      wineForm.formData.blendComponents[0].ingredients
-                        .preservatives.list
+                      wineForm.formData.minifiedWine.blendIngredients
+                        ?.preservatives.list
                     }
                     onItemsChange={(items: string[]) => {
                       updateWineForm({
                         ...wineForm,
                         formData: {
                           ...wineForm.formData,
-                          blendComponents: [
-                            {
-                              ...wineForm.formData.blendComponents[0],
-                              ingredients: {
-                                ...wineForm.formData.blendComponents[0]
-                                  .ingredients,
-                                preservatives: {
-                                  allergens:
-                                    wineForm.formData.blendComponents[0]
-                                      .ingredients.preservatives.allergens,
-                                  has: true,
-                                  list: items,
+                          minifiedWine: {
+                            ...wineForm.formData.minifiedWine,
+                            blendIngredients: {
+                              ...wineForm.formData.minifiedWine
+                                .blendIngredients,
+                              preservatives: {
+                                allergens: {
+                                  has: wineForm.formData.minifiedWine
+                                    .blendIngredients?.preservatives?.allergens
+                                    ?.has,
+                                  list: wineForm.formData.minifiedWine
+                                    .blendIngredients?.preservatives?.allergens
+                                    ?.list,
                                 },
+                                has: true,
+                                list: items,
                               },
                             },
-                          ],
+                          },
                         },
                       });
                     }}
@@ -828,30 +837,33 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
                       label="Name"
                       placeholder="e.g. Gallic Acid (GA)"
                       initialItems={
-                        wineForm.formData.blendComponents[0].ingredients
-                          .antioxidants.list
+                        wineForm.formData.minifiedWine.blendIngredients
+                          ?.antioxidants.list
                       }
                       onItemsChange={(items: string[]) => {
                         updateWineForm({
                           ...wineForm,
                           formData: {
                             ...wineForm.formData,
-                            blendComponents: [
-                              {
-                                ...wineForm.formData.blendComponents[0],
-                                ingredients: {
-                                  ...wineForm.formData.blendComponents[0]
-                                    .ingredients,
-                                  antioxidants: {
-                                    allergens:
-                                      wineForm.formData.blendComponents[0]
-                                        .ingredients.antioxidants.allergens,
-                                    has: true,
-                                    list: items,
+                            minifiedWine: {
+                              ...wineForm.formData.minifiedWine,
+                              blendIngredients: {
+                                ...wineForm.formData.minifiedWine
+                                  .blendIngredients,
+                                antioxidants: {
+                                  allergens: {
+                                    has: wineForm.formData.minifiedWine
+                                      .blendIngredients?.antioxidants?.allergens
+                                      ?.has,
+                                    list: wineForm.formData.minifiedWine
+                                      .blendIngredients?.antioxidants?.allergens
+                                      ?.list,
                                   },
+                                  has: true,
+                                  list: items,
                                 },
                               },
-                            ],
+                            },
                           },
                         });
                       }}
@@ -874,26 +886,25 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
                   <input
                     type="number"
                     required
+                    min="0"
+                    max="100"
+                    step={0.5}
                     placeholder=""
-                    value={
-                      (wineForm.formData.blendComponents[0].ingredients
-                        .sugars as string) || ""
-                    }
+                    value={wineForm.formData.minifiedWine.residualSugar || ""}
                     onChange={(event: any) => {
+                      const restrictedVal = restrictNumberInput(
+                        0,
+                        100,
+                        event.target.value
+                      );
                       updateWineForm({
                         ...wineForm,
                         formData: {
                           ...wineForm.formData,
-                          blendComponents: [
-                            {
-                              ...wineForm.formData.blendComponents[0],
-                              ingredients: {
-                                ...wineForm.formData.blendComponents[0]
-                                  .ingredients,
-                                sugars: event.target.value,
-                              },
-                            },
-                          ],
+                          minifiedWine: {
+                            ...wineForm.formData.minifiedWine,
+                            residualSugar: restrictedVal.toString(),
+                          },
                         },
                       });
                     }}
@@ -924,7 +935,7 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
                   intent="primary"
                   size="medium"
                   onClick={() => {
-                    onSave();
+                    // onSave();
                   }}
                 >
                   Save

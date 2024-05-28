@@ -87,7 +87,7 @@ export const SelectAndTextInputCrud = ({
                   value: event.target.value,
                 });
               }}
-              className="max-w-[160px] placeholder:text-on-surface-dark/50 text-sm text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
+              className="max-w-[160px] placeholder:text-on-surface-dark/50 text-base text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
             />
           </Container>
         </Container>

@@ -1,19 +1,13 @@
 "use client";
 
-import { functions } from "@/lib/firebase/client";
-import { httpsCallable } from "firebase/functions";
+import { getIrrigationPractices } from "@/utils/firestore";
 import { useState, useEffect } from "react";
 
 export const useGetVineyardsDetails = () => {
   const [irrigationPractices, setIrrigationPractices] = useState<string[]>([]);
 
-  const getIrrigationPracticesDb = httpsCallable(
-    functions,
-    "getIrrigationPracticesDb"
-  );
-
   useEffect(() => {
-    getIrrigationPracticesDb()
+    getIrrigationPractices()
       .then((res: any) => {
         setIrrigationPractices(res.data.irrigationPractices);
       })

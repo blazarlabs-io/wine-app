@@ -239,7 +239,7 @@ export interface BlendComponent {
 }
 
 // SINGLE GRAPE VARIETY
-export interface GrapeVariety {
+export interface Grape {
   name: string;
   percentage: string;
   vineyardId: string;
@@ -249,7 +249,7 @@ export interface GrapeVariety {
 export interface BlendIngredients {
   grapesVarieties: {
     has: boolean;
-    list: GrapeVariety[];
+    list: Grape[];
   };
   acidityRegulators: {
     allergens: {

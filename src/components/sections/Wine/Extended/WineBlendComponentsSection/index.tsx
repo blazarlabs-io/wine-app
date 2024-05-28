@@ -50,7 +50,7 @@ export const WineBlendComponentsSection = ({
           {item.blendComponents.map((blendComponent, index) => (
             <div
               key={"blend-" + index}
-              className="flex flex-col items-center justify-center w-full px-[24px]"
+              className="flex flex-col items-center justify-center w-full"
             >
               <Container intent="flexRowLeft" className="mt-[-24px]">
                 <Disclosure

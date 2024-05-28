@@ -28,6 +28,9 @@ import { useForms } from "@/context/FormsContext";
 import { useBanner } from "@/context/bannerContext";
 import { BasicForm } from "./BasicForm";
 import { ExtendedForm } from "./ExtendedForm";
+import { useToast } from "@/context/toastContext";
+import { MinifiedWine } from "@/typings/winery";
+import { minifiedWineInitData } from "@/data/minifiedWineInitData";
 
 export const WineForm = () => {
   const router = useRouter();
@@ -37,6 +40,8 @@ export const WineForm = () => {
 
   const { updateModal } = useModal();
 
+  const { updateToast } = useToast();
+
   const { updateBanner } = useBanner();
 
   const { wineryGeneralInfo } = useRealtimeDb();
@@ -45,17 +50,24 @@ export const WineForm = () => {
   const { user } = useAuth();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [imageUploading, setImageUploading] = useState<boolean>(false);
   const [showReview, setShowReview] = useState<boolean>(false);
   const [qrCodeFile, setQrCodeFile] = useState<string | null>(null);
-  const [showExtendedForm, setShowExtendedForm] = useState<boolean>(false);
+  const [showExtendedForm, setShowExtendedForm] = useState<boolean | null>(
+    null
+  );
 
-  const sendEmail = httpsCallable(functions, "sendEmail");
+  const sendEmail = httpsCallable(functions, "email-sendEmail");
 
   useEffect(() => {
+    updateBanner(false, "");
+
+    wineForm.formData.generalInformation.wineryName = wineryGeneralInfo.name;
+    wineForm.formData.minifiedWine.wineryName = wineryGeneralInfo.name;
+
     if (!initialized.current && !wineForm.isEditing) {
       const ref = generateId(5) + "-" + dateToTimestamp();
       wineForm.formData.referenceNumber = ref;
+
       updateWineForm({
         ...wineForm,
         formData: {
@@ -63,7 +75,9 @@ export const WineForm = () => {
           referenceNumber: ref as string,
           generalInformation: {
             ...wineForm.formData.generalInformation,
-            wineryName: wineryGeneralInfo.name,
+          },
+          minifiedWine: {
+            ...wineForm.formData.minifiedWine,
           },
         },
       });
@@ -74,13 +88,30 @@ export const WineForm = () => {
           ...wineForm.formData,
           generalInformation: {
             ...wineForm.formData.generalInformation,
-            wineryName: wineryGeneralInfo.name,
+          },
+          minifiedWine: {
+            ...wineForm.formData.minifiedWine,
           },
         },
       });
     }
     updateAppLoading(false);
   }, []);
+
+  // * Update the minified form based on the extended form toggle
+  useEffect(() => {
+    if (showExtendedForm == null) {
+      setShowExtendedForm(!wineForm.formData.isMinified);
+    } else {
+      updateWineForm({
+        ...wineForm,
+        formData: {
+          ...wineForm.formData,
+          isMinified: !showExtendedForm,
+        },
+      });
+    }
+  }, [showExtendedForm]);
 
   const handleRegistration = () => {
     setIsLoading(true);
@@ -91,73 +122,105 @@ export const WineForm = () => {
         getQrCodeImageData("euLabelQrCode"),
         wineForm.formData.referenceNumber as string,
         (url: string) => {
+          wineForm.formData.minifiedWine.qrCodeUrl = url;
           wineForm.formData.generalInformation.qrCodeUrl = url;
-          registerWineryWine(user?.uid as string, wineForm.formData);
-          setIsLoading(false);
-          sendEmail({
-            data: {
-              from: "it@blazarlabs.io",
-              to: user?.email,
-              subject: "Your new EU label has been created!",
-              text: `Congratulations, you have successfuly registered a new EU Label.`,
-              html: generateWineHtml(
-                wineUrlComposerRef(wineForm.formData.referenceNumber as string),
-                wineForm.formData.generalInformation.qrCodeUrl
-              ),
-            },
+          registerWineryWine({
+            uid: user?.uid as string,
+            wine: wineForm.formData,
           })
-            .then((result) => {
-              // Read result of the Cloud Function.
-              /** @type {any} */
-              const data = result.data;
-              const sanitizedMessage: any = data;
-
-              updateAppLoading(false);
-              updateModal({
-                show: true,
-                title: "Success",
-                description:
-                  "Your EU Label has been registered, and an email has been sent to you with the details.",
-                action: {
-                  label: "OK",
-                  onAction: () => {
-                    updateModal({
-                      show: false,
-                      title: "",
-                      description: "",
-                      action: { label: "", onAction: () => {} },
-                    });
-                    router.replace("/home");
-                  },
+            .then((result: any) => {
+              setIsLoading(false);
+              sendEmail({
+                data: {
+                  from: "it@blazarlabs.io",
+                  to: user?.email,
+                  subject: "Your new EU label has been created!",
+                  text: `Congratulations, you have successfuly registered a new EU Label.`,
+                  html: generateWineHtml(
+                    wineUrlComposerRef(
+                      wineForm.formData.referenceNumber as string
+                    ),
+                    wineForm.formData.generalInformation.qrCodeUrl as string
+                  ),
                 },
-              });
+              })
+                .then((result) => {
+                  // Read result of the Cloud Function.
+                  /** @type {any} */
+                  const data = result.data;
+                  const sanitizedMessage: any = data;
+
+                  updateAppLoading(false);
+                  updateModal({
+                    show: true,
+                    title: "Success",
+                    description:
+                      "Your EU Label has been registered, and an email has been sent to you with the details.",
+                    action: {
+                      label: "OK",
+                      onAction: () => {
+                        updateModal({
+                          show: false,
+                          title: "",
+                          description: "",
+                          action: { label: "", onAction: () => {} },
+                        });
+                        router.replace("/home");
+                      },
+                    },
+                  });
+                })
+                .catch((error) => {
+                  const errorCode = error.code;
+                  const errorMessage = error.message;
+
+                  updateAppLoading(false);
+                  updateModal({
+                    show: true,
+                    title: "Error",
+                    description: firebaseAuthErrors[errorCode] as string,
+                    action: {
+                      label: "OK",
+                      onAction: () => {
+                        updateModal({
+                          show: false,
+                          title: "",
+                          description: "",
+                          action: { label: "", onAction: () => {} },
+                        });
+                      },
+                    },
+                  });
+                });
             })
-            .catch((error) => {
-              const errorCode = error.code;
-              const errorMessage = error.message;
-
-              updateAppLoading(false);
-              updateModal({
-                show: true,
-                title: "Error",
-                description: firebaseAuthErrors[errorCode] as string,
-                action: {
-                  label: "OK",
-                  onAction: () => {
-                    updateModal({
-                      show: false,
-                      title: "",
-                      description: "",
-                      action: { label: "", onAction: () => {} },
-                    });
-                  },
-                },
-              });
-            });
+            .catch((error: any) => {});
+          ///////////////////////////////////
         }
       );
     } else {
-      updateWineryWine(user?.uid as string, wineForm.formData);
+      setIsLoading(true);
+      updateAppLoading(true);
+      updateWineryWine({ uid: user?.uid, wine: wineForm.formData })
+        .then((result: any) => {
+          setIsLoading(false);
+          updateAppLoading(false);
+          updateToast({
+            show: true,
+            status: "success",
+            message: "Wine updated successfully",
+            timeout: 3000,
+          });
+        })
+        .catch((error: any) => {
+          setIsLoading(false);
+          updateAppLoading(false);
+          updateToast({
+            show: true,
+            status: "error",
+            message: "Error updating wine",
+            timeout: 3000,
+          });
+        });
 
       router.replace("/home");
     }
@@ -226,7 +289,7 @@ export const WineForm = () => {
             <Text variant="dim">{wineForm.description}</Text>
             <Toggle
               label="Show extended form"
-              isChecked={showExtendedForm}
+              isChecked={(showExtendedForm as boolean) || false}
               onCheck={(checked: boolean) => {
                 setShowExtendedForm(checked);
                 updateBanner(
@@ -247,7 +310,7 @@ export const WineForm = () => {
               handleRegistration();
             }
           }}
-          onCancel={() => {}}
+          onCancel={() => router.replace("/home")}
         />
       ) : (
         <BasicForm

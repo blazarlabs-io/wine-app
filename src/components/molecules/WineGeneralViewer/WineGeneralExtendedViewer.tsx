@@ -19,11 +19,11 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from "@headlessui/react";
-import { IngredientsSection } from "@/components/sections/Wine/WineBlendComponentsSection/IngredientsSection";
-import { VineyardDetailsSection } from "@/components/sections/Wine/WineBlendComponentsSection/VineyardDetailsSection";
-import { GrapesHarvestingSection } from "@/components/sections/Wine/WineBlendComponentsSection/GrapesHarvestingSection";
-import { FermentationProcessSection } from "@/components/sections/Wine/WineBlendComponentsSection/FermentationProcessSection";
-import { AgeingSection } from "@/components/sections/Wine/WineBlendComponentsSection/AgeingSection";
+import { IngredientsSection } from "@/components/sections/Wine/Extended/WineBlendComponentsSection/IngredientsSection";
+import { VineyardDetailsSection } from "@/components/sections/Wine/Extended/WineBlendComponentsSection/VineyardDetailsSection";
+import { GrapesHarvestingSection } from "@/components/sections/Wine/Extended/WineBlendComponentsSection/GrapesHarvestingSection";
+import { FermentationProcessSection } from "@/components/sections/Wine/Extended/WineBlendComponentsSection/FermentationProcessSection";
+import { AgeingSection } from "@/components/sections/Wine/Extended/WineBlendComponentsSection/AgeingSection";
 import { Icon } from "@iconify/react";
 
 export interface WineGeneralViewerInterface {
@@ -31,7 +31,7 @@ export interface WineGeneralViewerInterface {
   generalInfo?: WineryGeneralInfo;
 }
 
-export const WineGeneralViewer = ({
+export const WineGeneralExtendedViewer = ({
   item,
   generalInfo,
 }: WineGeneralViewerInterface) => {
@@ -237,7 +237,7 @@ export const WineGeneralViewer = ({
                     null ? (
                     <Text variant="dim">Not Specified</Text>
                   ) : (
-                    <Container intent="flexColLeft" gap="xsmall">
+                    <Container intent="flexRowLeft" gap="xsmall">
                       <Text variant="dim">
                         {
                           item.storageConditions.storageTemperature.selected
@@ -319,62 +319,66 @@ export const WineGeneralViewer = ({
                   Blend Components
                 </Text>
               </Container>
-              {item.blendComponents.length > 0 && (
-                <>
-                  {item.blendComponents.map((blendComponent, index) => (
-                    <div
-                      key={"blend-" + index}
-                      className="flex items-center justify-center w-full"
-                    >
-                      <Container intent="flexRowLeft" className="min-w-full">
-                        <Disclosure
-                          as="div"
-                          className="w-full bg-surface-dark/30 rounded-md"
-                          defaultOpen={false}
-                        >
-                          <DisclosureButton className="p-6 border border-on-surface-dark/30 rounded-md group flex w-full items-center justify-between">
-                            <Text
-                              intent="h6"
-                              variant="dim"
-                              className="font-semibold"
-                            >
-                              {blendComponent.name || "Blend Component Name"}
-                            </Text>
-                            <Icon
-                              icon="ion:chevron-down-sharp"
-                              className="size-6 text-white/60 group-data-[hover]:text-white/50 group-data-[open]:rotate-180"
-                            />
-                          </DisclosureButton>
-                          <DisclosurePanel className="border border-on-surface-dark/30 px-[24px] rounded-b-md">
-                            {/* <Text intent="p1" variant="dim">
+              <Container intent="flexColLeft" gap="medium" className="w-full">
+                {item.blendComponents.length > 0 && (
+                  <>
+                    {item.blendComponents.map((blendComponent, index) => (
+                      <div
+                        key={"blend-" + index}
+                        className="flex items-center justify-center w-full"
+                      >
+                        <Container intent="flexRowLeft" className="min-w-full">
+                          <Disclosure
+                            as="div"
+                            className="w-full bg-surface-dark/30 rounded-md"
+                            defaultOpen={false}
+                          >
+                            <DisclosureButton className="p-6 border border-on-surface-dark/30 rounded-md group flex w-full items-center justify-between">
+                              <Text
+                                intent="h6"
+                                variant="dim"
+                                className="font-semibold"
+                              >
+                                {blendComponent.name || "Blend Component Name"}
+                              </Text>
+                              <Icon
+                                icon="ion:chevron-down-sharp"
+                                className="size-6 text-white/60 group-data-[hover]:text-white/50 group-data-[open]:rotate-180"
+                              />
+                            </DisclosureButton>
+                            <DisclosurePanel className="border border-on-surface-dark/30 px-[24px] rounded-b-md">
+                              {/* <Text intent="p1" variant="dim">
                               {blendComponent.type || "Blend Component Type"}
                             </Text> */}
-                            {/* INGREDIENTS */}
-                            <IngredientsSection
-                              item={blendComponent.ingredients}
-                            />
-                            {/* VINEYARD DETAILS */}
-                            <VineyardDetailsSection
-                              item={blendComponent.vineyardDetails}
-                              mapData={mapData}
-                            />
-                            {/* GRAPES HARVESTING */}
-                            <GrapesHarvestingSection
-                              item={blendComponent.grapesHarvesting}
-                            />
-                            {/* FERMENTATION PROCESS */}
-                            <FermentationProcessSection
-                              item={blendComponent.fermentationProcess}
-                            />
-                            {/* AGEING */}
-                            <AgeingSection item={blendComponent.agingProcess} />
-                          </DisclosurePanel>
-                        </Disclosure>
-                      </Container>
-                    </div>
-                  ))}
-                </>
-              )}
+                              {/* INGREDIENTS */}
+                              <IngredientsSection
+                                item={blendComponent.ingredients}
+                              />
+                              {/* VINEYARD DETAILS */}
+                              <VineyardDetailsSection
+                                item={blendComponent.vineyardDetails}
+                                mapData={mapData}
+                              />
+                              {/* GRAPES HARVESTING */}
+                              <GrapesHarvestingSection
+                                item={blendComponent.grapesHarvesting}
+                              />
+                              {/* FERMENTATION PROCESS */}
+                              <FermentationProcessSection
+                                item={blendComponent.fermentationProcess}
+                              />
+                              {/* AGEING */}
+                              <AgeingSection
+                                item={blendComponent.agingProcess}
+                              />
+                            </DisclosurePanel>
+                          </Disclosure>
+                        </Container>
+                      </div>
+                    ))}
+                  </>
+                )}
+              </Container>
 
               {/* Ingredients */}
               <Container intent="flexColLeft" className="max-w-fit">

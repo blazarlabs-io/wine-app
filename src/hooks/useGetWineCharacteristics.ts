@@ -1,5 +1,10 @@
-import { functions } from "@/lib/firebase/client";
-import { httpsCallable } from "firebase/functions";
+import {
+  getWineTypes,
+  getWineColours,
+  getWineBottleSizes,
+  getAromaProfiles,
+  getFlavourProfiles,
+} from "@/utils/firestore";
 import { useEffect, useState } from "react";
 
 export const useGetWineCharacteristics = () => {
@@ -9,14 +14,8 @@ export const useGetWineCharacteristics = () => {
   const [aromaProfiles, setAromaProfiles] = useState<string[]>([]);
   const [flavourProfiles, setFlavourProfiles] = useState<string[]>([]);
 
-  const getWineTypesDb = httpsCallable(functions, "getWineTypesDb");
-  const getWineColoursDb = httpsCallable(functions, "getWineColoursDb");
-  const getWineBottleSizesDb = httpsCallable(functions, "getWineBottleSizesDb");
-  const getAromaProfilesDb = httpsCallable(functions, "getAromaProfilesDb");
-  const getFlavourProfilesDb = httpsCallable(functions, "getFlavourProfilesDb");
-
   useEffect(() => {
-    getWineTypesDb()
+    getWineTypes()
       .then((result: any) => {
         setWineTypes(result.data.wineTypes);
       })
@@ -24,7 +23,7 @@ export const useGetWineCharacteristics = () => {
         console.error(error);
       });
 
-    getWineColoursDb()
+    getWineColours()
       .then((result: any) => {
         setWineColours(result.data.wineColours);
       })
@@ -32,7 +31,7 @@ export const useGetWineCharacteristics = () => {
         console.error(error);
       });
 
-    getWineBottleSizesDb()
+    getWineBottleSizes()
       .then((result: any) => {
         setWineBottleSizes(result.data.wineBottleSizes);
       })
@@ -40,7 +39,7 @@ export const useGetWineCharacteristics = () => {
         console.error(error);
       });
 
-    getAromaProfilesDb()
+    getAromaProfiles()
       .then((result: any) => {
         setAromaProfiles(result.data.aromaProfiles);
       })
@@ -48,7 +47,7 @@ export const useGetWineCharacteristics = () => {
         console.error(error);
       });
 
-    getFlavourProfilesDb()
+    getFlavourProfiles()
       .then((result: any) => {
         setFlavourProfiles(result.data.flavourProfiles);
       })

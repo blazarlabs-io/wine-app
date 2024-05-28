@@ -2,13 +2,13 @@
 import { Button, Container, DropDown, Text } from "@/components";
 import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
-import { GrapeVariety } from "@/typings/winery";
-import { vintageYearList } from "@/utils/data";
+import { Grape } from "@/typings/winery";
+import { vintageYearList } from "@/data";
 
 export interface TextInputCrudProps {
-  initialItems: GrapeVariety[];
+  initialItems: Grape[];
   required?: boolean;
-  onItemsChange: (items: GrapeVariety[] | string[]) => void;
+  onItemsChange: (items: Grape[] | string[]) => void;
 }
 
 export const TextAndNumberInputCrud = ({
@@ -16,8 +16,8 @@ export const TextAndNumberInputCrud = ({
   required = false,
   onItemsChange,
 }: TextInputCrudProps) => {
-  const [items, setItems] = useState<GrapeVariety[] | null>(initialItems);
-  const [currentItem, setCurrentItem] = useState<GrapeVariety | null>(null);
+  const [items, setItems] = useState<Grape[] | null>(initialItems);
+  const [currentItem, setCurrentItem] = useState<Grape | null>(null);
   const [disableButton, setDisableButton] = useState<boolean>(true);
   const [isRequired, setIsRequired] = useState<boolean>(required);
 
@@ -52,7 +52,7 @@ export const TextAndNumberInputCrud = ({
                 name: event.target.value,
                 percentage: currentItem?.percentage,
               };
-              setCurrentItem(newItem as GrapeVariety);
+              setCurrentItem(newItem as Grape);
             }}
             className="w-full placeholder:text-on-surface-dark/50 text-sm text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
           />
@@ -70,7 +70,7 @@ export const TextAndNumberInputCrud = ({
                 name: currentItem?.name,
                 percentage: event.target.value,
               };
-              setCurrentItem(newItem as GrapeVariety);
+              setCurrentItem(newItem as Grape);
             }}
             className="w-full placeholder:text-on-surface-dark/50 text-sm text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
           />
@@ -90,7 +90,7 @@ export const TextAndNumberInputCrud = ({
                 : ""
             }
             onSelect={(data: string) => {
-              const newItem: GrapeVariety = {
+              const newItem: Grape = {
                 name: currentItem?.name as string,
                 vintageYear: parseInt(data as string),
                 percentage: currentItem?.percentage as string,
@@ -103,11 +103,11 @@ export const TextAndNumberInputCrud = ({
           intent="unstyled"
           disabled={disableButton}
           onClick={() => {
-            let its: GrapeVariety[] = [];
+            let its: Grape[] = [];
             if (items !== null && items !== undefined && items.length > 0) {
-              its = [...items, currentItem as GrapeVariety];
+              its = [...items, currentItem as Grape];
             } else {
-              its = [currentItem as GrapeVariety];
+              its = [currentItem as Grape];
             }
             setItems(its);
             onItemsChange(its);
@@ -115,7 +115,7 @@ export const TextAndNumberInputCrud = ({
               name: "",
               percentage: "",
             };
-            setCurrentItem(newItem as GrapeVariety);
+            setCurrentItem(newItem as Grape);
           }}
           className="border-[1.5px] border-primary-light mt-[32px] text-[16px] flex items-center justify-center max-w-fit px-[12px] gap-[4px] text-primary-light hover:text-primary transition-all duration-200 ease-in-out"
         >

@@ -6,13 +6,13 @@ export const useGetWineMakingTechnique = () => {
   const [sustainabilityPractices, setSustainabilityPractices] = useState<
     string[]
   >([]);
-  const getSustainabilityPracticesDb = httpsCallable(
+  const getSustainabilityPractices = httpsCallable(
     functions,
-    "getSustainabilityPracticesDb"
+    "utils-getSustainabilityPractices"
   );
 
   useEffect(() => {
-    getSustainabilityPracticesDb()
+    getSustainabilityPractices()
       .then((res: any) => {
         setSustainabilityPractices(res.data.sustainabilityPractices);
       })

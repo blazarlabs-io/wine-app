@@ -68,11 +68,12 @@ export const IngredientViewerTable = ({
                 </Text>
               </div>
             ))}
-            {!ingredient.has && !ingredient.allergens.has && (
-              <Text intent="p1" variant="dim">
-                No
-              </Text>
-            )}
+            {ingredient.list.length === 0 &&
+              ingredient.allergens.list.length === 0 && (
+                <Text intent="p1" variant="dim">
+                  No
+                </Text>
+              )}
           </>
         </Container>
       )}

@@ -16,13 +16,12 @@ import { useRealtimeDb } from "@/context/realtimeDbContext";
 import { classNames } from "@/utils/classNames";
 import { useForms } from "@/context/FormsContext";
 import { useModal } from "@/context/modalContext";
-import { httpsCallable } from "firebase/functions";
-import { functions } from "@/lib/firebase/client";
 import { CreateAdminNotification } from "@/typings/winery";
 import { Timestamp } from "firebase/firestore";
 import { useAuth } from "@/context/authContext";
 import { useToast } from "@/context/toastContext";
 import { useAppState } from "@/context/appStateContext";
+import { createNotification } from "@/utils/firestore";
 
 export interface WineryGeneralInfoProps {
   fullWidth?: boolean;
@@ -39,8 +38,6 @@ export const WineryGeneralInfo = ({
   const { user } = useAuth();
   const { updateToast } = useToast();
   const { updateAppLoading } = useAppState();
-
-  const createNotification = httpsCallable(functions, "createNotification");
 
   const sendNotification = () => {
     updateAppLoading(true);

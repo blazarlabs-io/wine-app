@@ -116,8 +116,8 @@ export const FiltersProvider = ({
   useEffect(() => {
     if (filters.byWinery.result && !filters.byWineType.result) {
       getWinesByWineryName(filters.byWinery.result)
-        .then((wines: Wine[]) => {
-          setFilteredWines(wines);
+        .then((wines: any) => {
+          setFilteredWines(wines.data);
           setFiltersLoading(false);
         })
         .catch((error) => {});
@@ -129,29 +129,33 @@ export const FiltersProvider = ({
   }, [filters]);
 
   useEffect(() => {
-    getAllWineryNames().then((wineries) => {
+    getAllWineryNames().then((wineries: any) => {
       setFilters((filters) => ({
         ...filters,
         byWinery: {
-          list: wineries,
+          list: wineries.data,
           result: null,
         },
       }));
     });
     getWineTypes()
-      .then((wineTypes) => {
+      .then((wineTypes: any) => {
         setFilters((filters) => ({
           ...filters,
           byWineType: {
-            list: wineTypes,
+            list: wineTypes.data,
             result: null,
           },
         }));
       })
       .catch((error) => {});
-    getAllWines().then((wines) => {
-      setAllWines(wines);
-    });
+    getAllWines()
+      .then((wines: any) => {
+        setAllWines(wines.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, []);
 
   const value = {

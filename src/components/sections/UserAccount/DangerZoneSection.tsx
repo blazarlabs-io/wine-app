@@ -18,6 +18,7 @@ import { useToast } from "@/context/toastContext";
 import { firebaseAuthErrors } from "@/utils/firebaseAuthErrors";
 import { useModal } from "@/context/modalContext";
 import { useRouter } from "next/navigation";
+import { deleteUser, disableUser } from "@/utils/firestore";
 
 export const DangerZoneSection = () => {
   const [showConfirmDelete, setShowConfirmDelete] = useState<boolean>(false);
@@ -27,9 +28,6 @@ export const DangerZoneSection = () => {
   const { updateToast } = useToast();
   const { updateAppLoading } = useAppState();
   const { updateModal } = useModal();
-
-  const deleteUser = httpsCallable(functions, "deleteUser");
-  const disableUser = httpsCallable(functions, "disableUser");
 
   const handleDisableAccount = () => {
     updateModal({
