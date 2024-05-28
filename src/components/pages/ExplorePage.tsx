@@ -1,13 +1,9 @@
 "use client";
 
 import {
-  Button,
   Container,
-  DropDownFilter,
   FilterBox,
   GeneralLoaderOverlay,
-  SearchFilter,
-  Text,
   WineCard,
 } from "@/components";
 import { useResponsive } from "@/hooks/useResponsive";
@@ -60,19 +56,30 @@ export const ExplorePage = () => {
               <WineCard
                 imageUrl={
                   wine.generalInformation.wineImageUrl ||
+                  wine.minifiedWine.wineImageUrl ||
                   "/wine-placeholder.png"
                 }
                 wineCollectionName={
-                  wine.generalInformation.wineCollectionName as string
+                  (wine.generalInformation.wineCollectionName as string) ||
+                  (wine.minifiedWine.wineCollectionName as string)
                 }
                 upc={wine.packagingAndBranding.upc as string}
                 wineryName={wine.generalInformation.wineryName as string}
-                country={wine.generalInformation.country as string}
+                country={
+                  (wine.generalInformation.country as string) ||
+                  (wine.minifiedWine.country as string)
+                }
                 // harvestYear={wine.generalInformation.harvestYear}
                 harvestYear=""
                 referenceNumber={wine.referenceNumber as string}
-                alcoholLevel={wine.characteristics.alcoholLevel as string}
-                typeOfWine={wine.characteristics.wineType as string}
+                alcoholLevel={
+                  (wine.characteristics.alcoholLevel as string) ||
+                  wine.minifiedWine.alcoholLevel
+                }
+                typeOfWine={
+                  (wine.characteristics.wineType as string) ||
+                  wine.minifiedWine.wineType
+                }
               />
             </div>
           ))}
