@@ -24,11 +24,21 @@ export const BlendComponentCrud = ({
   const [formTitle, setFormTitle] = useState<string>("");
   const [formDescription, setFormDescription] = useState<string>("");
 
-  const handleAddComponent = () => {
+  const handleAddComponent = (component: BlendComponent) => {
+    console.log("handleAddComponent", wineForm.formData.blendComponents.length);
+
+    wineForm.formData.blendComponents.push(component);
+    updateWineForm({
+      ...wineForm,
+      formData: {
+        ...wineForm.formData,
+        blendComponents: wineForm.formData.blendComponents,
+      },
+    });
+
     setFormTitle("Add Component");
     setFormDescription("Add a new blend component to the wine blend.");
-    const newComponent: BlendComponent = blendComponentInitialData;
-    setComponentToCreateOrEdit(newComponent);
+    setComponentToCreateOrEdit(component);
     setShowComponentForm(true);
   };
 
@@ -57,21 +67,31 @@ export const BlendComponentCrud = ({
         <BlendComponentForm
           title={formTitle}
           description={formDescription}
-          component={componentToCreateOrEdit}
+          component={componentToCreateOrEdit as BlendComponent}
           onSave={() => {
             onSave();
             setShowComponentForm(false);
           }}
-          onCancel={() => setShowComponentForm(false)}
+          onCancel={() => {
+            setShowComponentForm(false);
+            wineForm.formData.blendComponents.pop();
+            updateWineForm({
+              ...wineForm,
+              formData: {
+                ...wineForm.formData,
+                blendComponents: wineForm.formData.blendComponents,
+              },
+            });
+          }}
         />
       )}
       {components && (
         <>
           <Container intent="flexColLeft" gap="medium">
-            {components.map((component, index) => (
-              <>
-                {component.id && (
-                  <div key={`${component.id}-${index}`} className="w-full">
+            {components.map((component, index) => {
+              return (
+                <div key={`${component.id}-${index}`} className="w-full">
+                  {component.id && (
                     <Container
                       intent="flexRowBetween"
                       px="small"
@@ -128,14 +148,16 @@ export const BlendComponentCrud = ({
                         </Button>
                       </div>
                     </Container>
-                  </div>
-                )}
-              </>
-            ))}
-            <button
+                  )}
+                </div>
+              );
+            })}
+            <Button
+              intent="unstyled"
               type="button"
               onClick={() => {
-                handleAddComponent();
+                const newComponent: BlendComponent = blendComponentInitialData;
+                handleAddComponent(newComponent);
               }}
               className="flex gap-[8px] items-center justify-center text-primary-light font-semibold"
             >
@@ -146,7 +168,7 @@ export const BlendComponentCrud = ({
                 className="mt-[-4px]"
               />
               Add component
-            </button>
+            </Button>
           </Container>
         </>
       )}

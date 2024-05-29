@@ -77,7 +77,6 @@ export const VineyardCoordinatesCrud = ({
   useEffect(() => {
     if (isDone === true) {
       if (grapeAndCoordinates && Object.keys(grapeAndCoordinates).length > 0) {
-        // console.log("grapeAndCoordinates", grapeAndCoordinates);
         onSave(grapeAndCoordinates as VineyardGrapeAndCoordinates);
         setIsDone(false);
       }
@@ -88,7 +87,6 @@ export const VineyardCoordinatesCrud = ({
       wineryGeneralInfo.wineryHeadquarters.lat === null &&
       wineryGeneralInfo.wineryHeadquarters.lng === null
     ) {
-      console.log("wineryGeneralInfo.wineryHeadquarters");
       updateModal({
         show: true,
         title: "Winery Headquarters Not Set",
@@ -185,7 +183,6 @@ export const VineyardCoordinatesCrud = ({
                 item: Grape,
                 polygon: CoordinateInterface[]
               ) => {
-                console.log("polygon", polygon, item);
                 grapeAndCoordinates.coordinates = polygon;
                 grapeAndCoordinates.grape = item;
                 setGrapeAndCoordinates(grapeAndCoordinates);

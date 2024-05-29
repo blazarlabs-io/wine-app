@@ -98,7 +98,7 @@ export interface Wine {
   // wine packaging and branding
   packagingAndBranding: {
     bottleSize: string;
-    bottleType: string;
+    bottleType: string[];
     closureType: string[];
     extraPackaging: string;
     upc: string;
@@ -198,7 +198,7 @@ export interface VineyardDetails {
   coordinates: CoordinateInterface[];
   elevation: string;
   orientation: string;
-  soilType: string;
+  soilType: string[];
   vinesAge: string;
   irrigationPractices: string[];
 }
@@ -214,8 +214,8 @@ export interface GrapesHarvesting {
 // FERMENTATION PROCESS
 export interface FermentationProcess {
   method: string;
-  yeastType: string;
-  time: string;
+  yeastType: string[];
+  time: string[];
   malolactic: boolean;
 }
 

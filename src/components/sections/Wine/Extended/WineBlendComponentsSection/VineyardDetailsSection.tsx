@@ -40,8 +40,6 @@ export const VineyardDetailsSection = ({
     }
   }, []);
 
-  console.log(item);
-
   return (
     <>
       <Container intent="flexRowLeft" gap="xsmall" className="mt-[24px]">
@@ -80,9 +78,9 @@ export const VineyardDetailsSection = ({
           extraVal="orientation"
           variant="surface"
         />
-        <WineItem
+        <WineItemList
           title="Soil Type"
-          value={item.soilType as string}
+          list={item.soilType as string[]}
           variant="surface"
         />
         <WineItem
