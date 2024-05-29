@@ -39,9 +39,9 @@ export const WinePackagingAndBrandingSection = ({ item }: WineSectionProps) => {
               value={item.packagingAndBranding.bottleSize as string}
               variant="surface"
             />
-            <WineItem
+            <WineItemList
               title="Bottle Type"
-              value={item.packagingAndBranding.bottleType as string}
+              list={item.packagingAndBranding.bottleType as string[]}
               variant="surface"
             />
             <WineItemList
@@ -81,9 +81,9 @@ export const WinePackagingAndBrandingSection = ({ item }: WineSectionProps) => {
               value={item.packagingAndBranding.bottleSize as string}
               variant="surface"
             />
-            <WineItem
+            <WineItemList
               title="Bottle Type"
-              value={item.packagingAndBranding.bottleType as string}
+              list={item.packagingAndBranding.bottleType as string[]}
               variant="surface"
             />
             <WineItemList

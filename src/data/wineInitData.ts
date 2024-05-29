@@ -56,7 +56,7 @@ export const wineInitData: Wine = {
   },
   packagingAndBranding: {
     bottleSize: "",
-    bottleType: "",
+    bottleType: [],
     closureType: [],
     extraPackaging: "",
     upc: "",

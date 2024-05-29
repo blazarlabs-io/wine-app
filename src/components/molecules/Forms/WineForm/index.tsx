@@ -61,39 +61,39 @@ export const WineForm = () => {
   useEffect(() => {
     updateBanner(false, "");
 
-    wineForm.formData.generalInformation.wineryName = wineryGeneralInfo.name;
-    wineForm.formData.minifiedWine.wineryName = wineryGeneralInfo.name;
+    // wineForm.formData.generalInformation.wineryName = wineryGeneralInfo.name;
+    // wineForm.formData.minifiedWine.wineryName = wineryGeneralInfo.name;
 
     if (!initialized.current && !wineForm.isEditing) {
       const ref = generateId(5) + "-" + dateToTimestamp();
-      wineForm.formData.referenceNumber = ref;
+      // wineForm.formData.referenceNumber = ref;
 
-      updateWineForm({
-        ...wineForm,
-        formData: {
-          ...wineForm.formData,
-          referenceNumber: ref as string,
-          generalInformation: {
-            ...wineForm.formData.generalInformation,
-          },
-          minifiedWine: {
-            ...wineForm.formData.minifiedWine,
-          },
-        },
-      });
+      // updateWineForm({
+      //   ...wineForm,
+      //   formData: {
+      //     ...wineForm.formData,
+      //     referenceNumber: ref as string,
+      //     generalInformation: {
+      //       ...wineForm.formData.generalInformation,
+      //     },
+      //     minifiedWine: {
+      //       ...wineForm.formData.minifiedWine,
+      //     },
+      //   },
+      // });
     } else {
-      updateWineForm({
-        ...wineForm,
-        formData: {
-          ...wineForm.formData,
-          generalInformation: {
-            ...wineForm.formData.generalInformation,
-          },
-          minifiedWine: {
-            ...wineForm.formData.minifiedWine,
-          },
-        },
-      });
+      // updateWineForm({
+      //   ...wineForm,
+      //   formData: {
+      //     ...wineForm.formData,
+      //     generalInformation: {
+      //       ...wineForm.formData.generalInformation,
+      //     },
+      //     minifiedWine: {
+      //       ...wineForm.formData.minifiedWine,
+      //     },
+      //   },
+      // });
     }
     updateAppLoading(false);
   }, []);
@@ -194,7 +194,6 @@ export const WineForm = () => {
                 });
             })
             .catch((error: any) => {});
-          ///////////////////////////////////
         }
       );
     } else {

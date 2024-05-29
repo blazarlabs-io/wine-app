@@ -37,7 +37,6 @@ export const PolygonEditorMap = ({
         initialPosition={initialPosition}
         onPolygonComplete={(polygon: CoordinateInterface[]) => {
           onPolygonComplete(selectedItem, polygon);
-          console.log("polygon", polygon, selectedItem);
         }}
       />
       <Container intent="flexRowRight" gap="medium">

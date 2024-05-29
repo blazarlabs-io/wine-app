@@ -9,8 +9,6 @@ import {
   InfoTooltip,
   CheckBox,
   SpinnerLoader,
-  TextAndNumberInputCrud,
-  GrapeCrud,
   MinifiedGrapeCrud,
   WineThumbnail,
 } from "@/components";
@@ -18,18 +16,13 @@ import { useForms } from "@/context/FormsContext";
 import { useAuth } from "@/context/authContext";
 import { useModal } from "@/context/modalContext";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
-import {
-  BlendComponent,
-  BlendIngredients,
-  Grape,
-  MinifiedWine,
-} from "@/typings/winery";
-import { countryList, blendComponentInitialData } from "@/data";
+import { Grape } from "@/typings/winery";
+import { countryList } from "@/data";
 import { uploadWineImageToStorage } from "@/utils/firestore";
 import { restrictNumberInput } from "@/utils/validators/restrictNumberInput";
 import { validateFileSizeAndType } from "@/utils/validators/validateFileSizeAndType";
 import { useEffect, useRef, useState } from "react";
-import { minifiedWineInitData } from "@/data/minifiedWineInitData";
+import { useIntegrateMinifiedAndExtendedWines } from "@/hooks/useIntegrateMinifiedAndExtendedWines";
 
 export interface BasicFormProps {
   onSave: () => void;
@@ -41,7 +34,7 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
   const { wineTypes, wineBottleSizes, wineColours, wineryGeneralInfo } =
     useRealtimeDb();
   const { wineForm, updateWineForm } = useForms();
-
+  const { formsIntegrated } = useIntegrateMinifiedAndExtendedWines();
   const inputFileRef = useRef<any>(null);
 
   const { user } = useAuth();
@@ -80,22 +73,12 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
     onSave();
   };
 
+  // * Update the wine form with integrated data
   useEffect(() => {
-    if (!wineForm.isEditing) {
-      // minifiedWineInitData.wineryName = wineryGeneralInfo.name;
-      // updateWineForm({
-      //   ...wineForm,
-      //   formData: {
-      //     ...wineForm.formData,
-      //     minifiedWine: minifiedWineInitData,
-      //   },
-      // });
-
-      setDataReady(true);
-    } else {
+    if (formsIntegrated) {
       setDataReady(true);
     }
-  }, []);
+  }, [formsIntegrated]);
 
   return (
     <>

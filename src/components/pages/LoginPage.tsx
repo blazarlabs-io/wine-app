@@ -1,6 +1,6 @@
 "use client";
 
-import { Login } from "../molecules/Login";
+import { Login } from "../molecules/Forms/Login";
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/authContext";
 import { useEffect } from "react";

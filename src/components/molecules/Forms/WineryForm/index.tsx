@@ -651,7 +651,7 @@ export const WineryForm = () => {
                 onClick={() => {}}
               >
                 {!isLoading ? (
-                  <>{"save"}</>
+                  <>{"Save"}</>
                 ) : (
                   <Container intent="flexRowCenter">
                     <Icon

@@ -60,8 +60,12 @@ export const useForms = (): FormsContextInterface => {
 export const FormsProvider = ({
   children,
 }: React.PropsWithChildren): JSX.Element => {
-  const [wineryForm, setWineryForm] = useState(contextInitialData.wineryForm);
-  const [wineForm, setWineForm] = useState(contextInitialData.wineForm);
+  const [wineryForm, setWineryForm] = useState<WineryFormInterface>(
+    contextInitialData.wineryForm
+  );
+  const [wineForm, setWineForm] = useState<WineFormInterface>(
+    contextInitialData.wineForm
+  );
 
   const updateWineryForm = (data: WineryFormInterface) => {
     setWineryForm(data);

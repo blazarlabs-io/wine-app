@@ -20,11 +20,7 @@ import { useModal } from "@/context/modalContext";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
 import { useIntegrateMinifiedAndExtendedWines } from "@/hooks/useIntegrateMinifiedAndExtendedWines";
 import { BlendComponent, SelectedTemperature } from "@/typings/winery";
-import {
-  countryList,
-  vintageYearList,
-  blendComponentInitialData,
-} from "@/data";
+import { countryList, vintageYearList } from "@/data";
 import { uploadWineImageToStorage } from "@/utils/firestore";
 import { restrictNumberInput } from "@/utils/validators/restrictNumberInput";
 import { validateFileSizeAndType } from "@/utils/validators/validateFileSizeAndType";
@@ -42,9 +38,7 @@ export const ExtendedForm = ({ onSave, onCancel }: BasicFormProps) => {
     wineTypes,
     wineBottleSizes,
     wineColours,
-    wineryGeneralInfo,
     aromaProfiles,
-    flavourProfiles,
     sustainabilityPractices,
     closureTypes,
   } = useRealtimeDb();
@@ -71,6 +65,10 @@ export const ExtendedForm = ({ onSave, onCancel }: BasicFormProps) => {
           ...wineForm,
           formData: {
             ...wineForm.formData,
+            minifiedWine: {
+              ...wineForm.formData.minifiedWine,
+              wineImageUrl: url,
+            },
             generalInformation: {
               ...wineForm.formData.generalInformation,
               wineImageUrl: url,
@@ -363,33 +361,18 @@ export const ExtendedForm = ({ onSave, onCancel }: BasicFormProps) => {
                     label="Name"
                     placeholder="Award name"
                     initialItems={
-                      wineForm.formData.blendComponents[0].ingredients
-                        .acidityRegulators.list
+                      (wineForm.formData.generalInformation
+                        .awardsAndRecognitions as string[]) || []
                     }
                     onItemsChange={(items: string[]) => {
-                      wineForm.formData.blendComponents[0].ingredients.acidityRegulators.list =
-                        items;
-
                       updateWineForm({
                         ...wineForm,
                         formData: {
                           ...wineForm.formData,
-                          blendComponents: [
-                            {
-                              ...wineForm.formData.blendComponents[0],
-                              ingredients: {
-                                ...wineForm.formData.blendComponents[0]
-                                  .ingredients,
-                                acidityRegulators: {
-                                  allergens:
-                                    wineForm.formData.blendComponents[0]
-                                      .ingredients.acidityRegulators.allergens,
-                                  has: true,
-                                  list: items,
-                                },
-                              },
-                            },
-                          ],
+                          generalInformation: {
+                            ...wineForm.formData.generalInformation,
+                            awardsAndRecognitions: items,
+                          },
                         },
                       });
                     }}
@@ -442,34 +425,6 @@ export const ExtendedForm = ({ onSave, onCancel }: BasicFormProps) => {
                   />
                 </Container>
 
-                {/* <Container intent="flexColLeft" gap="xsmall" className="w-full">
-                  <Text intent="p1" variant="dim" className="font-semibold">
-                    * Bottle Size
-                  </Text>
-                  <DropDown
-                    items={wineBottleSizes}
-                    id="wineBottleSizes"
-                    isRequired
-                    fullWidth
-                    selectedValue={
-                      wineForm.formData.packagingAndBranding.bottleSize
-                    }
-                    onSelect={(data: string) => {
-                      wineForm.formData.packagingAndBranding.bottleSize = data;
-                      updateWineForm({
-                        ...wineForm,
-                        formData: {
-                          ...wineForm.formData,
-                          packagingAndBranding: {
-                            ...wineForm.formData.packagingAndBranding,
-                            bottleSize:
-                              wineForm.formData.packagingAndBranding.bottleSize,
-                          },
-                        },
-                      });
-                    }}
-                  />
-                </Container> */}
                 <Container intent="flexColLeft" gap="xsmall" className="w-full">
                   <Text intent="p1" variant="dim" className="font-semibold">
                     * Wine Color
@@ -1234,6 +1189,31 @@ export const ExtendedForm = ({ onSave, onCancel }: BasicFormProps) => {
                           packagingAndBranding: {
                             ...wineForm.formData.packagingAndBranding,
                             closureType: items,
+                          },
+                        },
+                      });
+                    }}
+                  />
+                </Container>
+                <Container intent="flexColLeft" gap="xsmall" className="w-full">
+                  <Text intent="p1" variant="dim" className="font-semibold">
+                    * Bottle Container Type
+                  </Text>
+                  <TextInputCrud
+                    label=""
+                    placeholder="eg. High Shoulder"
+                    initialItems={
+                      wineForm.formData.packagingAndBranding
+                        .bottleType as string[]
+                    }
+                    onItemsChange={(items: string[]) => {
+                      updateWineForm({
+                        ...wineForm,
+                        formData: {
+                          ...wineForm.formData,
+                          packagingAndBranding: {
+                            ...wineForm.formData.packagingAndBranding,
+                            bottleType: items,
                           },
                         },
                       });
