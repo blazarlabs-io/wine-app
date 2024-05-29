@@ -78,9 +78,9 @@ export const VineyardDetailsSection = ({
           extraVal="orientation"
           variant="surface"
         />
-        <WineItem
+        <WineItemList
           title="Soil Type"
-          value={item.soilType as string}
+          list={item.soilType as string[]}
           variant="surface"
         />
         <WineItem

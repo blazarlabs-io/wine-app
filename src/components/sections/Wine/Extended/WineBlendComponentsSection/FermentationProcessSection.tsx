@@ -41,15 +41,14 @@ export const FermentationProcessSection = ({
           value={item.method as string}
           variant="surface"
         />
-        <WineItem
+        <WineItemList
           title="Yeast Type"
-          value={item.yeastType as string}
+          list={item.yeastType as string[]}
           variant="surface"
         />
-        <WineItem
+        <WineItemList
           title="Fermentation Time"
-          value={item.time as string}
-          extraVal="Kg/Ha"
+          list={item.time as string[]}
           variant="surface"
         />
         <WineItem
