@@ -40,8 +40,6 @@ export const VineyardDetailsSection = ({
     }
   }, []);
 
-  console.log(item);
-
   return (
     <>
       <Container intent="flexRowLeft" gap="xsmall" className="mt-[24px]">

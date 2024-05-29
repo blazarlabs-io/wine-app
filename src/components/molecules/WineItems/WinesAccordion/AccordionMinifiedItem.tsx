@@ -2,7 +2,7 @@ import {
   Container,
   Text,
   Button,
-  WineGeneralExtendedViewer,
+  WineGeneralMinifiedViewer,
   WineThumbnail,
 } from "@/components";
 import { Icon } from "@iconify/react";
@@ -16,18 +16,20 @@ import { WineryGeneralInfo, Wine } from "@/typings/winery";
 
 export interface WineAccordionItemInterface {
   generalInfo: WineryGeneralInfo;
-  item: Wine;
+  wine: Wine;
   onEdit: () => void;
 }
 
-export const AccordionExtendedItem = ({
+export const AccordionMinifiedItem = ({
   generalInfo,
-  item,
+  wine,
   onEdit,
 }: WineAccordionItemInterface) => {
   const { updateModal } = useModal();
 
   const [active, setActive] = useState(false);
+  const [showInfoBanner, setShowInfoBanner] = useState(true);
+  const [item, setItem] = useState(wine as Wine);
 
   const handleToggle = () => {
     setActive(!active);
@@ -89,36 +91,26 @@ export const AccordionExtendedItem = ({
         {/* Data to display when closed    */}
         <div className="flex items-center w-full justify-center">
           <Text intent="p1" className="font-normal text-on-surface">
-            {item.generalInformation.wineCollectionName}
+            {item.minifiedWine.wineCollectionName}
           </Text>
         </div>
         <div className="flex items-center w-full justify-center">
           <Text intent="p1" className="font-normal text-on-surface">
-            {item.characteristics.wineType}
+            {item.minifiedWine.wineType}
           </Text>
         </div>
         <div className="flex items-center w-full justify-center">
           <Text intent="p1" className="font-normal text-on-surface">
-            {item.characteristics.alcoholLevel} %vol
+            {item.minifiedWine.alcoholLevel} %vol
           </Text>
         </div>
         <div className="flex items-center w-full justify-center">
           <Text intent="p1" className="font-normal text-on-surface">
-            {item.generalInformation.country}
+            {item.minifiedWine.country}
           </Text>
         </div>
 
         <div className="flex items-center w-full gap-[16px] justify-center">
-          {/* <Button
-            intent="unstyled"
-            className="text-surface-dark bg-status-info px-[16px] py-[14px] rounded-md"
-            onClick={() => handleTokenization()}
-          >
-            <Icon
-              icon="hugeicons:blockchain-06"
-              className="w-[20px] h-[20px]"
-            />
-          </Button> */}
           <Button
             intent="unstyled"
             className="text-surface-dark bg-status-warning px-[16px] py-[14px] rounded-md"
@@ -154,50 +146,77 @@ export const AccordionExtendedItem = ({
             active ? "block" : "hidden"
           }`}
         >
-          <WineGeneralExtendedViewer item={item} generalInfo={generalInfo} />
-          <Container intent="flexColLeft" className="max-w-fit">
-            <Text intent="h6" variant="accent" className="font-semibold">
-              QR Code & Url
-            </Text>
-          </Container>
-          <Container
-            intent="unstyled"
-            gap="medium"
-            className="flex items-start"
-          >
-            <WineThumbnail
-              imageUrl={item?.generalInformation.wineImageUrl as string}
-            />
-            <Link
-              href={item.generalInformation.qrCodeUrl as string}
-              target="__blank"
-            >
-              <div className="bg-surface p-[8px] rounded-md">
-                <Image
-                  src={item.generalInformation.qrCodeUrl as string}
-                  width={148}
-                  height={148}
-                  alt={item.generalInformation.wineCollectionName as string}
-                  className="rounded-md"
-                />
-              </div>
-            </Link>
+          {showInfoBanner && (
             <Container
               intent="flexRowCenter"
               px="medium"
-              py="small"
-              className="max-w-fit h-full bg-surface rounded-md"
+              py="xsmall"
+              gap="xsmall"
+              className="bg-status-info/30 rounded-md border border-status-info relative"
             >
+              <Icon
+                icon="mdi:information-outline"
+                width={24}
+                height={24}
+                className="text-status-info mt-[-4px]"
+              />
+              <Text variant="info">
+                This wine is not tokenized yet. Click on the yellow Edit button
+                and fill in the extended form. Once saved, the tokenization
+                button will appear.
+              </Text>
+              <button onClick={() => setShowInfoBanner(false)}>
+                <Icon
+                  icon="ant-design:close-outlined"
+                  width={16}
+                  height={16}
+                  className="text-status-info right-[8px] top-[50%] -translate-y-[50%] absolute"
+                />
+              </button>
+            </Container>
+          )}
+          <WineGeneralMinifiedViewer item={item} generalInfo={generalInfo} />
+          <Container intent="flexColLeft" className="max-w-fit">
+            <Text intent="h6" variant="accent" className="font-semibold">
+              Images & Url
+            </Text>
+          </Container>
+          <div className="flex items-center justify-between w-full">
+            <Container intent="flexRowLeft" gap="xsmall">
+              <WineThumbnail
+                imageUrl={item?.minifiedWine.wineImageUrl as string}
+              />
               <Link
-                href={wineUrlComposerRef(item.referenceNumber as string)}
+                href={item.minifiedWine.qrCodeUrl as string}
                 target="__blank"
               >
-                <Text variant="dim">
-                  {wineUrlComposerRef(item.referenceNumber as string)}
-                </Text>
+                <div className="bg-surface p-[8px] rounded-md">
+                  <Image
+                    src={item.minifiedWine.qrCodeUrl as string}
+                    width={148}
+                    height={148}
+                    alt={item.minifiedWine.wineCollectionName as string}
+                    className="rounded-md"
+                  />
+                </div>
               </Link>
+              <Container
+                intent="flexRowCenter"
+                px="medium"
+                py="small"
+                className="max-w-fit h-full bg-surface rounded-md"
+              >
+                <Link
+                  href={wineUrlComposerRef(item.referenceNumber as string)}
+                  target="__blank"
+                >
+                  <Text variant="dim">
+                    {wineUrlComposerRef(item.referenceNumber as string)}
+                  </Text>
+                </Link>
+              </Container>
             </Container>
-          </Container>
+          </div>
         </motion.div>
       </Container>
     </Container>

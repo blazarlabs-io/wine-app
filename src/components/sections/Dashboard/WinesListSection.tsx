@@ -7,11 +7,12 @@ import { Wine } from "@/typings/winery";
 import { useForms } from "@/context/FormsContext";
 import { wineInitData } from "@/data/wineInitData";
 import { useModal } from "@/context/modalContext";
+import { useEffect } from "react";
 
 export const WinesListSection = () => {
   const router = useRouter();
   const { wines, allowedWines, wineryGeneralInfo } = useRealtimeDb();
-  const { updateWineForm } = useForms();
+  const { updateWineForm, wineForm } = useForms();
   const { updateModal } = useModal();
 
   const handleMaxWinesReached = () => {
@@ -76,6 +77,7 @@ export const WinesListSection = () => {
           </Container>
           <div className="min-w-full">
             {wines &&
+              wines.length > 0 &&
               wineryGeneralInfo &&
               wines !== undefined &&
               wineryGeneralInfo !== undefined && (
@@ -89,7 +91,7 @@ export const WinesListSection = () => {
                         "Edit your wine. All fields marked with * are mandatory.",
                       isEditing: true,
                       isMinified: false,
-                      formData: item,
+                      formData: item as Wine,
                     });
 
                     router.push("/wine-form");

@@ -57,7 +57,7 @@ export const blendComponentInitialData: BlendComponent = {
     coordinates: [],
     elevation: "",
     orientation: "",
-    soilType: "",
+    soilType: [],
     vinesAge: "",
     irrigationPractices: [],
   },
@@ -69,8 +69,8 @@ export const blendComponentInitialData: BlendComponent = {
   },
   fermentationProcess: {
     method: "",
-    yeastType: "",
-    time: "",
+    yeastType: [],
+    time: [],
     malolactic: false,
   },
   agingProcess: {

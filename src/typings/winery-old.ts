@@ -52,7 +52,7 @@ export interface WineMakingTechniquesInterface {
 }
 
 export interface WinePackagingInterface {
-  bottleType: string;
+  bottleType: string[];
   bottleSizing: string;
   closureType: string;
   upcCode: string;
@@ -315,8 +315,8 @@ export interface GrapesHarvesting {
 // FERMENTATION PROCESS
 export interface FermentationProcess {
   method: string | null;
-  yeastType: string | null;
-  time: string | null;
+  yeastType: string[] | null;
+  time: string[] | null;
   malolactic: boolean | null;
 }
 

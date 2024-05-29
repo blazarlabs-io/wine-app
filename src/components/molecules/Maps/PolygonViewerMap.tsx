@@ -17,7 +17,6 @@ export const PolygonViewerMap = ({
   initialItems,
   onClose,
 }: PolygonEditorMapProps) => {
-  console.log("initialItems", initialItems);
   return (
     <Container
       intent="flexColLeft"
