@@ -79,6 +79,8 @@ export { MapVineyardsView } from "./widgets/MapComponents/MapVineyardsViewer";
 export { MapVineyardsMultiGrapeView } from "./widgets/MapComponents/MapVineyardsMultiGrapeViewer";
 export { MapLocationViewer } from "./widgets/MapComponents/MapLocationViewer";
 export { MapLocationFinder } from "./widgets/MapComponents/MapLocationFinder";
+export { LineGraph } from "./widgets/SensorsGraph/LineGraph";
+export { Sensors } from "./widgets/SensorsGraph/Sensors";
 
 // Sections
 export { HeroSection } from "./sections/Home/HeroSection";
@@ -100,6 +102,8 @@ export { WinePackagingAndBrandingSection as ExtendedWinePackagingAndBrandingSect
 export { WinePackagingAndBrandingSection as MinifiedWinePackagingAndBrandingSection } from "./sections/Wine/Minified/WinePackagingAndBrandingSection";
 export { WineBlendComponentsSection } from "./sections/Wine/Extended/WineBlendComponentsSection";
 export { BlendIngredientsSection as MinifiedBlendIngredientsSection } from "./sections/Wine/Minified/BlendIngredientsSection";
+export { WineStorageConditionsSection as TokenizedWineStorageConditionsSection } from "./sections/Wine/Tokenized/StorageConditionsSection";
+
 // Pages
 export { HomePage } from "./pages/HomePage";
 export { LoginPage } from "./pages/LoginPage";
@@ -107,7 +111,7 @@ export { DashboardHomePage } from "./pages/DashboardHomePage";
 export { ProtectedPage } from "./pages/ProtectedPage";
 export { WineFormPage } from "./pages/WineFormPage";
 export { ExplorePage } from "./pages/ExplorePage";
-export { WinePage } from "./pages/WinePage";
+export { WinePage } from "./pages/Wine/WinePage";
 export { WineryFormPage } from "./pages/WineryFormPage";
 export { AboutUsPage } from "./pages/AboutUsPage";
 export { ContactUsPage } from "./pages/ContactUsPage";

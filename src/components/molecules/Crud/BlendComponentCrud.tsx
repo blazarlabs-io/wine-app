@@ -152,6 +152,11 @@ export const BlendComponentCrud = ({
                 </div>
               );
             })}
+            {components.length === 0 && (
+              <Text intent="p1" className="">
+                No blend components added yet.
+              </Text>
+            )}
             <Button
               intent="unstyled"
               type="button"

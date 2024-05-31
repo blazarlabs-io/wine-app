@@ -17,6 +17,8 @@ import { Icon } from "@iconify/react";
 import { useEffect, useState } from "react";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
 import { useModal } from "@/context/modalContext";
+import { useValidateMapinitialCoordinates } from "@/hooks/useValidateMapinitialCoordinates";
+import { useSetMapInitialData } from "@/hooks/useSetMapInitialData";
 
 export interface VineyardCoordinatesCrudProps {
   blendComponent: BlendComponent;
@@ -35,7 +37,7 @@ export const VineyardCoordinatesCrud = ({
 }: VineyardCoordinatesCrudProps) => {
   const { wineryGeneralInfo } = useRealtimeDb();
   const { updateModal } = useModal();
-
+  const { initialMapData } = useSetMapInitialData();
   const [showMapEditor, setShowMapEditor] = useState<boolean>(false);
   const [showMapViewer, setShowMapViewer] = useState<boolean>(false);
   const [grapeAndCoordinates, setGrapeAndCoordinates] =
@@ -170,33 +172,32 @@ export const VineyardCoordinatesCrud = ({
           />
         </div>
       )}
-      {showMapEditor &&
-        wineryGeneralInfo.wineryHeadquarters.lat !== null &&
-        wineryGeneralInfo.wineryHeadquarters.lng !== null && (
-          <div className="w-full">
-            <PolygonEditorMap
-              initialPosition={
-                wineryGeneralInfo.wineryHeadquarters as CoordinateInterface
-              }
-              selectedItem={blendComponent.vineyardDetails?.grape as any}
-              onPolygonComplete={(
-                item: Grape,
-                polygon: CoordinateInterface[]
-              ) => {
-                grapeAndCoordinates.coordinates = polygon;
-                grapeAndCoordinates.grape = item;
-                setGrapeAndCoordinates(grapeAndCoordinates);
-              }}
-              onCancel={() => setShowMapEditor(false)}
-              onSave={() => {
-                setIsDone(true);
-                setShowMapEditor(false);
-              }}
-            />
-          </div>
-        )}
+      {showMapEditor && (
+        <div className="w-full">
+          <PolygonEditorMap
+            initialPosition={initialMapData as CoordinateInterface}
+            selectedItem={blendComponent.vineyardDetails?.grape as any}
+            onPolygonComplete={(
+              item: Grape,
+              polygon: CoordinateInterface[]
+            ) => {
+              grapeAndCoordinates.coordinates = polygon;
+              grapeAndCoordinates.grape = item;
+              setGrapeAndCoordinates(grapeAndCoordinates);
+            }}
+            onCancel={() => setShowMapEditor(false)}
+            onSave={() => {
+              setIsDone(true);
+              setShowMapEditor(false);
+            }}
+            onMapDataInvalid={() => {
+              setShowMapEditor(false);
+            }}
+          />
+        </div>
+      )}
       <Container intent="flexColLeft" gap="small">
-        <Container intent="flexRowLeft" gap="xsmall" className="">
+        <Container intent="flexRowWrap" gap="xsmall" className="">
           {grapeAndCoordinates?.coordinates &&
           grapeAndCoordinates.coordinates.length > 0 ? (
             <>

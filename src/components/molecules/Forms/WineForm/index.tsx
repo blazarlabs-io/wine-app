@@ -31,6 +31,7 @@ import { ExtendedForm } from "./ExtendedForm";
 import { useToast } from "@/context/toastContext";
 import { MinifiedWine } from "@/typings/winery";
 import { minifiedWineInitData } from "@/data/minifiedWineInitData";
+import { Timestamp } from "firebase/firestore";
 
 export const WineForm = () => {
   const router = useRouter();
@@ -122,6 +123,9 @@ export const WineForm = () => {
         getQrCodeImageData("euLabelQrCode"),
         wineForm.formData.referenceNumber as string,
         (url: string) => {
+          wineForm.formData.createdAt = Timestamp.now();
+          wineForm.formData.generalInformation.wineryId = user?.uid as string;
+          wineForm.formData.minifiedWine.wineryId = user?.uid as string;
           wineForm.formData.minifiedWine.qrCodeUrl = url;
           wineForm.formData.generalInformation.qrCodeUrl = url;
           registerWineryWine({

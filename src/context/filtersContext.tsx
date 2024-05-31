@@ -8,6 +8,8 @@ import {
   getAllWineryNames,
   getWinesByWineryName,
   getWineTypes,
+  getTokenizedWines,
+  getNonTokenizedWines,
 } from "@/utils/firestore";
 
 export interface FiltersInterface {
@@ -20,6 +22,7 @@ export interface FiltersInterface {
     result: any;
   };
   byUpc: string[] | null;
+  showTokenized: boolean | null;
 }
 export interface FiltersContextInterface {
   mobileFilters: boolean;
@@ -27,6 +30,8 @@ export interface FiltersContextInterface {
   filters: FiltersInterface;
   filteredWines: Wine[];
   allWines: Wine[];
+  tokenizedWines: Wine[];
+  nonTokenizedWines: Wine[];
   filtersLoading: boolean;
   filtersMessage: string;
   updateShowFilters: (value: boolean) => void;
@@ -47,8 +52,11 @@ const contextInitialData: FiltersContextInterface = {
       result: null,
     },
     byUpc: null,
+    showTokenized: null,
   },
   allWines: [],
+  tokenizedWines: [],
+  nonTokenizedWines: [],
   filteredWines: [],
   filtersLoading: false,
   filtersMessage: "",
@@ -86,9 +94,12 @@ export const FiltersProvider = ({
       result: null,
     },
     byUpc: null,
+    showTokenized: null,
   });
   const [filteredWines, setFilteredWines] = useState<Wine[]>([]);
   const [allWines, setAllWines] = useState<Wine[]>([]);
+  const [tokenizedWines, setTokenizedWines] = useState<Wine[]>([]);
+  const [nonTokenizedWines, setNonTokenizedWines] = useState<Wine[]>([]);
   const [filtersLoading, setFiltersLoading] = useState<boolean>(false);
   const [filtersMessage, setFiltersMessage] = useState<string>("");
 
@@ -121,6 +132,10 @@ export const FiltersProvider = ({
           setFiltersLoading(false);
         })
         .catch((error) => {});
+      return;
+    } else if (filters.showTokenized) {
+      setFilteredWines(tokenizedWines);
+      setFiltersLoading(false);
       return;
     }
 
@@ -156,6 +171,26 @@ export const FiltersProvider = ({
       .catch((error) => {
         console.log(error);
       });
+
+    // * GET NON-TOKENIZED WINES
+    getNonTokenizedWines()
+      .then((response: any) => {
+        setNonTokenizedWines(response.data);
+        console.log("NON-TOKENIZED", response);
+      })
+      .catch((error: any) => {
+        console.error(error);
+      });
+
+    // * GET TOKENIZED WINES
+    getTokenizedWines()
+      .then((response: any) => {
+        setTokenizedWines(response.data);
+        console.log("TOKENIZED", response);
+      })
+      .catch((error: any) => {
+        console.error(error);
+      });
   }, []);
 
   const value = {
@@ -164,8 +199,10 @@ export const FiltersProvider = ({
     filters,
     filteredWines,
     allWines,
+    tokenizedWines,
     filtersLoading,
     filtersMessage,
+    nonTokenizedWines,
     updateShowFilters,
     updateFilters,
     updateFiltersMessage,

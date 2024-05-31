@@ -2,6 +2,8 @@
 
 import { Container, Text, Button, MapVineyardsDraw } from "@/components";
 import { CoordinateInterface, Grape } from "@/typings/winery";
+import { useValidateMapinitialCoordinates } from "@/hooks/useValidateMapinitialCoordinates";
+import { useEffect } from "react";
 
 export interface PolygonEditorMapProps {
   initialPosition: CoordinateInterface;
@@ -9,6 +11,7 @@ export interface PolygonEditorMapProps {
   onPolygonComplete: (item: Grape, polygon: CoordinateInterface[]) => void;
   onCancel: () => void;
   onSave: () => void;
+  onMapDataInvalid?: () => void;
 }
 
 export const PolygonEditorMap = ({
@@ -17,6 +20,7 @@ export const PolygonEditorMap = ({
   onPolygonComplete,
   onCancel,
   onSave,
+  onMapDataInvalid,
 }: PolygonEditorMapProps) => {
   return (
     <Container

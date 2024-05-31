@@ -26,6 +26,7 @@ export const WineBlendComponentsSection = ({
   mapData,
 }: WineBlendComponentSectionProps) => {
   const { responsiveSize } = useResponsive();
+
   return (
     <>
       <Container

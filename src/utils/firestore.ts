@@ -214,6 +214,16 @@ export const getAllWineryNames = httpsCallable(
   "winery-getAllWineryNames"
 );
 
+export const getTokenizedWines = httpsCallable(
+  functions,
+  "winery-getTokenizedWines"
+);
+
+export const getNonTokenizedWines = httpsCallable(
+  functions,
+  "winery-getNonTokenizedWines"
+);
+
 // DB CALLABLES
 export const createNotification = httpsCallable(
   functions,
@@ -262,4 +272,10 @@ export const getAromaProfiles = httpsCallable(
 export const getFlavourProfiles = httpsCallable(
   functions,
   "utils-getFlavourProfiles"
+);
+
+// BLOCKFROST CALLABLES
+export const getAssetsByPolicyId = httpsCallable(
+  functions,
+  "blockfrost-getAssetsByPolicyId"
 );

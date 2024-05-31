@@ -3,6 +3,7 @@ import { MinifiedWine } from "@/typings/winery";
 export const minifiedWineInitData: MinifiedWine = {
   upc: "",
   wineryName: "",
+  wineryId: "",
   wineCollectionName: "",
   country: "",
   wineType: "",

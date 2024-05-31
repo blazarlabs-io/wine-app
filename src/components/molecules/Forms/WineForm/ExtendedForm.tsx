@@ -1269,24 +1269,24 @@ export const ExtendedForm = ({ onSave, onCancel }: BasicFormProps) => {
                 />
               </Container>
 
-              {wineForm.formData.blendComponents.length > 0 && (
-                <Container intent="flexRowLeft" gap="xsmall">
-                  <BlendComponentCrud
-                    components={
-                      wineForm.formData.blendComponents as BlendComponent[]
-                    }
-                    onSave={() => {
-                      updateWineForm({
-                        ...wineForm,
-                        formData: {
-                          ...wineForm.formData,
-                          blendComponents: wineForm.formData.blendComponents,
-                        },
-                      });
-                    }}
-                  />
-                </Container>
-              )}
+              {/* {wineForm.formData.blendComponents.length > 0 && ( */}
+              <Container intent="flexRowLeft" gap="xsmall">
+                <BlendComponentCrud
+                  components={
+                    wineForm.formData.blendComponents as BlendComponent[]
+                  }
+                  onSave={() => {
+                    updateWineForm({
+                      ...wineForm,
+                      formData: {
+                        ...wineForm.formData,
+                        blendComponents: wineForm.formData.blendComponents,
+                      },
+                    });
+                  }}
+                />
+              </Container>
+              {/* )} */}
 
               {/* Buttons */}
 

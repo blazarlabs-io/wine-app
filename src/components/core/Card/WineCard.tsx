@@ -8,6 +8,7 @@ import { useResponsive } from "@/hooks/useResponsive";
 import { classNames } from "@/utils/classNames";
 import Link from "next/link";
 import { wineUrlComposerRef } from "@/utils/wineUrlComposerRef";
+import { tokenizedWineUrlComposerRef } from "@/utils/tokenizedWineUrlComposerRef";
 
 export interface WineCardProps {
   imageUrl: string;
@@ -19,6 +20,7 @@ export interface WineCardProps {
   referenceNumber: string;
   alcoholLevel: string;
   typeOfWine: string;
+  isTokenized?: boolean;
 }
 
 export const WineCard = ({
@@ -30,6 +32,7 @@ export const WineCard = ({
   referenceNumber,
   alcoholLevel,
   typeOfWine,
+  isTokenized = false,
 }: WineCardProps) => {
   const router = useRouter();
   const { responsiveSize } = useResponsive();
@@ -56,13 +59,29 @@ export const WineCard = ({
             className="rounded-t-lg"
           />
         </div>
-        <Container intent="flexColTop" gap="xsmall">
+        <Container intent="flexColTop" gap="xsmall" className="relative">
           <Container
             intent={"flexColCenter"}
             gap="xsmall"
             px={responsiveSize === "mobile" ? "medium" : "medium"}
             className={classNames("min-w-full, mt-[24px]")}
           >
+            {isTokenized && (
+              <>
+                <Icon
+                  icon="formkit:cardano"
+                  width="40px"
+                  height="40px"
+                  className="text-status-info top-0 left-[24px] absolute"
+                />
+                <Icon
+                  icon="material-symbols-light:token-outline"
+                  width="40px"
+                  height="40px"
+                  className="text-status-info top-0 right-[24px] absolute"
+                />
+              </>
+            )}
             <Container
               intent="flexRowCenter"
               gap="xsmall"
@@ -136,19 +155,38 @@ export const WineCard = ({
             </Container>
           </Container>
         </Container>
-        <Container intent="flexRowRight" px="medium" className="mb-[24px]">
-          <Link
-            href={wineUrlComposerRef(referenceNumber)}
-            className="border border-primary-light text-primary-light hover:border-primary hover:text-primary transition-all duration-300 ease-in-out rounded-md px-2 py-1"
-          >
-            <Text
-              variant="accent"
-              className="text-primary-light hover:text-primary"
-            >
-              View Details
+        {isTokenized ? (
+          <Container intent="flexRowBetween" px="medium" className="mb-[24px]">
+            <Text variant="accent" className="text-status-info">
+              This wine is tokenized
             </Text>
-          </Link>
-        </Container>
+            <Link
+              href={tokenizedWineUrlComposerRef(referenceNumber)}
+              className="border border-primary-light text-primary-light hover:border-primary hover:text-primary transition-all duration-300 ease-in-out rounded-md px-2 py-1"
+            >
+              <Text
+                variant="accent"
+                className="text-primary-light hover:text-primary"
+              >
+                View Details
+              </Text>
+            </Link>
+          </Container>
+        ) : (
+          <Container intent="flexRowRight" px="medium" className="mb-[24px]">
+            <Link
+              href={wineUrlComposerRef(referenceNumber)}
+              className="border border-primary-light text-primary-light hover:border-primary hover:text-primary transition-all duration-300 ease-in-out rounded-md px-2 py-1"
+            >
+              <Text
+                variant="accent"
+                className="text-primary-light hover:text-primary"
+              >
+                View Details
+              </Text>
+            </Link>
+          </Container>
+        )}
       </Container>
     </>
   );
