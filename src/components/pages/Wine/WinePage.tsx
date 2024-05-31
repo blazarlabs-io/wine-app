@@ -17,6 +17,8 @@ import {
   MinifiedWineCharacteristicsSection,
   MinifiedWinePackagingAndBrandingSection,
   MinifiedBlendIngredientsSection,
+  LineGraph,
+  Sensors,
 } from "@/components";
 import {
   BlendIngredients,
@@ -26,8 +28,9 @@ import {
   WineryGeneralInfo,
 } from "@/typings/winery";
 import { classNames } from "@/utils/classNames";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAppState } from "@/context/appStateContext";
+import { useGetIpfsData } from "@/hooks/useGetIpfsData";
 
 export interface WinePagePropsInterface {
   generalInfo?: WineryGeneralInfo;
@@ -36,6 +39,16 @@ export interface WinePagePropsInterface {
 
 export const WinePage = ({ generalInfo, wine }: WinePagePropsInterface) => {
   const { updateAppLoading } = useAppState();
+  const {
+    ipfsData,
+    setIpfsUrl,
+    sensorData,
+    temperatureData,
+    humidityData,
+    vibrationData,
+    lightingData,
+  } = useGetIpfsData();
+  const [sensors, setSensors] = useState<any>(null);
 
   const mapData = {
     initialPosition: generalInfo?.wineryHeadquarters as any,
@@ -43,7 +56,15 @@ export const WinePage = ({ generalInfo, wine }: WinePagePropsInterface) => {
 
   useEffect(() => {
     updateAppLoading(false);
-  }, []);
+
+    if (wine?.tokenization?.isTokenized) {
+      setIpfsUrl(wine.tokenization.ipfsUrl as string);
+    }
+
+    if (ipfsData && temperatureData.length > 0) {
+      setSensors(temperatureData);
+    }
+  }, [ipfsData]);
   return (
     <>
       {wine && generalInfo ? (
@@ -85,6 +106,17 @@ export const WinePage = ({ generalInfo, wine }: WinePagePropsInterface) => {
           ) : (
             <>
               <ExtendedWineHeadSection wine={wine as Wine} />
+              {sensors && sensors.length > 0 && (
+                <div className="w-full gap-[16px] flex">
+                  <Sensors
+                    temperatureData={temperatureData}
+                    humidityData={humidityData}
+                    vibrationData={vibrationData}
+                    lightingData={lightingData}
+                  />
+                </div>
+              )}
+
               <ExtendedWineGeneralInformationSection item={wine as Wine} />
               <ExtendedWineCharacteristicsSection item={wine as Wine} />
               <ExtendedWineStorageConditionsSection item={wine as Wine} />

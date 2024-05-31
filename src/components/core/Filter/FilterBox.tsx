@@ -86,6 +86,7 @@ export const FilterBox = () => {
                       list: filters.byWinery.list,
                       result: null,
                     },
+                    showTokenized: null,
                   });
                   setCurrentFiltering(null);
                 }}
@@ -114,11 +115,12 @@ export const FilterBox = () => {
                       list: filters.byWinery.list,
                       result: item,
                     },
+                    showTokenized: null,
                   });
                   setCurrentFiltering("winery name");
                 }}
               />
-              <DropDownFilter
+              {/* <DropDownFilter
                 disabled={false}
                 label="Search by wine type"
                 items={filters.byWineType.list}
@@ -138,14 +140,14 @@ export const FilterBox = () => {
                   });
                   setCurrentFiltering("wine type");
                 }}
-              />
-              <SearchFilter
+              /> */}
+              {/* <SearchFilter
                 disabled={true}
                 label="Search UPC code"
                 onChange={(value: string[]) => {
                   // setUpcFilterValue(value);
                 }}
-              />
+              /> */}
             </Container>
             <Container
               intent={currentFiltering ? "flexRowBetween" : "flexRowRight"}

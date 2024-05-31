@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Container, DropDown, Text } from "@/components";
+import { Button, Container, DropDown, Text, Toggle } from "@/components";
 import { useResponsive } from "@/hooks/useResponsive";
 import { useFilters } from "@/context/filtersContext";
 import { Icon } from "@iconify/react";
@@ -47,6 +47,16 @@ export const ExploreModeSelect = ({}: ExploreModeSelectProps) => {
             </Text>
           )}
         </Container>
+
+        <Toggle
+          label="Show tokenized wines"
+          isChecked={filters.showTokenized || false}
+          onCheck={(state: boolean) => {
+            console.log(state);
+            updateFilters({ ...filters, showTokenized: state });
+          }}
+        />
+
         {/* )} */}
         <Container intent="grid-2" gap="small" className="max-w-[240px]">
           <Container intent="flexRowRight">
