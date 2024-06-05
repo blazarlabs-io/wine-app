@@ -1,10 +1,13 @@
 import { Wine } from "@/typings/winery";
+import { Timestamp } from "firebase/firestore";
 
 export const wineInitData: Wine = {
   referenceNumber: "",
   isMinified: true,
+  createdAt: null,
   generalInformation: {
     wineryName: "",
+    wineryId: "",
     wineCollectionName: "",
     country: "",
     collectionSize: "",
@@ -66,6 +69,7 @@ export const wineInitData: Wine = {
   minifiedWine: {
     upc: "",
     wineryName: "",
+    wineryId: "",
     wineCollectionName: "",
     country: "",
     wineType: "",
@@ -119,5 +123,11 @@ export const wineInitData: Wine = {
       },
     },
     residualSugar: "",
+  },
+  tokenization: {
+    isTokenized: false,
+    tokenizationDate: null,
+    ipfsHash: "",
+    ipfsUrl: "",
   },
 };

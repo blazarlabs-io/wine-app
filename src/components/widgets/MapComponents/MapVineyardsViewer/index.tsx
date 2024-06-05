@@ -10,11 +10,11 @@ import { useEffect, useState } from "react";
 import { useDrawingManager } from "./useDrawingManager";
 import {
   CoordinateInterface,
-  GrapeAndVineyard,
   VineyardGrapeAndCoordinates,
 } from "@/typings/winery";
-import { Container, Text } from "@/components";
+import { Container, DropDown, Text } from "@/components";
 import { getPolygonCenter } from "@/utils/getPolygonCenter";
+import { useSetMapInitialData } from "@/hooks/useSetMapInitialData";
 
 export interface MapVineyardsDrawProps {
   initialPosition: CoordinateInterface;
@@ -25,6 +25,8 @@ export const MapVineyardsView = ({
   initialPosition,
   initialItems,
 }: MapVineyardsDrawProps) => {
+  const { initialMapData } = useSetMapInitialData();
+
   // initial camera position
   const INITIAL_CAMERA = {
     center: { lat: initialPosition.lat, lng: initialPosition.lng },
@@ -38,8 +40,7 @@ export const MapVineyardsView = ({
   const { drawingManager } = useDrawingManager();
 
   // set camera props
-  const [cameraProps, setCameraProps] =
-    useState<MapCameraProps>(INITIAL_CAMERA);
+  const [cameraProps, setCameraProps] = useState<MapCameraProps | null>(null);
 
   // Markers array
   const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
@@ -64,6 +65,23 @@ export const MapVineyardsView = ({
 
     poly.setMap(map);
   };
+
+  useEffect(() => {
+    console.log(initialItems);
+    if (initialMapData && initialItems.coordinates.length === 0) {
+      setCameraProps({
+        center: { lat: initialMapData.lat, lng: initialMapData.lng },
+        zoom: 15,
+      });
+    } else {
+      setCameraProps({
+        center: getPolygonCenter(
+          initialItems.coordinates
+        ) as CoordinateInterface,
+        zoom: 15,
+      });
+    }
+  }, [initialMapData]);
 
   useEffect(() => {
     if (initialItems?.coordinates) {
@@ -93,16 +111,22 @@ export const MapVineyardsView = ({
     }
   }, [markers]);
 
+  // console.log("initialItems", initialItems);
+  // console.log("initialPosition", initialPosition);
+
   return (
     <>
-      {initialPosition.lat && initialPosition.lng ? (
+      {cameraProps ? (
         <Map
           {...cameraProps}
           style={{ width: "100%", height: 400 }}
           onCameraChanged={handleCameraChange}
           gestureHandling={"greedy"}
           disableDefaultUI={true}
-        />
+          mapTypeId={"satellite"}
+        >
+          {/* <DropDown id="mapStyle" items={[]} onSelect={() => {}} /> */}
+        </Map>
       ) : (
         <Container
           intent="flexRowLeft"

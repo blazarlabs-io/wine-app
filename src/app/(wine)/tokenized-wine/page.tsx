@@ -10,9 +10,21 @@ import {
   getWineByRefNumber,
   getWineryByWineRefNumber,
 } from "@/utils/firestore";
+import { useGetIpfsData } from "@/hooks/useGetIpfsData";
+import { TokenizedWinePage } from "@/components/pages/Wine/TokenizedWinePage";
 
-export default function WineDetail() {
+export default function TokenizedWineDetail() {
   const { updateAppLoading } = useAppState();
+
+  const {
+    ipfsData,
+    setIpfsUrl,
+    sensorData,
+    temperatureData,
+    humidityData,
+    vibrationData,
+    lightingData,
+  } = useGetIpfsData();
 
   const searchParams = useSearchParams();
 
@@ -20,14 +32,13 @@ export default function WineDetail() {
   const [generalInfo, setGeneralInfo] = useState<WineryGeneralInfo | null>(
     null
   );
-  const [wine, setWine] = useState<DocumentData | null>(null);
 
   useEffect(() => {
     if (ref) {
       getWineByRefNumber({ ref })
         .then((data: any) => {
           console.log("getWineByRefNumber", ref, data.data);
-          setWine(data.data);
+          setIpfsUrl(data.data.tokenization.ipfsUrl as string);
         })
         .catch((error) => {
           console.error("Error getting document:", error);
@@ -49,10 +60,16 @@ export default function WineDetail() {
   return (
     <>
       <Suspense>
-        {wine && generalInfo && (
-          <WinePage
+        {ipfsData && generalInfo && (
+          <TokenizedWinePage
             generalInfo={generalInfo as WineryGeneralInfo}
-            wine={wine as Wine}
+            wine={ipfsData as Wine}
+            sensorData={{
+              temperature: temperatureData,
+              humidity: humidityData,
+              vibration: vibrationData,
+              lighting: lightingData,
+            }}
           />
         )}
       </Suspense>

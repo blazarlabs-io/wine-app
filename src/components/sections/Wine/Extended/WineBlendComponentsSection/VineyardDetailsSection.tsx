@@ -24,7 +24,6 @@ export const VineyardDetailsSection = ({
 
   useEffect(() => {
     if (
-      item.coordinates?.length &&
       item.coordinates?.length > 0 &&
       item.grape?.name !== "" &&
       item.grape?.name !== null &&
@@ -37,8 +36,9 @@ export const VineyardDetailsSection = ({
       item.grape?.vintageYear !== undefined
     ) {
       setMapAllowed(true);
+      console.log("mapAllowed", mapAllowed);
     }
-  }, []);
+  }, [item]);
 
   return (
     <>
