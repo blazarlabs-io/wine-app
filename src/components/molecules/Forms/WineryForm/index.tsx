@@ -25,8 +25,10 @@ import { useModal } from "@/context/modalContext";
 import { useRouter } from "next/navigation";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
 import { useForms } from "@/context/FormsContext";
-import PhoneInput from "react-phone-number-input";
-import "react-phone-number-input/style.css";
+// import PhoneInput from "react-phone-number-input";
+// import "react-phone-number-input/style.css";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 import { useMasterLoader } from "@/context/masterLoaderContext";
 import { useToast } from "@/context/toastContext";
 import { removeUndefinedValues } from "@/utils/removeUndefinedValues";
@@ -311,7 +313,7 @@ export const WineryForm = () => {
                   required
                   type="text"
                   placeholder=""
-                  value={wineryGeneralInfo.name}
+                  value={wineryGeneralInfo.name || ""}
                   onChange={(event: any) => {
                     const newGeneralInfo = {
                       ...wineryGeneralInfo,
@@ -596,13 +598,13 @@ export const WineryForm = () => {
                   <InfoTooltip text="Please provide the representative phone with the area code starting with +" />
                 </Container>
                 <div className="flex items-center justify-center gap-[8px] w-full">
-                  <PhoneInput
+                  {/* <PhoneInput
                     name="phoneNumber"
                     type="text"
                     country={"us"}
                     enableAreaCodes={true}
                     areaCodes={{ us: ["332"] }}
-                    inputProps={{
+                    inputprops={{
                       name: "phone",
                       country: "us",
                       required: true,
@@ -625,6 +627,37 @@ export const WineryForm = () => {
                       height: "48px",
                     }}
                     className="w-full text-on-surface px-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
+                  /> */}
+                  <PhoneInput
+                    country={"us"}
+                    value={wineryGeneralInfo.wineryRepresentative.phone}
+                    onChange={(event: any) => {
+                      const newGeneralInfo = {
+                        ...wineryGeneralInfo,
+                        wineryRepresentative: {
+                          name: wineryGeneralInfo.wineryRepresentative.name,
+                          email: wineryGeneralInfo.wineryRepresentative.email,
+                          phone: event === undefined ? "" : event,
+                        },
+                      };
+                      updateWineryGeneralInfo(newGeneralInfo);
+                    }}
+                    inputStyle={{
+                      width: "100%",
+                      height: "48px",
+                      backgroundColor: "#292929",
+                      color: "#ddd",
+                      border: "0px",
+                    }}
+                    dropdownStyle={{
+                      backgroundColor: "#292929",
+                      color: "#ddd",
+                    }}
+                    buttonStyle={{
+                      backgroundColor: "#292929",
+                      color: "#ddd",
+                      border: "0px",
+                    }}
                   />
                 </div>
               </Container>

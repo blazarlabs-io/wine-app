@@ -30,6 +30,7 @@ export const ExplorePage = () => {
   useEffect(() => {
     if (filteredWines.length > 0) {
       setWinesToShow(filteredWines);
+      console.log(filteredWines);
     } else {
       setWinesToShow(allWines);
     }

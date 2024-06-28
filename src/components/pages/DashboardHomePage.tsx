@@ -19,7 +19,9 @@ export const DashboardHomePage = () => {
   useEffect(() => {
     getWineryData({ data: { uid: user?.uid } })
       .then((res: any) => {
+        console.log(res.data);
         if (
+          res.data === null ||
           res.data.generalInfo === null ||
           res.data.generalInfo === undefined ||
           Object.keys(res.data.generalInfo).length === 0
