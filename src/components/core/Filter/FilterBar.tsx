@@ -48,14 +48,6 @@ export const ExploreModeSelect = ({}: ExploreModeSelectProps) => {
           )}
         </Container>
 
-        <Toggle
-          label="Show tokenized wines"
-          isChecked={filters.showTokenized || false}
-          onCheck={(state: boolean) => {
-            updateFilters({ ...filters, showTokenized: state });
-          }}
-        />
-
         {/* )} */}
         <Container intent="grid-2" gap="small" className="max-w-[240px]">
           <Container intent="flexRowRight">

@@ -294,6 +294,7 @@ export const WineForm = () => {
           <Container intent="flexRowBetween">
             <Text variant="dim">{wineForm.description}</Text>
             <Toggle
+              disabled={true}
               label="Show extended form"
               isChecked={(showExtendedForm as boolean) || false}
               onCheck={(checked: boolean) => {

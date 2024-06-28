@@ -264,7 +264,7 @@ export const WineGeneralExtendedViewer = ({
               />
             </Container>
 
-            {/* PAckaging And Branding */}
+            {/* Packaging And Branding */}
 
             <Container intent="flexColLeft" className="max-w-fit">
               <Text intent="h6" variant="accent" className="font-semibold">
