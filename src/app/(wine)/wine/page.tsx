@@ -26,7 +26,6 @@ export default function WineDetail() {
     if (ref) {
       getWineByRefNumber({ ref })
         .then((data: any) => {
-          console.log("getWineByRefNumber", ref, data.data);
           setWine(data.data);
         })
         .catch((error) => {

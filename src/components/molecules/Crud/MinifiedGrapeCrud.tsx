@@ -35,9 +35,6 @@ export const MinifiedGrapeCrud = ({
     }
   }, [currentItem]);
 
-  console.log("initialItems", initialItems);
-  console.log("grapes", grapes);
-
   return (
     <>
       <Container intent="grid-4" gap="xsmall" className="w-full">

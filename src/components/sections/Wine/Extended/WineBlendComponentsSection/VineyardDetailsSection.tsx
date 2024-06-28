@@ -36,7 +36,6 @@ export const VineyardDetailsSection = ({
       item.grape?.vintageYear !== undefined
     ) {
       setMapAllowed(true);
-      console.log("mapAllowed", mapAllowed);
     }
   }, [item]);
 
