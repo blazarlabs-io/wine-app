@@ -37,7 +37,6 @@ export default function TokenizedWineDetail() {
     if (ref) {
       getWineByRefNumber({ ref })
         .then((data: any) => {
-          console.log("getWineByRefNumber", ref, data.data);
           setIpfsUrl(data.data.tokenization.ipfsUrl as string);
         })
         .catch((error) => {

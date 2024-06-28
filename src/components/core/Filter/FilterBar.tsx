@@ -52,7 +52,6 @@ export const ExploreModeSelect = ({}: ExploreModeSelectProps) => {
           label="Show tokenized wines"
           isChecked={filters.showTokenized || false}
           onCheck={(state: boolean) => {
-            console.log(state);
             updateFilters({ ...filters, showTokenized: state });
           }}
         />
