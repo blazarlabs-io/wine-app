@@ -47,9 +47,6 @@ export const TokenizedWinePage = ({
 
   useEffect(() => {
     updateAppLoading(false);
-
-    console.log(wine);
-    console.log("sensorData", sensorData);
   }, [sensorData]);
   return (
     <>

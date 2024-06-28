@@ -67,34 +67,37 @@ export const WineForm = () => {
 
     if (!initialized.current && !wineForm.isEditing) {
       const ref = generateId(5) + "-" + dateToTimestamp();
-      // wineForm.formData.referenceNumber = ref;
+      console.log("ref", ref);
+      wineForm.formData.referenceNumber = ref;
 
-      // updateWineForm({
-      //   ...wineForm,
-      //   formData: {
-      //     ...wineForm.formData,
-      //     referenceNumber: ref as string,
-      //     generalInformation: {
-      //       ...wineForm.formData.generalInformation,
-      //     },
-      //     minifiedWine: {
-      //       ...wineForm.formData.minifiedWine,
-      //     },
-      //   },
-      // });
+      updateWineForm({
+        ...wineForm,
+        formData: {
+          ...wineForm.formData,
+          referenceNumber: ref as string,
+          generalInformation: {
+            ...wineForm.formData.generalInformation,
+          },
+          minifiedWine: {
+            ...wineForm.formData.minifiedWine,
+            wineryName: wineryGeneralInfo.name,
+          },
+        },
+      });
     } else {
-      // updateWineForm({
-      //   ...wineForm,
-      //   formData: {
-      //     ...wineForm.formData,
-      //     generalInformation: {
-      //       ...wineForm.formData.generalInformation,
-      //     },
-      //     minifiedWine: {
-      //       ...wineForm.formData.minifiedWine,
-      //     },
-      //   },
-      // });
+      updateWineForm({
+        ...wineForm,
+        formData: {
+          ...wineForm.formData,
+          generalInformation: {
+            ...wineForm.formData.generalInformation,
+          },
+          minifiedWine: {
+            ...wineForm.formData.minifiedWine,
+            wineryName: wineryGeneralInfo.name,
+          },
+        },
+      });
     }
     updateAppLoading(false);
   }, []);

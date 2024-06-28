@@ -176,7 +176,6 @@ export const FiltersProvider = ({
     getNonTokenizedWines()
       .then((response: any) => {
         setNonTokenizedWines(response.data);
-        console.log("NON-TOKENIZED", response);
       })
       .catch((error: any) => {
         console.error(error);
@@ -186,7 +185,6 @@ export const FiltersProvider = ({
     getTokenizedWines()
       .then((response: any) => {
         setTokenizedWines(response.data);
-        console.log("TOKENIZED", response);
       })
       .catch((error: any) => {
         console.error(error);

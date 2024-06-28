@@ -25,8 +25,6 @@ export const BlendComponentCrud = ({
   const [formDescription, setFormDescription] = useState<string>("");
 
   const handleAddComponent = (component: BlendComponent) => {
-    console.log("handleAddComponent", wineForm.formData.blendComponents.length);
-
     wineForm.formData.blendComponents.push(component);
     updateWineForm({
       ...wineForm,

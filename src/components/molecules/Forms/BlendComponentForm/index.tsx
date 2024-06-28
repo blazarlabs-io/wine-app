@@ -51,7 +51,6 @@ export const BlendComponentForm = ({
   const [disableSave, setDisableSave] = useState<boolean>(true);
 
   const handleCharacterCount = (event: any) => {
-    console.log(event.target.value.length);
     setCharsLeft(maxAllowedChars - event.target.value.length);
   };
 

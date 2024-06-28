@@ -67,7 +67,6 @@ export const MapVineyardsView = ({
   };
 
   useEffect(() => {
-    console.log(initialItems);
     if (initialMapData && initialItems.coordinates.length === 0) {
       setCameraProps({
         center: { lat: initialMapData.lat, lng: initialMapData.lng },
