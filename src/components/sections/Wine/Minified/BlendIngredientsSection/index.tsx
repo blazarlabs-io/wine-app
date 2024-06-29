@@ -83,7 +83,7 @@ export const BlendIngredientsSection = ({
       {responsiveSize === "mobile" && (
         <>
           <Container
-            intent="flexRowLeft"
+            intent="flexRowCenter"
             gap="xsmall"
             className="mt-[24px] px-[24px]"
           >
