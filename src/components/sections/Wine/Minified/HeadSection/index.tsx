@@ -26,7 +26,7 @@ export const WineHeadSection = ({ wine }: WineHeadSectionProps) => {
       )}
     >
       <Container intent="flexRowCenter" gap="xsmall" className="max-w-fit">
-        <Text intent="h6" variant="dim" className="">
+        <Text intent="h6" variant="dim" className="text-center">
           {wine?.wineryName}
         </Text>
         <Button intent="unstyled" disabled={true}>
@@ -38,7 +38,7 @@ export const WineHeadSection = ({ wine }: WineHeadSectionProps) => {
           />
         </Button>
       </Container>
-      <Text intent="h3" variant="dim" className="">
+      <Text intent="h3" variant="dim" className="text-center">
         {wine?.wineCollectionName}
       </Text>
       <Container intent={"flexRowCenter"} gap="medium" className="flex-wrap">
