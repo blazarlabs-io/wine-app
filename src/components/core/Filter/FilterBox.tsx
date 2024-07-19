@@ -7,6 +7,7 @@ import {
   DropDownFilter,
   SearchFilter,
   SpinnerLoader,
+  Toggle,
 } from "@/components";
 import { Icon } from "@iconify/react";
 import { useFilters } from "@/context/filtersContext";
@@ -47,11 +48,11 @@ export const FilterBox = () => {
   return (
     <Container
       intent="flexColCenter"
-      px="medium"
+      px={responsiveSize === "mobile" ? "medium" : "large"}
       py="medium"
       gap="medium"
       className={classNames(
-        "bg-surface-light rounded-lg min-h-[460px]",
+        "bg-surface-light rounded-lg",
         responsiveSize === "mobile"
           ? "max-w-[320px] min-w-[320px]"
           : "min-w-[440px] max-w-[440px]"
@@ -99,6 +100,13 @@ export const FilterBox = () => {
               className="h-full w-full"
               gap="medium"
             >
+              <Toggle
+                label="Show tokenized wines"
+                isChecked={filters.showTokenized || false}
+                onCheck={(state: boolean) => {
+                  updateFilters({ ...filters, showTokenized: state });
+                }}
+              />
               <DropDownFilter
                 disabled={false}
                 label="Search by winery"

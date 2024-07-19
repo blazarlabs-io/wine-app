@@ -23,6 +23,7 @@ export default function Sandbox() {
 
     const referenceNumber = generateId(5) + "-" + dateToTimestamp();
     setRef(referenceNumber);
+    console.log("referenceNumber", referenceNumber);
     // const tmpUrl = wineUrlComposerRef(referenceNumber);
     const dns = "https://wines.blazarlabs.io/";
     const tmpUrl = `${dns}wine/?ref=${referenceNumber}`;

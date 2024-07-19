@@ -90,9 +90,10 @@ export const Signup = ({ title, description }: LoginProps) => {
   }, [password, confirmPassword]);
 
   const handleRegistration = () => {
+    updateMasterLoading(true);
     createUserWithEmailAndPassword(auth, wineryEmail as string, password)
       .then((userCredential) => {
-        updateMasterLoading(true);
+        updateMasterLoading(false);
 
         updateToast({
           show: true,
@@ -182,7 +183,7 @@ export const Signup = ({ title, description }: LoginProps) => {
               <input
                 required
                 type="email"
-                value={wineryEmail as string}
+                value={(wineryEmail as string) || ""}
                 placeholder="Enter your email"
                 onChange={(event: any) => {
                   setWineryEmail(event.target.value as string);
@@ -216,54 +217,6 @@ export const Signup = ({ title, description }: LoginProps) => {
               />
             </Container>
           </Container>
-          {/* <Container intent="grid-2" gap="small">
-            <Container intent="flexColLeft" gap="xsmall">
-              <Container intent="flexRowLeft" gap="xsmall" className="">
-                <Text intent="p1" variant="dim" className="font-semibold">
-                  Phone
-                </Text>
-                <InfoTooltip text="Please provide the representative phone with the area code starting with +" />
-              </Container>
-              <div className="flex items-center justify-center gap-[8px] w-full">
-                <PhoneInput
-                  name="phoneNumber"
-                  type="text"
-                  country={"us"}
-                  enableAreaCodes={true}
-                  areaCodes={{ us: ["332"] }}
-                  inputProps={{
-                    name: "phone",
-                    country: "us",
-                    required: true,
-                    autoFocus: true,
-                  }}
-                  value={wineryPhone as string}
-                  onChange={(event: any) => {
-                    setWineryPhone(event as string);
-                  }}
-                  inputStyle={{
-                    width: "100%",
-                    height: "48px",
-                  }}
-                  className="w-full text-on-surface px-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
-                />
-              </div>
-            </Container>
-            <Container intent="flexColLeft" gap="xsmall">
-              <Text intent="p1" variant="dim" className="font-semibold">
-                Representative Name
-              </Text>
-              <input
-                type="text"
-                value={wineryRepresentative as string}
-                placeholder="Enter name"
-                onChange={(event: any) => {
-                  setWineryRepresentative(event.target.value as string);
-                }}
-                className="w-full text-on-surface p-[8px] bg-surface-dark rounded-md min-h-[48px] max-h-[48px]"
-              />
-            </Container>
-          </Container> */}
 
           <Container intent="flexRowLeft" className="h-[48px]">
             {errorMessage && (

@@ -138,7 +138,6 @@ export const FiltersProvider = ({
       setFiltersLoading(false);
       return;
     }
-
     setFilteredWines(allWines);
     setFiltersLoading(false);
   }, [filters]);
