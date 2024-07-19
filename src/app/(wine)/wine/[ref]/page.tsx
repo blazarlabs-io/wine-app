@@ -29,28 +29,31 @@ export default function Page({ params }: PageProps) {
   const [wine, setWine] = useState<DocumentData | null>(null);
 
   useEffect(() => {
-    if (ref) {
-      getWineByRefNumber({ ref })
+    if (params.ref) {
+      getWineByRefNumber({ ref: params.ref })
         .then((data: any) => {
           setWine(data.data);
         })
         .catch((error) => {
           console.error("Error getting document:", error);
         });
-      getWineryByWineRefNumber({ ref })
+      getWineryByWineRefNumber({ ref: params.ref })
         .then((data: any) => {
           setGeneralInfo(data?.data.generalInfo as WineryGeneralInfo);
+          updateAppLoading(false);
         })
         .catch((error) => {
           console.error("Error getting document:", error);
+          updateAppLoading(false);
         });
     }
-  }, [ref]);
+  }, [params.ref]);
 
-  useEffect(() => {
-    updateAppLoading(false);
-    setRef(params.ref);
-  }, [params]);
+  // useEffect(() => {
+  //   console.log("params", params.ref);
+  //   updateAppLoading(false);
+  //   setRef(params.ref);
+  // }, [params]);
 
   return (
     <>
