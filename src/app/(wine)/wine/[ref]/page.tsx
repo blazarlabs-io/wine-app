@@ -30,8 +30,10 @@ export default function Page({ params }: PageProps) {
 
   useEffect(() => {
     if (params.ref) {
+      console.log("params.ref", params.ref);
       getWineByRefNumber({ ref: params.ref })
         .then((data: any) => {
+          console.log("wine data", data.data);
           setWine(data.data);
         })
         .catch((error) => {
@@ -39,6 +41,7 @@ export default function Page({ params }: PageProps) {
         });
       getWineryByWineRefNumber({ ref: params.ref })
         .then((data: any) => {
+          console.log("general info data", data);
           setGeneralInfo(data?.data.generalInfo as WineryGeneralInfo);
           updateAppLoading(false);
         })
