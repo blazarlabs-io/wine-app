@@ -57,7 +57,7 @@ export default function TokenizedWineDetail() {
   useEffect(() => {
     if (ref) {
       wineClient.winery
-        .getWineByRefNumber({ ref })
+        .getWineByRefNumber(ref)
         .then((data: any) => {
           setIpfsUrl(data.tokenization.ipfsUrl as string);
         })
@@ -65,7 +65,7 @@ export default function TokenizedWineDetail() {
           console.error("Error getting document:", error);
         });
       wineClient.winery
-        .getWineryByWineRefNumber({ ref })
+        .getWineryByWineRefNumber(ref)
         .then((data: any) => {
           setGeneralInfo(data.generalInfo as WineryGeneralInfo);
         })
