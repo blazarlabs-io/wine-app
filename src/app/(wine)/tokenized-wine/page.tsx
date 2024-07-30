@@ -34,7 +34,7 @@ export default function TokenizedWineDetail() {
   );
 
   useEffect(() => {
-    if (ref) {
+    if (ref && wineClient) {
       wineClient.winery
         .getWineByRefNumber(ref)
         .then((res: any) => {
@@ -54,7 +54,7 @@ export default function TokenizedWineDetail() {
           console.error("Error getting document:", error);
         });
     }
-  }, [ref]);
+  }, [ref, wineClient]);
 
   useEffect(() => {
     updateAppLoading(false);
