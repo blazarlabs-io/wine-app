@@ -52,7 +52,7 @@ export const GeneralSection = () => {
               updateAppLoading(false);
             });
         })
-        .catch((err) => {
+        .catch((err: any) => {
           updateToast({
             show: true,
             status: "error",

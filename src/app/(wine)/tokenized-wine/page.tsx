@@ -6,10 +6,6 @@ import { useAppState } from "@/context/appStateContext";
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { DocumentData } from "firebase/firestore";
-import {
-  getWineByRefNumber,
-  getWineryByWineRefNumber,
-} from "@/utils/firestore";
 import { useGetIpfsData } from "@/hooks/useGetIpfsData";
 import { TokenizedWinePage } from "@/components/pages/Wine/TokenizedWinePage";
 import { useWineClient } from "@/context/wineClientSdkContext";
@@ -60,18 +56,20 @@ export default function TokenizedWineDetail() {
 
   useEffect(() => {
     if (ref) {
-      getWineByRefNumber({ ref })
+      wineClient.winery
+        .getWineByRefNumber({ ref })
         .then((data: any) => {
           setIpfsUrl(data.data.tokenization.ipfsUrl as string);
         })
-        .catch((error) => {
+        .catch((error: any) => {
           console.error("Error getting document:", error);
         });
-      getWineryByWineRefNumber({ ref })
+      wineClient.winery
+        .getWineryByWineRefNumber({ ref })
         .then((data: any) => {
           setGeneralInfo(data?.data.generalInfo as WineryGeneralInfo);
         })
-        .catch((error) => {
+        .catch((error: any) => {
           console.error("Error getting document:", error);
         });
     }
