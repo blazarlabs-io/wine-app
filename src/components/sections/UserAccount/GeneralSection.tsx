@@ -17,47 +17,50 @@ import { useAppState } from "@/context/appStateContext";
 import { auth } from "@/lib/firebase/client";
 import { useToast } from "@/context/toastContext";
 import { signOut } from "firebase/auth";
-import { updateUserPassword } from "@/utils/firestore";
+import { useWineClient } from "@/context/wineClientSdkContext";
 
 export const GeneralSection = () => {
   const { user } = useAuth();
   const { wineryGeneralInfo } = useRealtimeDb();
   const { updateAppLoading } = useAppState();
   const { updateToast } = useToast();
+  const { wineClient } = useWineClient();
   const [showUpdatePassword, setShowUpdatePassword] = useState<boolean>(false);
 
   const handleUpdatePassword = (password: string) => {
-    updateUserPassword({ data: { uid: user?.uid, password: password } })
-      .then((res) => {
-        signOut(auth)
-          .then(() => {
-            updateToast({
-              show: true,
-              status: "success",
-              message: "Password updated successfully!",
-              timeout: 5000,
+    wineClient &&
+      wineClient.auth
+        .updateUserPassword({ uid: user?.uid, password: password })
+        .then((res: any) => {
+          signOut(auth)
+            .then(() => {
+              updateToast({
+                show: true,
+                status: "success",
+                message: "Password updated successfully!",
+                timeout: 5000,
+              });
+              updateAppLoading(false);
+            })
+            .catch((err) => {
+              updateToast({
+                show: true,
+                status: "error",
+                message: err.message,
+                timeout: 5000,
+              });
+              updateAppLoading(false);
             });
-            updateAppLoading(false);
-          })
-          .catch((err) => {
-            updateToast({
-              show: true,
-              status: "error",
-              message: err.message,
-              timeout: 5000,
-            });
-            updateAppLoading(false);
+        })
+        .catch((err) => {
+          updateToast({
+            show: true,
+            status: "error",
+            message: err.message,
+            timeout: 5000,
           });
-      })
-      .catch((err) => {
-        updateToast({
-          show: true,
-          status: "error",
-          message: err.message,
-          timeout: 5000,
+          updateAppLoading(false);
         });
-        updateAppLoading(false);
-      });
   };
 
   return (

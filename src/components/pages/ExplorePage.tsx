@@ -12,7 +12,6 @@ import { useFilters } from "@/context/filtersContext";
 import { useEffect, useState } from "react";
 import { Wine } from "@/typings/winery";
 import { classNames } from "@/utils/classNames";
-import { getAssetsByPolicyId } from "@/utils/firestore";
 
 export const ExplorePage = () => {
   const { responsiveSize } = useResponsive();
@@ -35,18 +34,6 @@ export const ExplorePage = () => {
       setWinesToShow(allWines);
     }
   }, [filteredWines, allWines]);
-
-  // useEffect(() => {
-  //   getAssetsByPolicyId({
-  //     policyId: "78015c70e9ef4f76c0f01465fe16f084c4e22b6c6c34bb1ce57668c3",
-  //   })
-  //     .then((response: any) => {
-  //       console.log(response);
-  //     })
-  //     .catch((error: any) => {
-  //       console.error(error);
-  //     });
-  // }, []);
 
   return (
     <Container
