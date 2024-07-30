@@ -6,13 +6,12 @@ import { Unsubscribe, doc, onSnapshot } from "firebase/firestore";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./authContext";
 import { wineryInitialData } from "@/data/wineryInitialData";
-import { getWineryLevel } from "@/utils/firestore";
 import { AvailableLevels, LevelsInterface } from "@/typings/systemVariables";
 import { useGetWineCharacteristics } from "@/hooks/useGetWineCharacteristics";
 import { useGetWineMakingTechnique } from "@/hooks/useGetWineMakingTechnique";
 import { useGetPackagingAndBranding } from "@/hooks/useGetPackagingAndBranding";
 import { useGetVineyardsDetails } from "@/hooks/useGetVineyardsDetails";
-
+import { useWineClient } from "@/context/wineClientSdkContext";
 export interface RealtimeDbContextInterface {
   wineryGeneralInfo: WineryGeneralInfo;
   tier: string;
@@ -84,6 +83,7 @@ export const RealtimeDbProvider = ({
   const { sustainabilityPractices } = useGetWineMakingTechnique();
   const { closureTypes } = useGetPackagingAndBranding();
   const { irrigationPractices } = useGetVineyardsDetails();
+  const { wineClient } = useWineClient();
 
   // STATES
   const [wineryGeneralInfo, setWineryGeneralInfo] = useState(
@@ -182,16 +182,17 @@ export const RealtimeDbProvider = ({
 
   // Winery levels
   useEffect(() => {
-    if (level) {
-      getWineryLevel({ l: level })
-        .then((data: any) => {
-          if (data) setAllowedWines(data.data.qrCodes as number);
+    if (level && wineClient) {
+      wineClient.winery
+        .getWineryLevel(level)
+        .then((res: any) => {
+          setAllowedWines(res.data.qrCodes as number);
         })
-        .catch((error) => {
-          console.log(error);
+        .catch((error: any) => {
+          console.error("Error getting document:", error);
         });
     }
-  }, [level]);
+  }, [level, wineClient]);
 
   // Max price
   useEffect(() => {

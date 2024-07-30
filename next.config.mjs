@@ -12,6 +12,8 @@ const nextConfig = {
 
     return config;
   },
+
+  transpilePackages: ["@blzlabs/wine-client-sdk"],
 };
 
 export default nextConfig;

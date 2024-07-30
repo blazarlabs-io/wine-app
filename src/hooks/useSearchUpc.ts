@@ -1,26 +1,30 @@
-import { Winery } from "@/typings/winery";
-import { getDocsInCollection } from "@/utils/firestore";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useWineClient } from "@/context/wineClientSdkContext";
 
 export interface SearchUpcInterface {}
 
 export const useSearchUpc = () => {
+  const { wineClient } = useWineClient();
+
   const [wineries, setWineries] = useState<any[]>([]);
   const [upcs, setUpcs] = useState<string[]>([]);
 
   const fetchUpcCodes = () => {
-    getDocsInCollection("wineries").then((data: any) => {
-      setWineries(data.docs);
-      wineries.forEach((winery) => {
-        if (winery.wines && winery.wines.length > 0) {
-          winery.wines.forEach((wine: any) => {
-            if (wine.upc && wine.upc !== undefined) {
-              setUpcs((upcs) => [...upcs, wine.upc]);
-            }
-          });
-        }
+    if (wineClient) {
+      wineClient.db.getDocsInCollection("wineries").then((res: any) => {
+        console.log("WINERIES", res.data);
+        setWineries(res.data);
+        res.data.forEach((winery: any) => {
+          if (winery.wines && winery.wines.length > 0) {
+            winery.wines.forEach((wine: any) => {
+              if (wine.upc && wine.upc !== undefined) {
+                setUpcs((upcs) => [...upcs, wine.upc]);
+              }
+            });
+          }
+        });
       });
-    });
+    }
   };
 
   const searchUpc = (query: string) => {
@@ -37,7 +41,7 @@ export const useSearchUpc = () => {
 
   useEffect(() => {
     fetchUpcCodes();
-  }, []);
+  }, [wineClient]);
 
   return { wineries, upcs, searchUpc };
 };

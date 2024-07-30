@@ -18,7 +18,7 @@ import { useToast } from "@/context/toastContext";
 import { firebaseAuthErrors } from "@/utils/firebaseAuthErrors";
 import { useModal } from "@/context/modalContext";
 import { useRouter } from "next/navigation";
-import { deleteUser, disableUser } from "@/utils/firestore";
+import { useWineClient } from "@/context/wineClientSdkContext";
 
 export const DangerZoneSection = () => {
   const [showConfirmDelete, setShowConfirmDelete] = useState<boolean>(false);
@@ -28,6 +28,7 @@ export const DangerZoneSection = () => {
   const { updateToast } = useToast();
   const { updateAppLoading } = useAppState();
   const { updateModal } = useModal();
+  const { wineClient } = useWineClient();
 
   const handleDisableAccount = () => {
     updateModal({
@@ -84,40 +85,38 @@ export const DangerZoneSection = () => {
 
             updateAppLoading(true);
 
-            disableUser({
-              data: {
-                uid: user?.uid,
-              },
-            })
-              .then((result) => {
-                // Read result of the Cloud Function.
-                /** @type {any} */
-                const data = result.data;
-                const sanitizedMessage: any = data;
-                const toastProps: ToastProps = {
-                  show: true,
-                  status: "success",
-                  message: sanitizedMessage.message,
-                  timeout: 5000,
-                };
-                updateAppLoading(false);
-                updateToast(toastProps);
-                router.replace("/");
-                user?.reload();
-              })
-              .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                const toastProps: ToastProps = {
-                  show: true,
-                  status: "error",
-                  message:
-                    (firebaseAuthErrors[errorCode] as string) ?? errorMessage,
-                  timeout: 5000,
-                };
-                updateAppLoading(false);
-                updateToast(toastProps);
-              });
+            wineClient &&
+              wineClient.auth
+                .disableUser(user?.uid)
+                .then((result: any) => {
+                  // Read result of the Cloud Function.
+                  /** @type {any} */
+                  const data = result.data;
+                  const sanitizedMessage: any = data;
+                  const toastProps: ToastProps = {
+                    show: true,
+                    status: "success",
+                    message: sanitizedMessage.message,
+                    timeout: 5000,
+                  };
+                  updateAppLoading(false);
+                  updateToast(toastProps);
+                  router.replace("/");
+                  user?.reload();
+                })
+                .catch((error: any) => {
+                  const errorCode = error.code;
+                  const errorMessage = error.message;
+                  const toastProps: ToastProps = {
+                    show: true,
+                    status: "error",
+                    message:
+                      (firebaseAuthErrors[errorCode] as string) ?? errorMessage,
+                    timeout: 5000,
+                  };
+                  updateAppLoading(false);
+                  updateToast(toastProps);
+                });
           }}
           onCancel={() => {
             setShowConfirmDisable(false);
@@ -131,12 +130,9 @@ export const DangerZoneSection = () => {
 
             updateAppLoading(true);
 
-            deleteUser({
-              data: {
-                uid: user?.uid,
-              },
-            })
-              .then((result) => {
+            wineClient.auth
+              .deleteUser(user?.uid)
+              .then((result: any) => {
                 // Read result of the Cloud Function.
                 /** @type {any} */
                 const data = result.data;
@@ -152,7 +148,7 @@ export const DangerZoneSection = () => {
                 router.replace("/");
                 user?.reload();
               })
-              .catch((error) => {
+              .catch((error: any) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
                 const toastProps: ToastProps = {

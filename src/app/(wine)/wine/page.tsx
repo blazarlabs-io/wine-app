@@ -6,13 +6,11 @@ import { useAppState } from "@/context/appStateContext";
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { DocumentData } from "firebase/firestore";
-import {
-  getWineByRefNumber,
-  getWineryByWineRefNumber,
-} from "@/utils/firestore";
+import { useWineClient } from "@/context/wineClientSdkContext";
 
 export default function WineDetail() {
   const { updateAppLoading } = useAppState();
+  const { wineClient } = useWineClient();
 
   const searchParams = useSearchParams();
 
@@ -23,23 +21,27 @@ export default function WineDetail() {
   const [wine, setWine] = useState<DocumentData | null>(null);
 
   useEffect(() => {
-    if (ref) {
-      getWineByRefNumber({ ref })
-        .then((data: any) => {
-          setWine(data.data);
+    if (ref && wineClient) {
+      wineClient.winery
+        .getWineByRefNumber(ref)
+        .then((res: any) => {
+          console.log("Wine Data", res);
+          setWine(res.data);
         })
-        .catch((error) => {
+        .catch((error: any) => {
           console.error("Error getting document:", error);
         });
-      getWineryByWineRefNumber({ ref })
-        .then((data: any) => {
-          setGeneralInfo(data?.data.generalInfo as WineryGeneralInfo);
+      wineClient.winery
+        .getWineryByWineRefNumber(ref)
+        .then((result: any) => {
+          console.log("Winery Data", result);
+          setGeneralInfo(result.data.generalInfo as WineryGeneralInfo);
         })
-        .catch((error) => {
+        .catch((error: any) => {
           console.error("Error getting document:", error);
         });
     }
-  }, [ref]);
+  }, [ref, wineClient]);
 
   useEffect(() => {
     updateAppLoading(false);

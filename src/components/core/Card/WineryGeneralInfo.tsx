@@ -21,7 +21,7 @@ import { Timestamp } from "firebase/firestore";
 import { useAuth } from "@/context/authContext";
 import { useToast } from "@/context/toastContext";
 import { useAppState } from "@/context/appStateContext";
-import { createNotification } from "@/utils/firestore";
+import { useWineClient } from "@/context/wineClientSdkContext";
 
 export interface WineryGeneralInfoProps {
   fullWidth?: boolean;
@@ -38,6 +38,7 @@ export const WineryGeneralInfo = ({
   const { user } = useAuth();
   const { updateToast } = useToast();
   const { updateAppLoading } = useAppState();
+  const { wineClient } = useWineClient();
 
   const sendNotification = () => {
     updateAppLoading(true);
@@ -50,35 +51,37 @@ export const WineryGeneralInfo = ({
       wineryRepresentative: wineryGeneralInfo.wineryRepresentative.name,
     };
 
-    createNotification({ data: data })
-      .then((res: any) => {
-        const { exists } = res.data;
-        updateAppLoading(false);
-        if (!exists) {
-          updateToast({
-            show: true,
-            status: "success",
-            message: "Request sent successfully",
-            timeout: 5000,
-          });
-        } else {
+    wineClient &&
+      wineClient.db
+        .createNotification(data)
+        .then((res: any) => {
+          const { exists } = res.data;
+          updateAppLoading(false);
+          if (!exists) {
+            updateToast({
+              show: true,
+              status: "success",
+              message: "Request sent successfully",
+              timeout: 5000,
+            });
+          } else {
+            updateToast({
+              show: true,
+              status: "error",
+              message: "Request already exists",
+              timeout: 5000,
+            });
+          }
+        })
+        .catch((error: any) => {
+          updateAppLoading(false);
           updateToast({
             show: true,
             status: "error",
-            message: "Request already exists",
+            message: "Request failed",
             timeout: 5000,
           });
-        }
-      })
-      .catch((error) => {
-        updateAppLoading(false);
-        updateToast({
-          show: true,
-          status: "error",
-          message: "Request failed",
-          timeout: 5000,
         });
-      });
   };
 
   return (
