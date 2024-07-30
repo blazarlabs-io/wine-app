@@ -69,7 +69,6 @@ export default function TokenizedWineDetail() {
         .getWineryByWineRefNumber(ref)
         .then((res: any) => {
           console.log(res);
-          s;
           setGeneralInfo(res.data.generalInfo as WineryGeneralInfo);
         })
         .catch((error: any) => {
