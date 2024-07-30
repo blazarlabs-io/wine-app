@@ -59,7 +59,7 @@ export default function TokenizedWineDetail() {
       wineClient.winery
         .getWineByRefNumber({ ref })
         .then((data: any) => {
-          setIpfsUrl(data.data.tokenization.ipfsUrl as string);
+          setIpfsUrl(data.tokenization.ipfsUrl as string);
         })
         .catch((error: any) => {
           console.error("Error getting document:", error);
@@ -67,7 +67,7 @@ export default function TokenizedWineDetail() {
       wineClient.winery
         .getWineryByWineRefNumber({ ref })
         .then((data: any) => {
-          setGeneralInfo(data?.data.generalInfo as WineryGeneralInfo);
+          setGeneralInfo(data.generalInfo as WineryGeneralInfo);
         })
         .catch((error: any) => {
           console.error("Error getting document:", error);
