@@ -66,14 +66,14 @@ export const TokenizedWinePage = ({
               icon="formkit:cardano"
               width="40px"
               height="40px"
-              className="text-status-info top-[56px] left-[112px] absolute"
+              className="text-status-info top-[56px] right-[112px] absolute"
             />
-            <Icon
+            {/* <Icon
               icon="material-symbols-light:token-outline"
               width="40px"
               height="40px"
               className="text-status-info top-[56px] right-[112px] absolute"
-            />
+            /> */}
             <Text variant="accent" className="text-status-info">
               This wine is tokenized
             </Text>
@@ -81,9 +81,9 @@ export const TokenizedWinePage = ({
 
           <ExtendedWineGeneralInformationSection item={wine as Wine} />
           <ExtendedWineCharacteristicsSection item={wine as Wine} />
-          <TokenizedWineStorageConditionsSection sensorData={sensorData} />
           <ExtendedWineMakingTechniqueSection item={wine as Wine} />
           <ExtendedWinePackagingAndBrandingSection item={wine as Wine} />
+          <TokenizedWineStorageConditionsSection sensorData={sensorData} />
           <WineBlendComponentsSection item={wine as Wine} mapData={mapData} />
           <NutritionTable
             items={{
