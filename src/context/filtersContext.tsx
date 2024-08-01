@@ -3,14 +3,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useResponsive } from "@/hooks/useResponsive";
 import { Wine } from "@/typings/winery";
-import {
-  getAllWines,
-  getAllWineryNames,
-  getWinesByWineryName,
-  getWineTypes,
-  getTokenizedWines,
-  getNonTokenizedWines,
-} from "@/utils/firestore";
+import { useWineClient } from "./wineClientSdkContext";
 
 export interface FiltersInterface {
   byWinery: {
@@ -81,6 +74,7 @@ export const FiltersProvider = ({
   children,
 }: React.PropsWithChildren): JSX.Element => {
   const { responsiveSize } = useResponsive();
+  const { wineClient } = useWineClient();
 
   const [mobileFilters, setMobileFilters] = useState<boolean>(false);
   const [showFilters, setShowFilters] = useState<boolean>(false);
@@ -125,13 +119,14 @@ export const FiltersProvider = ({
   }, [responsiveSize]);
 
   useEffect(() => {
-    if (filters.byWinery.result && !filters.byWineType.result) {
-      getWinesByWineryName(filters.byWinery.result)
+    if (wineClient && filters.byWinery.result && !filters.byWineType.result) {
+      wineClient.winery
+        .getWinesByWineryName(filters.byWinery.result)
         .then((wines: any) => {
           setFilteredWines(wines.data);
           setFiltersLoading(false);
         })
-        .catch((error) => {});
+        .catch((error: any) => {});
       return;
     } else if (filters.showTokenized) {
       setFilteredWines(tokenizedWines);
@@ -140,55 +135,112 @@ export const FiltersProvider = ({
     }
     setFilteredWines(allWines);
     setFiltersLoading(false);
-  }, [filters]);
+  }, [filters, wineClient]);
 
   useEffect(() => {
-    getAllWineryNames().then((wineries: any) => {
-      setFilters((filters) => ({
-        ...filters,
-        byWinery: {
-          list: wineries.data,
-          result: null,
-        },
-      }));
-    });
-    getWineTypes()
-      .then((wineTypes: any) => {
+    if (wineClient) {
+      wineClient.winery.getAllWineryNames().then((wineries: any) => {
         setFilters((filters) => ({
           ...filters,
-          byWineType: {
-            list: wineTypes.data,
+          byWinery: {
+            list: wineries.data,
             result: null,
           },
         }));
-      })
-      .catch((error) => {});
-    getAllWines()
-      .then((wines: any) => {
-        setAllWines(wines.data);
-      })
-      .catch((error) => {
-        console.log(error);
       });
+      wineClient.utils
+        .getSystemVariable("wineTypes")
+        .then((wineTypes: any) => {
+          setFilters((filters) => ({
+            ...filters,
+            byWineType: {
+              list: wineTypes.data,
+              result: null,
+            },
+          }));
+        })
+        .catch((error: any) => {
+          console.error(error);
+        });
+      wineClient.winery
+        .getAllWines()
+        .then((wines: any) => {
+          console.log(wines.data);
+          setAllWines(wines.data);
+        })
+        .catch((error: any) => {
+          console.log(error);
+        });
 
-    // * GET NON-TOKENIZED WINES
-    getNonTokenizedWines()
-      .then((response: any) => {
-        setNonTokenizedWines(response.data);
-      })
-      .catch((error: any) => {
-        console.error(error);
-      });
+      // * GET NON-TOKENIZED WINES
+      wineClient.winery
+        .getNonTokenizedWines()
+        .then((response: any) => {
+          setNonTokenizedWines(response.data);
+        })
+        .catch((error: any) => {
+          console.error(error);
+        });
 
-    // * GET TOKENIZED WINES
-    getTokenizedWines()
-      .then((response: any) => {
-        setTokenizedWines(response.data);
-      })
-      .catch((error: any) => {
-        console.error(error);
-      });
-  }, []);
+      // * GET TOKENIZED WINES
+      wineClient.winery
+        .getTokenizedWines()
+        .then((response: any) => {
+          setTokenizedWines(response.data);
+        })
+        .catch((error: any) => {
+          console.error(error);
+        });
+    }
+  }, [wineClient]);
+
+  // useEffect(() => {
+  //   getAllWineryNames().then((wineries: any) => {
+  //     setFilters((filters) => ({
+  //       ...filters,
+  //       byWinery: {
+  //         list: wineries.data,
+  //         result: null,
+  //       },
+  //     }));
+  //   });
+  //   getWineTypes()
+  //     .then((wineTypes: any) => {
+  //       setFilters((filters) => ({
+  //         ...filters,
+  //         byWineType: {
+  //           list: wineTypes.data,
+  //           result: null,
+  //         },
+  //       }));
+  //     })
+  //     .catch((error) => {});
+  //   getAllWines()
+  //     .then((wines: any) => {
+  //       setAllWines(wines.data);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+
+  //   // * GET NON-TOKENIZED WINES
+  //   getNonTokenizedWines()
+  //     .then((response: any) => {
+  //       setNonTokenizedWines(response.data);
+  //     })
+  //     .catch((error: any) => {
+  //       console.error(error);
+  //     });
+
+  //   // * GET TOKENIZED WINES
+  //   getTokenizedWines()
+  //     .then((response: any) => {
+  //       setTokenizedWines(response.data);
+  //     })
+  //     .catch((error: any) => {
+  //       console.error(error);
+  //     });
+  // }, []);
 
   const value = {
     mobileFilters,

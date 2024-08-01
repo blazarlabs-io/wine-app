@@ -50,15 +50,17 @@ export const DropDown = ({
         <option value="DEFAULT" disabled>
           Select option...
         </option>
-        {items.map((item, index) => (
-          <option
-            className="capitalize"
-            key={id + "-" + item + "-" + index}
-            value={item}
-          >
-            {item}
-          </option>
-        ))}
+        {items !== null &&
+          items !== undefined &&
+          items.map((item, index) => (
+            <option
+              className="capitalize"
+              key={id + "-" + item + "-" + index}
+              value={item}
+            >
+              {item}
+            </option>
+          ))}
       </select>
     </Container>
   );

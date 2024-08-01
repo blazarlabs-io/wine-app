@@ -72,14 +72,14 @@ export const WineCard = ({
                   icon="formkit:cardano"
                   width="40px"
                   height="40px"
-                  className="text-status-info top-0 left-[24px] absolute"
+                  className="text-status-info top-[16px] right-[24px] absolute"
                 />
-                <Icon
+                {/* <Icon
                   icon="material-symbols-light:token-outline"
                   width="40px"
                   height="40px"
                   className="text-status-info top-0 right-[24px] absolute"
-                />
+                /> */}
               </>
             )}
             <Container

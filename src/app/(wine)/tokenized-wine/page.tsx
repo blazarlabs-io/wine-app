@@ -6,12 +6,10 @@ import { useAppState } from "@/context/appStateContext";
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { DocumentData } from "firebase/firestore";
-import {
-  getWineByRefNumber,
-  getWineryByWineRefNumber,
-} from "@/utils/firestore";
 import { useGetIpfsData } from "@/hooks/useGetIpfsData";
 import { TokenizedWinePage } from "@/components/pages/Wine/TokenizedWinePage";
+import { useWineClient } from "@/context/wineClientSdkContext";
+import { useAuth } from "@/context/authContext";
 
 export default function TokenizedWineDetail() {
   const { updateAppLoading } = useAppState();
@@ -27,6 +25,8 @@ export default function TokenizedWineDetail() {
   } = useGetIpfsData();
 
   const searchParams = useSearchParams();
+  const { user } = useAuth();
+  const { wineClient } = useWineClient();
 
   const [ref, setRef] = useState<string | null>(searchParams.get("ref"));
   const [generalInfo, setGeneralInfo] = useState<WineryGeneralInfo | null>(
@@ -34,23 +34,27 @@ export default function TokenizedWineDetail() {
   );
 
   useEffect(() => {
-    if (ref) {
-      getWineByRefNumber({ ref })
-        .then((data: any) => {
-          setIpfsUrl(data.data.tokenization.ipfsUrl as string);
+    if (ref && wineClient) {
+      wineClient.winery
+        .getWineByRefNumber(ref)
+        .then((res: any) => {
+          console.log(res);
+          setIpfsUrl(res.data.tokenization.ipfsUrl as string);
         })
-        .catch((error) => {
+        .catch((error: any) => {
           console.error("Error getting document:", error);
         });
-      getWineryByWineRefNumber({ ref })
-        .then((data: any) => {
-          setGeneralInfo(data?.data.generalInfo as WineryGeneralInfo);
+      wineClient.winery
+        .getWineryByWineRefNumber(ref)
+        .then((res: any) => {
+          console.log(res);
+          setGeneralInfo(res.data.generalInfo as WineryGeneralInfo);
         })
-        .catch((error) => {
+        .catch((error: any) => {
           console.error("Error getting document:", error);
         });
     }
-  }, [ref]);
+  }, [ref, wineClient]);
 
   useEffect(() => {
     updateAppLoading(false);

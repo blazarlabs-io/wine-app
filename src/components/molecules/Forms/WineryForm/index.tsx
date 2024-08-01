@@ -14,11 +14,7 @@ import {
 import { Icon } from "@iconify/react";
 import { useAuth } from "@/context/authContext";
 import { CoordinateInterface, WineryGeneralInfo } from "@/typings/winery";
-import {
-  registerWineryGeneralInfo,
-  updateWineryHeadquarters,
-  uploadLogoToStorage,
-} from "@/utils/firestore";
+import { uploadLogoToStorage } from "@/utils/firestore";
 import { useEffect, useRef, useState } from "react";
 import { validateFileSizeAndType } from "@/utils/validators/validateFileSizeAndType";
 import { useModal } from "@/context/modalContext";
@@ -33,9 +29,11 @@ import { useMasterLoader } from "@/context/masterLoaderContext";
 import { useToast } from "@/context/toastContext";
 import { removeUndefinedValues } from "@/utils/removeUndefinedValues";
 import { useAppState } from "@/context/appStateContext";
+import { useWineClient } from "@/context/wineClientSdkContext";
 
 export const WineryForm = () => {
   const { user } = useAuth();
+  const { wineClient } = useWineClient();
   const router = useRouter();
   const { updateModal } = useModal();
   const { updateMasterLoading } = useMasterLoader();
@@ -88,29 +86,31 @@ export const WineryForm = () => {
 
     // UPDATE TO DATABASE
     updateAppLoading(true);
-    registerWineryGeneralInfo({
-      uid: user?.uid as string,
-      generalInfo: newGeneralInfo,
-    })
-      .then((result: any) => {
-        updateAppLoading(false);
-        updateToast({
-          show: true,
-          status: "success",
-          message: "Winery information saved successfully.",
-          timeout: 3000,
+    wineClient &&
+      wineClient.winery
+        .registerWineryGeneralInfo({
+          uid: user?.uid as string,
+          generalInfo: newGeneralInfo,
+        })
+        .then((result: any) => {
+          updateAppLoading(false);
+          updateToast({
+            show: true,
+            status: "success",
+            message: "Winery information saved successfully.",
+            timeout: 3000,
+          });
+        })
+        .catch((error: any) => {
+          console.error(error);
+          updateAppLoading(false);
+          updateToast({
+            show: true,
+            status: "error",
+            message: "An error occurred. Please try again.",
+            timeout: 3000,
+          });
         });
-      })
-      .catch((error) => {
-        console.error(error);
-        updateAppLoading(false);
-        updateToast({
-          show: true,
-          status: "error",
-          message: "An error occurred. Please try again.",
-          timeout: 3000,
-        });
-      });
 
     setIsLoading(false);
     router.replace("/home");
@@ -198,24 +198,29 @@ export const WineryForm = () => {
                         lng: wineryGeneralInfo.wineryHeadquarters.lng,
                       };
 
-                      updateWineryHeadquarters({ uid: user?.uid, headquarters })
-                        .then((result: any) => {
-                          updateToast({
-                            show: true,
-                            status: "success",
-                            message: "Winery location saved successfully.",
-                            timeout: 3000,
-                          });
-                        })
-                        .catch((error) => {
-                          console.error(error);
-                          updateToast({
-                            show: true,
-                            status: "error",
-                            message: "An error occurred. Please try again.",
-                            timeout: 3000,
-                          });
-                        });
+                      // wineClient &&
+                      //   wineClient.winery
+                      //     .updateWineryHeadquarters({
+                      //       uid: user?.uid,
+                      //       headquarters,
+                      //     })
+                      //     .then((result: any) => {
+                      //       updateToast({
+                      //         show: true,
+                      //         status: "success",
+                      //         message: "Winery location saved successfully.",
+                      //         timeout: 3000,
+                      //       });
+                      //     })
+                      //     .catch((error: any) => {
+                      //       console.error(error);
+                      //       updateToast({
+                      //         show: true,
+                      //         status: "error",
+                      //         message: "An error occurred. Please try again.",
+                      //         timeout: 3000,
+                      //       });
+                      //     });
                     }}
                   >
                     Save

@@ -4,12 +4,8 @@ import { WinePage } from "@/components";
 import { Wine, WineryGeneralInfo } from "@/typings/winery";
 import { useAppState } from "@/context/appStateContext";
 import { Suspense, useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { DocumentData } from "firebase/firestore";
-import {
-  getWineByRefNumber,
-  getWineryByWineRefNumber,
-} from "@/utils/firestore";
+import { useWineClient } from "@/context/wineClientSdkContext";
 
 export interface PageProps {
   params: {
@@ -19,8 +15,7 @@ export interface PageProps {
 
 export default function Page({ params }: PageProps) {
   const { updateAppLoading } = useAppState();
-
-  const searchParams = useSearchParams();
+  const { wineClient } = useWineClient();
 
   const [ref, setRef] = useState<string | null>(params.ref);
   const [generalInfo, setGeneralInfo] = useState<WineryGeneralInfo | null>(
@@ -29,34 +24,27 @@ export default function Page({ params }: PageProps) {
   const [wine, setWine] = useState<DocumentData | null>(null);
 
   useEffect(() => {
-    if (params.ref) {
-      console.log("params.ref", params.ref);
-      getWineByRefNumber({ ref: params.ref })
-        .then((data: any) => {
-          console.log("wine data", data.data);
-          setWine(data.data);
+    if (ref && wineClient) {
+      wineClient.winery
+        .getWineByRefNumber(ref)
+        .then((res: any) => {
+          console.log("Wine Data", res);
+          setWine(res.data);
         })
-        .catch((error) => {
+        .catch((error: any) => {
           console.error("Error getting document:", error);
         });
-      getWineryByWineRefNumber({ ref: params.ref })
-        .then((data: any) => {
-          console.log("general info data", data);
-          setGeneralInfo(data?.data.generalInfo as WineryGeneralInfo);
-          updateAppLoading(false);
+      wineClient.winery
+        .getWineryByWineRefNumber(ref)
+        .then((result: any) => {
+          console.log("Winery Data", result);
+          setGeneralInfo(result.data.generalInfo as WineryGeneralInfo);
         })
-        .catch((error) => {
+        .catch((error: any) => {
           console.error("Error getting document:", error);
-          updateAppLoading(false);
         });
     }
-  }, [params.ref]);
-
-  // useEffect(() => {
-  //   console.log("params", params.ref);
-  //   updateAppLoading(false);
-  //   setRef(params.ref);
-  // }, [params]);
+  }, [ref, wineClient]);
 
   return (
     <>

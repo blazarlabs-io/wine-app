@@ -119,9 +119,9 @@ export const WinePage = ({ generalInfo, wine }: WinePagePropsInterface) => {
 
               <ExtendedWineGeneralInformationSection item={wine as Wine} />
               <ExtendedWineCharacteristicsSection item={wine as Wine} />
-              <ExtendedWineStorageConditionsSection item={wine as Wine} />
               <ExtendedWineMakingTechniqueSection item={wine as Wine} />
               <ExtendedWinePackagingAndBrandingSection item={wine as Wine} />
+              <ExtendedWineStorageConditionsSection item={wine as Wine} />
               <WineBlendComponentsSection
                 item={wine as Wine}
                 mapData={mapData}

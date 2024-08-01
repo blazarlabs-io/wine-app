@@ -11,6 +11,7 @@ import { APIProvider } from "@vis.gl/react-google-maps";
 import { MasterLoaderProvider } from "./masterLoaderContext";
 import { UiContextProvider } from "./uiContext";
 import { BannerProvider } from "./bannerContext";
+import { WineClientProvider } from "./wineClientSdkContext";
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -20,30 +21,32 @@ export const Providers = ({ children }: ProvidersProps) => {
   return (
     <MasterLoaderProvider>
       <AppStateProvider>
-        <UiContextProvider>
-          <AuthProvider>
-            <RealtimeDbProvider>
-              <FormsProvider>
-                <FiltersProvider>
-                  <BannerProvider>
-                    <ToastProvider>
-                      <ModalProvider>
-                        <APIProvider
-                          apiKey={
-                            process.env
-                              .NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string
-                          }
-                        >
-                          {children}
-                        </APIProvider>
-                      </ModalProvider>
-                    </ToastProvider>
-                  </BannerProvider>
-                </FiltersProvider>
-              </FormsProvider>
-            </RealtimeDbProvider>
-          </AuthProvider>
-        </UiContextProvider>
+        <WineClientProvider>
+          <UiContextProvider>
+            <AuthProvider>
+              <RealtimeDbProvider>
+                <FormsProvider>
+                  <FiltersProvider>
+                    <BannerProvider>
+                      <ToastProvider>
+                        <ModalProvider>
+                          <APIProvider
+                            apiKey={
+                              process.env
+                                .NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string
+                            }
+                          >
+                            {children}
+                          </APIProvider>
+                        </ModalProvider>
+                      </ToastProvider>
+                    </BannerProvider>
+                  </FiltersProvider>
+                </FormsProvider>
+              </RealtimeDbProvider>
+            </AuthProvider>
+          </UiContextProvider>
+        </WineClientProvider>
       </AppStateProvider>
     </MasterLoaderProvider>
   );

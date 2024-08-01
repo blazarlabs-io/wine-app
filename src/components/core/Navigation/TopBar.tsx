@@ -42,7 +42,7 @@ export const TopBar = ({ className }: TopBarProps) => {
       disabled: false,
     },
     {
-      label: "Explore Wines",
+      label: "Explore",
       key: "explore",
       onClick: () => router.push("/explore"),
       disabled: false,

@@ -1,20 +1,24 @@
 "use client";
 
-import { getIrrigationPractices } from "@/utils/firestore";
 import { useState, useEffect } from "react";
+import { useWineClient } from "@/context/wineClientSdkContext";
 
 export const useGetVineyardsDetails = () => {
+  const { wineClient } = useWineClient();
   const [irrigationPractices, setIrrigationPractices] = useState<string[]>([]);
 
   useEffect(() => {
-    getIrrigationPractices()
-      .then((res: any) => {
-        setIrrigationPractices(res.data.irrigationPractices);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
+    if (wineClient) {
+      wineClient.utils
+        .getSystemVariable("irrigationPractices")
+        .then((res: any) => {
+          setIrrigationPractices(res.data);
+        })
+        .catch((error: any) => {
+          console.error(error);
+        });
+    }
+  }, [wineClient]);
 
   return { irrigationPractices };
 };

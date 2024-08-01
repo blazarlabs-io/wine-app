@@ -22,6 +22,7 @@ import { useFormValidation } from "@/hooks/useFormValidation";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { firebaseAuthErrors } from "@/utils/firebaseAuthErrors";
 import { useMasterLoader } from "@/context/masterLoaderContext";
+import { useWineClient } from "@/context/wineClientSdkContext";
 
 export interface LoginProps {
   title: string;
@@ -36,6 +37,7 @@ export const Signup = ({ title, description }: LoginProps) => {
   const { updateAppLoading } = useAppState();
   const { updateMasterLoading } = useMasterLoader();
   const { handleChange, errors } = useFormValidation();
+  const { wineClient } = useWineClient();
 
   const [wineryName, setWineryName] = useState<string | null>(null);
   const [wineryEmail, setWineryEmail] = useState<string | null>(null);
@@ -95,12 +97,25 @@ export const Signup = ({ title, description }: LoginProps) => {
       .then((userCredential) => {
         updateMasterLoading(false);
 
-        updateToast({
-          show: true,
-          status: "success",
-          message: "Account created successfully.",
-          timeout: 5000,
-        });
+        const uid = userCredential.user.uid;
+        wineClient.auth
+          .createFirestoreForUser(uid)
+          .then((res: any) => {
+            updateToast({
+              show: true,
+              status: "success",
+              message: "Account created successfully.",
+              timeout: 5000,
+            });
+          })
+          .catch((error: any) => {
+            updateToast({
+              show: true,
+              status: "error",
+              message: error.message,
+              timeout: 5000,
+            });
+          });
       })
       .catch((error: any) => {
         const errorCode = error.code;
