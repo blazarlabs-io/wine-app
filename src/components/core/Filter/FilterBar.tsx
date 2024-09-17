@@ -18,7 +18,7 @@ export const ExploreModeSelect = ({}: ExploreModeSelectProps) => {
   return (
     <>
       <Container
-        py="small"
+        py="medium"
         px={responsiveSize === "mobile" ? "small" : "none"}
         intent={"flexRowBetween"}
         className="min-w-full"
@@ -49,7 +49,7 @@ export const ExploreModeSelect = ({}: ExploreModeSelectProps) => {
         </Container>
 
         {/* )} */}
-        <Container intent="grid-2" gap="small" className="max-w-[240px]">
+        {/* <Container intent="grid-2" gap="small" className="max-w-[240px]">
           <Container intent="flexRowRight">
             <Text className="text-on-surface/40">Exploring</Text>
           </Container>
@@ -62,7 +62,7 @@ export const ExploreModeSelect = ({}: ExploreModeSelectProps) => {
             onSelect={(item: string) => {}}
             className="!bg-top-[0%]"
           />
-        </Container>
+        </Container> */}
       </Container>
       {filters.byUpc && filters.byUpc.length > 0 && (
         <Container
