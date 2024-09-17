@@ -72,14 +72,14 @@ export const WineCard = ({
                   icon="formkit:cardano"
                   width="40px"
                   height="40px"
-                  className="text-status-info top-0 left-[24px] absolute"
+                  className="text-status-info top-[16px] right-[24px] absolute"
                 />
-                <Icon
+                {/* <Icon
                   icon="material-symbols-light:token-outline"
                   width="40px"
                   height="40px"
                   className="text-status-info top-0 right-[24px] absolute"
-                />
+                /> */}
               </>
             )}
             <Container
@@ -105,54 +105,41 @@ export const WineCard = ({
             </Text>
           </Container>
         </Container>
-        <Container intent="flexColCenter" px="medium" gap="xsmall">
-          <Container intent="flexRowBetween" gap="xsmall" className="w-full">
-            <Container intent="flexRowLeft" gap="xsmall" className="w-full">
-              <Icon
-                icon="material-symbols:wine-bar"
-                width={16}
-                height={16}
-                className="text-primary-light"
-              />
-              <Text intent="p1" variant="dim" className="font-semibold">
-                Type of Wine
-              </Text>
-            </Container>
-            <Container intent="flexRowRight" gap="xsmall">
-              <Text className="capitalize">{typeOfWine}</Text>
-            </Container>
+        <Container intent="flexRowCenter" px="medium" gap="small">
+          <Container intent="flexRowCenter" gap="xsmall" className="max-w-fit">
+            <Icon
+              icon="material-symbols:wine-bar"
+              width={16}
+              height={16}
+              className="text-primary-light"
+            />
+            <Text className="capitalize">{typeOfWine}</Text>
           </Container>
-          <Container intent="flexRowBetween" gap="xsmall" className="w-full">
-            <Container intent="flexRowLeft" gap="xsmall" className="w-full">
-              <Icon
-                icon="ph:flag-bold"
-                width={16}
-                height={16}
-                className="text-primary-light"
-              />
-              <Text intent="p1" variant="dim" className="font-semibold">
-                Country
-              </Text>
-            </Container>
-            <Container intent="flexRowRight" className="max-w-[142px]">
-              <Text className="truncate">{country}</Text>
-            </Container>
+
+          <Container
+            intent="flexRowCenter"
+            gap="xsmall"
+            className="w-full max-w-[33%]"
+          >
+            <Icon
+              icon="ph:flag-bold"
+              width={16}
+              height={16}
+              className="text-primary-light min-w-[16px]"
+            />
+
+            <Text className="truncate">{country}</Text>
           </Container>
-          <Container intent="flexRowBetween" gap="xsmall" className="w-full">
-            <Container intent="flexRowLeft" gap="xsmall" className="w-full">
-              <Icon
-                icon="material-symbols:humidity-percentage"
-                width={16}
-                height={16}
-                className="text-primary-light"
-              />
-              <Text intent="p1" variant="dim" className="font-semibold">
-                Alcohol Level
-              </Text>
-            </Container>
-            <Container intent="flexRowRight">
-              <Text>{alcoholLevel} % vol</Text>
-            </Container>
+
+          <Container intent="flexRowCenter" gap="xsmall" className="w-full">
+            <Icon
+              icon="material-symbols:humidity-percentage"
+              width={16}
+              height={16}
+              className="text-primary-light"
+            />
+
+            <Text className="min-w-fit">{alcoholLevel} % ABV</Text>
           </Container>
         </Container>
         {isTokenized ? (

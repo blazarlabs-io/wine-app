@@ -297,18 +297,20 @@ export const WineForm = () => {
           </Container>
           <Container intent="flexRowBetween">
             <Text variant="dim">{wineForm.description}</Text>
-            <Toggle
-              disabled={true}
-              label="Show extended form"
-              isChecked={(showExtendedForm as boolean) || false}
-              onCheck={(checked: boolean) => {
-                setShowExtendedForm(checked);
-                updateBanner(
-                  checked,
-                  "You are now editing extended form. This form allows you to tokenize your wine for supply chain tracking."
-                );
-              }}
-            />
+            <div>
+              <Toggle
+                disabled={false}
+                label="Show extended form"
+                isChecked={(showExtendedForm as boolean) || false}
+                onCheck={(checked: boolean) => {
+                  setShowExtendedForm(checked);
+                  updateBanner(
+                    checked,
+                    "You are now editing extended form. This form allows you to tokenize your wine for supply chain tracking."
+                  );
+                }}
+              />
+            </div>
           </Container>
         </Container>
       </Container>

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Khula } from "next/font/google";
 import { Providers } from "@/context/Providers";
 import "./globals.css";
+import { Suspense } from "react";
+import Loading from "./loading";
 
 const inter = Khula({
   weight: "400",
@@ -23,7 +25,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Providers>{children}</Providers>
+        <Providers>
+          <Suspense fallback={<Loading />}>{children}</Suspense>
+        </Providers>
       </body>
     </html>
   );

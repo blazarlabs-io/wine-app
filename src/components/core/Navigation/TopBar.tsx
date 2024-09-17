@@ -42,7 +42,7 @@ export const TopBar = ({ className }: TopBarProps) => {
       disabled: false,
     },
     {
-      label: "Explore Wines",
+      label: "Explore",
       key: "explore",
       onClick: () => router.push("/explore"),
       disabled: false,
@@ -165,12 +165,7 @@ export const TopBar = ({ className }: TopBarProps) => {
               onClick={() => router.replace("/")}
               className="cursor-pointer"
             >
-              <Image
-                src="/logo-by-blazarlabs.png"
-                alt="Logo"
-                width={240}
-                height={56}
-              />
+              <Image src="/wines-logo.png" alt="Logo" width={240} height={56} />
             </button>
           </Container>
           <Container intent="flexRowCenter" gap="large" className="">

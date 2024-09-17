@@ -34,46 +34,27 @@ export default function TokenizedWineDetail() {
   );
 
   useEffect(() => {
-    if (ref) {
+    if (ref && wineClient) {
       wineClient.winery
-        .getWineByRefNumber({ ref })
+        .getWineByRefNumber(ref)
         .then((res: any) => {
-          console.log("Wine Data", res.data);
-          // setIpfsUrl(data.data.tokenization.ipfsUrl as string);
-        })
-        .catch((error: any) => {
-          console.error("Error getting document:", error);
-        });
-      // getWineryByWineRefNumber({ ref })
-      //   .then((data: any) => {
-      //     setGeneralInfo(data?.data.generalInfo as WineryGeneralInfo);
-      //   })
-      //   .catch((error) => {
-      //     console.error("Error getting document:", error);
-      //   });
-    }
-  }, [ref, user, wineClient]);
-
-  useEffect(() => {
-    if (ref) {
-      wineClient.winery
-        .getWineByRefNumber({ ref })
-        .then((data: any) => {
-          setIpfsUrl(data.data.tokenization.ipfsUrl as string);
+          console.log(res);
+          setIpfsUrl(res.data.tokenization.ipfsUrl as string);
         })
         .catch((error: any) => {
           console.error("Error getting document:", error);
         });
       wineClient.winery
-        .getWineryByWineRefNumber({ ref })
-        .then((data: any) => {
-          setGeneralInfo(data?.data.generalInfo as WineryGeneralInfo);
+        .getWineryByWineRefNumber(ref)
+        .then((res: any) => {
+          console.log(res);
+          setGeneralInfo(res.data.generalInfo as WineryGeneralInfo);
         })
         .catch((error: any) => {
           console.error("Error getting document:", error);
         });
     }
-  }, [ref]);
+  }, [ref, wineClient]);
 
   useEffect(() => {
     updateAppLoading(false);
