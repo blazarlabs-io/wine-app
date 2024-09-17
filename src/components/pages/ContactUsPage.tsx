@@ -57,11 +57,7 @@ export const ContactUsPage = () => {
             </Container>
           </Container>
           <Container intent="flexRowLeft" py="small" gap="small">
-            <Link
-              href="https://twitter.com/EECardanoHub"
-              target="_blank"
-              className=""
-            >
+            <Link href="https://x.com/BlazarLabs" target="_blank" className="">
               <Image
                 src="/twitter.svg"
                 width={32}

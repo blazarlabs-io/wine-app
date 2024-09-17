@@ -128,34 +128,6 @@ export const FilterBox = () => {
                   setCurrentFiltering("winery name");
                 }}
               />
-              {/* <DropDownFilter
-                disabled={false}
-                label="Search by wine type"
-                items={filters.byWineType.list}
-                selectedValue={filters.byWineType.result || ""}
-                onSelect={(item: string) => {
-                  // setWineTypeFilterValue(item);
-                  updateFilters({
-                    byUpc: upcFilterValue,
-                    byWineType: {
-                      list: filters.byWineType.list,
-                      result: item,
-                    },
-                    byWinery: {
-                      list: filters.byWinery.list,
-                      result: null,
-                    },
-                  });
-                  setCurrentFiltering("wine type");
-                }}
-              /> */}
-              {/* <SearchFilter
-                disabled={true}
-                label="Search UPC code"
-                onChange={(value: string[]) => {
-                  // setUpcFilterValue(value);
-                }}
-              /> */}
             </Container>
             <Container
               intent={currentFiltering ? "flexRowBetween" : "flexRowRight"}

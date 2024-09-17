@@ -41,6 +41,21 @@ export const WineryGeneralInfo = ({
   const { wineClient } = useWineClient();
 
   const sendNotification = () => {
+    fetch("/api/send-email", {
+      method: "POST",
+      body: JSON.stringify({ email: user?.email as string }),
+      headers: {
+        "content-type": "application/json",
+      },
+    })
+      .then(async (res) => {
+        console.log("Email sent");
+        console.log(await res.json());
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
     updateAppLoading(true);
 
     const data: CreateAdminNotification = {
