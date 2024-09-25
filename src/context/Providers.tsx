@@ -12,6 +12,7 @@ import { MasterLoaderProvider } from "./masterLoaderContext";
 import { UiContextProvider } from "./uiContext";
 import { BannerProvider } from "./bannerContext";
 import { WineClientProvider } from "./wineClientSdkContext";
+import { MeshProvider } from "@meshsdk/react";
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -20,6 +21,7 @@ export interface ProvidersProps {
 export const Providers = ({ children }: ProvidersProps) => {
   return (
     <MasterLoaderProvider>
+      {/* <MeshProvider> */}
       <AppStateProvider>
         <WineClientProvider>
           <UiContextProvider>
@@ -48,6 +50,7 @@ export const Providers = ({ children }: ProvidersProps) => {
           </UiContextProvider>
         </WineClientProvider>
       </AppStateProvider>
+      {/* </MeshProvider> */}
     </MasterLoaderProvider>
   );
 };
