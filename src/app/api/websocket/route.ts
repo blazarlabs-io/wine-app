@@ -1,6 +1,6 @@
-import { NextApiRequest } from "next";
+import { NextRequest } from "next/server";
 
-export function GET(req: NextApiRequest) {
+export function GET(req: NextRequest) {
   const ws: WebSocket = new WebSocket("ws://135.181.98.23:4001");
 
   ws.onmessage = (event) => {
