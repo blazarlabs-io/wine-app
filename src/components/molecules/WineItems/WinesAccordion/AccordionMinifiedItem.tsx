@@ -32,9 +32,9 @@ export const AccordionMinifiedItem = ({
   const [active, setActive] = useState(false);
   const [showInfoBanner, setShowInfoBanner] = useState(true);
   const [item, setItem] = useState(wine as Wine);
-  const [wsInstance, setWsInstance] = useState<WebSocket | null>(null);
-  const [wsMessage, setWsMessage] = useState<any>(null);
-  const [showHydraStatus, setShowHydraStatus] = useState<boolean>(false);
+  // const [wsInstance, setWsInstance] = useState<WebSocket | null>(null);
+  // const [wsMessage, setWsMessage] = useState<any>(null);
+  // const [showHydraStatus, setShowHydraStatus] = useState<boolean>(false);
 
   const mountRef = useRef<boolean>(false);
 
@@ -42,58 +42,58 @@ export const AccordionMinifiedItem = ({
     setActive(!active);
   };
 
-  useEffect(() => {
-    const isBrowser = typeof window !== "undefined";
+  // useEffect(() => {
+  //   const isBrowser = typeof window !== "undefined";
 
-    let ws: WebSocket;
+  //   let ws: WebSocket;
 
-    if (isBrowser) {
-      ws = new WebSocket("ws://135.181.98.23:4001");
-      setWsInstance(ws);
-    }
+  //   if (isBrowser) {
+  //     ws = new WebSocket("ws://135.181.98.23:4001");
+  //     setWsInstance(ws);
+  //   }
 
-    return () => {
-      // Cleanup on unmount if ws wasn't closed already
-      if (ws?.readyState !== 3) ws.close();
-    };
-  }, []);
+  //   return () => {
+  //     // Cleanup on unmount if ws wasn't closed already
+  //     if (ws?.readyState !== 3) ws.close();
+  //   };
+  // }, []);
 
-  wsInstance?.addEventListener("message", (event) => {
-    const message = JSON.parse(event.data);
-    console.log(message);
-    setWsMessage(message);
-  });
+  // wsInstance?.addEventListener("message", (event) => {
+  //   const message = JSON.parse(event.data);
+  //   console.log(message);
+  //   setWsMessage(message);
+  // });
 
-  const handleTokenization = async () => {
-    updateModal({
-      show: true,
-      title: "Tokenize Wine",
-      description:
-        "You are about to start a tokenization of your wine on the Cardano blockchain. Are you sure you want to proceed?",
-      action: {
-        label: "Tokenize",
-        onAction: async () => {
-          const res = await fetch("/api/websocket");
-          console.log(await res.json());
+  // const handleTokenization = async () => {
+  //   updateModal({
+  //     show: true,
+  //     title: "Tokenize Wine",
+  //     description:
+  //       "You are about to start a tokenization of your wine on the Cardano blockchain. Are you sure you want to proceed?",
+  //     action: {
+  //       label: "Tokenize",
+  //       onAction: async () => {
+  //         const res = await fetch("/api/websocket");
+  //         console.log(await res.json());
 
-          updateModal({
-            show: false,
-            title: "Modal Title",
-            description: "Modal Message",
-            action: {
-              label: "Action",
-              onAction: () => {},
-            },
-          });
+  //         updateModal({
+  //           show: false,
+  //           title: "Modal Title",
+  //           description: "Modal Message",
+  //           action: {
+  //             label: "Action",
+  //             onAction: () => {},
+  //           },
+  //         });
 
-          setShowHydraStatus(true);
-        },
-      },
-    });
-  };
+  //         setShowHydraStatus(true);
+  //       },
+  //     },
+  //   });
+  // };
   return (
     <>
-      {showHydraStatus && (
+      {/* {showHydraStatus && (
         <div className="fixed flex z-[999] items-center justify-center top-0 left-0 w-full h-full bg-black/80 backdrop-blur-sm">
           <Container
             intent="flexColCenter"
@@ -175,7 +175,7 @@ export const AccordionMinifiedItem = ({
             )}
           </Container>
         </div>
-      )}
+      )} */}
       <Container
         intent="flexColLeft"
         className={`flex min-w-full text-left py-[16px] bg-surface-dark`}
@@ -246,13 +246,13 @@ export const AccordionMinifiedItem = ({
             >
               <Icon icon="ph:trash" className="w-[20px] h-[20px]" />
             </Button>
-            <Button
+            {/* <Button
               intent="unstyled"
               onClick={handleTokenization}
               className="text-surface-dark bg-status-info px-[16px] py-[14px] rounded-md"
             >
               <Icon icon="oui:token-shape" className="w-[20px] h-[20px]" />
-            </Button>
+            </Button> */}
           </div>
         </Container>
 
