@@ -1,22 +1,18 @@
-import { functions } from "@/lib/firebase/client";
-import { httpsCallable } from "firebase/functions";
+import { db } from "@/lib/firebase/services/db";
 import { useEffect, useState } from "react";
 
 export const useGetWineMakingTechnique = () => {
   const [sustainabilityPractices, setSustainabilityPractices] = useState<
     string[]
   >([]);
-  const getSustainabilityPractices = httpsCallable(
-    functions,
-    "utils-getSustainabilityPractices"
-  );
 
   useEffect(() => {
-    getSustainabilityPractices()
+    db.systemVariables
+      .getOne("sustainabilityPractices")
       .then((res: any) => {
-        setSustainabilityPractices(res.data.sustainabilityPractices);
+        setSustainabilityPractices(res.data);
       })
-      .catch((error) => {
+      .catch((error: any) => {
         console.error(error);
       });
   }, []);

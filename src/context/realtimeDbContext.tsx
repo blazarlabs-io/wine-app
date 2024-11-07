@@ -157,6 +157,8 @@ export const RealtimeDbProvider = ({
     const unsubscribeWineries: Unsubscribe = onSnapshot(docRef, (snapshot) => {
       const wineryData = snapshot.data() as Winery;
       if (wineryData) {
+        console.log("WINERY REALTIME UPDATE", wineryData);
+
         let generalInfo: WineryGeneralInfo;
 
         if (
