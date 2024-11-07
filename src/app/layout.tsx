@@ -4,6 +4,7 @@ import { Providers } from "@/context/Providers";
 import "./globals.css";
 import { Suspense } from "react";
 import Loading from "./loading";
+import { Modal } from "@/components";
 
 const inter = Khula({
   weight: "400",
@@ -44,10 +45,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" suppressHydrationWarning={true}>
+      <body className={inter.className} suppressHydrationWarning={true}>
         <Providers>
-          <Suspense fallback={<Loading />}>{children}</Suspense>
+          <Suspense fallback={<Loading />}>
+            <div className="relative w-full h-full">
+              <Modal />
+              {children}
+            </div>
+          </Suspense>
         </Providers>
       </body>
     </html>

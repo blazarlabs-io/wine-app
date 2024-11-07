@@ -13,7 +13,11 @@ import {
 } from "@/components";
 import { Icon } from "@iconify/react";
 import { useAuth } from "@/context/authContext";
-import { CoordinateInterface, WineryGeneralInfo } from "@/typings/winery";
+import {
+  CoordinateInterface,
+  Winery,
+  WineryGeneralInfo,
+} from "@/typings/winery";
 import { uploadLogoToStorage } from "@/utils/firestore";
 import { useEffect, useRef, useState } from "react";
 import { validateFileSizeAndType } from "@/utils/validators/validateFileSizeAndType";
@@ -30,6 +34,7 @@ import { useToast } from "@/context/toastContext";
 import { removeUndefinedValues } from "@/utils/removeUndefinedValues";
 import { useAppState } from "@/context/appStateContext";
 import { useWineClient } from "@/context/wineClientSdkContext";
+import { db } from "@/lib/firebase/services/db";
 
 export const WineryForm = () => {
   const { user } = useAuth();
@@ -54,25 +59,7 @@ export const WineryForm = () => {
   const inputFileRef = useRef<any>(null);
 
   const handleCancel = () => {
-    if (!wineryForm.isEditing) {
-      updateModal({
-        show: true,
-        title: "Error",
-        description: "You must complete the registration process.",
-        action: {
-          label: "OK",
-          onAction: () =>
-            updateModal({
-              show: false,
-              title: "",
-              description: "",
-              action: { label: "", onAction: () => {} },
-            }),
-        },
-      });
-    } else {
-      router.back();
-    }
+    router.back();
   };
 
   const handleRegistration = () => {
@@ -84,15 +71,24 @@ export const WineryForm = () => {
       removeUndefinedValues(wineryGeneralInfo);
     updateWineryGeneralInfo(newGeneralInfo);
 
-    // UPDATE TO DATABASE
+    // * UPDATE DATABASE
     updateAppLoading(true);
-    wineClient &&
-      wineClient.winery
-        .registerWineryGeneralInfo({
-          uid: user?.uid as string,
-          generalInfo: newGeneralInfo,
-        })
-        .then((result: any) => {
+
+    if (!wineryForm.isEditing) {
+      // * SET WINERY FOR THE FIRST TIME
+      const newWinery: Winery = {
+        id: user?.uid as string,
+        level: "bronze",
+        tier: 1,
+        disabled: false,
+        isVerified: false,
+        generalInfo: newGeneralInfo,
+        wines: [],
+      };
+
+      db.winery
+        .set(user?.uid as string, newWinery)
+        .then(() => {
           updateAppLoading(false);
           updateToast({
             show: true,
@@ -100,6 +96,8 @@ export const WineryForm = () => {
             message: "Winery information saved successfully.",
             timeout: 3000,
           });
+          setIsLoading(false);
+          router.replace("/home");
         })
         .catch((error: any) => {
           console.error(error);
@@ -110,10 +108,37 @@ export const WineryForm = () => {
             message: "An error occurred. Please try again.",
             timeout: 3000,
           });
+          setIsLoading(false);
         });
-
-    setIsLoading(false);
-    router.replace("/home");
+    } else {
+      // * UPDATE EXISTING WINERY
+      db.winery
+        .update(user?.uid as string, {
+          generalInfo: newGeneralInfo,
+        })
+        .then(() => {
+          updateAppLoading(false);
+          updateToast({
+            show: true,
+            status: "success",
+            message: "Winery information saved successfully.",
+            timeout: 3000,
+          });
+          setIsLoading(false);
+          router.replace("/home");
+        })
+        .catch((error: any) => {
+          console.error(error);
+          updateAppLoading(false);
+          updateToast({
+            show: true,
+            status: "error",
+            message: "An error occurred. Please try again.",
+            timeout: 3000,
+          });
+          setIsLoading(false);
+        });
+    }
   };
 
   const handleUploadLogo = (logo: File) => {
@@ -673,19 +698,23 @@ export const WineryForm = () => {
               gap="medium"
               className="mt-[48px]"
             >
-              <Button
-                intent="secondary"
-                size="medium"
-                fullWidth
-                onClick={() => handleCancel()}
-              >
-                Cancel
-              </Button>
+              {wineryForm.isEditing && (
+                <Button
+                  intent="secondary"
+                  size="medium"
+                  fullWidth
+                  onClick={() => handleCancel()}
+                >
+                  Cancel
+                </Button>
+              )}
+
               <Button
                 intent="primary"
                 size="medium"
                 fullWidth
                 type="submit"
+                disabled={wineryGeneralInfo.name.length < 3}
                 onClick={() => {}}
               >
                 {!isLoading ? (

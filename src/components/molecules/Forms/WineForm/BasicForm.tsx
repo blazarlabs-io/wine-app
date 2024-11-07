@@ -40,7 +40,7 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
   const { user } = useAuth();
 
   const [imageUploading, setImageUploading] = useState<boolean>(false);
-  const [dataReady, setDataReady] = useState<boolean>(false);
+  const [validated, setValidated] = useState<boolean>(false);
 
   const handleWineImageUpload = (wineImageFile: File) => {
     setImageUploading(true);
@@ -74,11 +74,29 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
   };
 
   // * Update the wine form with integrated data
+  // useEffect(() => {
+  //   if (formsIntegrated) {
+  //     setDataReady(true);
+  //   }
+  // }, [formsIntegrated]);
+
+  // * VALIDATE DATA
   useEffect(() => {
-    if (formsIntegrated) {
-      setDataReady(true);
+    if (
+      wineForm.formData.minifiedWine.country.length > 0 &&
+      wineForm.formData.minifiedWine.wineCollectionName.length > 0 &&
+      wineForm.formData.minifiedWine.wineType.length > 0 &&
+      wineForm.formData.minifiedWine.bottleSize.length > 0 &&
+      wineForm.formData.minifiedWine.wineColour.length > 0 &&
+      wineForm.formData.minifiedWine.alcoholLevel.length > 0 &&
+      wineForm.formData.minifiedWine.grapes.length > 0 &&
+      wineForm.formData.minifiedWine.residualSugar.length > 0
+    ) {
+      setValidated(true);
+    } else {
+      setValidated(false);
     }
-  }, [formsIntegrated]);
+  }, [wineForm.formData.minifiedWine]);
 
   return (
     <>
@@ -917,6 +935,7 @@ export const BasicForm = ({ onSave, onCancel }: BasicFormProps) => {
                   type="submit"
                   intent="primary"
                   size="medium"
+                  disabled={!validated}
                   onClick={() => {
                     // onSave();
                   }}

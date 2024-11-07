@@ -43,7 +43,13 @@ export const WineryGeneralInfo = ({
   const sendNotification = () => {
     fetch("/api/send-email", {
       method: "POST",
-      body: JSON.stringify({ email: user?.email as string }),
+      body: JSON.stringify({
+        to: "c.tudorcotruta@gmail.com",
+        templateId: "d-487c5c7d1a094e87a803125e891aac08",
+        dynamic_template_data: {
+          userEmail: user?.email,
+        },
+      }),
       headers: {
         "content-type": "application/json",
       },
@@ -156,11 +162,11 @@ export const WineryGeneralInfo = ({
         )}
       >
         <Container
-          intent="grid-3"
+          intent="grid-2"
           gap="small"
           className="w-full place-items-start items-center"
         >
-          <Container intent="flexRowLeft" gap="xsmall" className="w-full">
+          {/* <Container intent="flexRowLeft" gap="xsmall" className="w-full">
             <div className="">
               <Icon
                 icon="material-symbols:verified-outline"
@@ -178,7 +184,7 @@ export const WineryGeneralInfo = ({
                 text="The tier and associated level (metal) indicate the service tier and subscription level associated with your account."
               />
             </div>
-          </Container>
+          </Container> */}
           <Container intent="flexRowLeft" gap="xsmall" className="w-full">
             <div>
               <Icon
@@ -194,7 +200,7 @@ export const WineryGeneralInfo = ({
             <div>
               <InfoTooltip
                 width={280}
-                text="The tier and associated level (metal) indicate the service tier and subscription level associated with your account."
+                text="The subscription level associated with your account."
               />
             </div>
           </Container>
