@@ -8,6 +8,7 @@ import { useAppState } from "@/context/appStateContext";
 import { useForms } from "@/context/FormsContext";
 import { useRealtimeDb } from "@/context/realtimeDbContext";
 import { useWineClient } from "@/context/wineClientSdkContext";
+import { db } from "@/lib/firebase/services/db";
 
 export const DashboardHomePage = () => {
   const { user } = useAuth();
@@ -19,22 +20,19 @@ export const DashboardHomePage = () => {
   const { wineClient } = useWineClient();
 
   useEffect(() => {
+    // * CHECK IF WINERY DETAILS ARE ALREADY REGISTERED
+    // * IF NOT, REDIRECT TO WINERY FORM
     if (user && wineClient) {
-      wineClient.winery
-        .getWineryData(user?.uid)
+      db.winery
+        .getOne(user?.uid)
         .then((res: any) => {
-          console.log("WINE CLIENT API", res);
-          if (
-            res.data === null ||
-            res.data.generalInfo === null ||
-            res.data.generalInfo === undefined ||
-            Object.keys(res.data.generalInfo).length === 0
-          ) {
+          console.log(user?.uid, res);
+          if (res.status == 404) {
             updateWineryForm({
               title: "Register Winery Details",
               description:
                 "Please fill in the form to register your winery details. All fields marked with * are mandatory.",
-              isEditing: true,
+              isEditing: false,
               formData: wineryGeneralInfo,
             });
             router.push("/winery-form");
@@ -52,6 +50,33 @@ export const DashboardHomePage = () => {
   return (
     <>
       <Container intent="flexColTop" className="min-w-full h-full">
+        <button
+          className="text-primary-light py-6"
+          onClick={() => {
+            fetch("/api/send-email", {
+              method: "POST",
+              body: JSON.stringify({
+                to: "fitosegrera@gmail.com",
+                templateId: "d-e43ea96c084e472abf812e22f2412c8e",
+                dynamic_template_data: {
+                  qrCodeUrl: "https://google.com",
+                },
+              }),
+              headers: {
+                "content-type": "application/json",
+              },
+            })
+              .then(async (res) => {
+                console.log("Email sent");
+                console.log(await res.json());
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+          }}
+        >
+          Send test email
+        </button>
         <WineryHeaderSection />
         <WinesListSection />
       </Container>

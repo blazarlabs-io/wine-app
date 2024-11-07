@@ -1,33 +1,28 @@
 "use client";
 
-import { Container, Text, ReviewWine, Toggle } from "@/components";
-import { Icon } from "@iconify/react";
-import { dateToTimestamp } from "@/utils/dateToTimestamp";
-import { useEffect, useRef, useState } from "react";
-import { generateId } from "@/utils/generateId";
-import { useRouter } from "next/navigation";
-import { useAppState } from "@/context/appStateContext";
-import { getQrCodeImageData } from "@/utils/getQrCodeImageData";
-import React from "react";
-import { uploadQrCodeToStorage } from "@/utils/firestore";
-import { useAuth } from "@/context/authContext";
-import { wineUrlComposerRef } from "@/utils/wineUrlComposerRef";
-import { useRealtimeDb } from "@/context/realtimeDbContext";
-import { useModal } from "@/context/modalContext";
-import { httpsCallable } from "firebase/functions";
-import { functions } from "@/lib/firebase/client";
-import { firebaseAuthErrors } from "@/utils/firebaseAuthErrors";
-import { generateWineHtml } from "@/utils/generateWineHtml";
-import { fileToBase64 } from "@/utils/fileToBase64";
+import { Container, ReviewWine, Text, Toggle } from "@/components";
 import { useForms } from "@/context/FormsContext";
+import { useAppState } from "@/context/appStateContext";
+import { useAuth } from "@/context/authContext";
 import { useBanner } from "@/context/bannerContext";
+import { useModal } from "@/context/modalContext";
+import { useRealtimeDb } from "@/context/realtimeDbContext";
+import { useToast } from "@/context/toastContext";
+import { useWineClient } from "@/context/wineClientSdkContext";
+import { db } from "@/lib/firebase/services/db";
+import storage from "@/lib/firebase/services/storage";
+import { DbReturn } from "@/typings/firestore";
+import { Wine } from "@/typings/winery";
+import { dateToTimestamp } from "@/utils/dateToTimestamp";
+import { fileToBase64 } from "@/utils/fileToBase64";
+import { generateId } from "@/utils/generateId";
+import { getQrCodeImageData } from "@/utils/getQrCodeImageData";
+import { Icon } from "@iconify/react";
+import { Timestamp } from "firebase/firestore";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { BasicForm } from "./BasicForm";
 import { ExtendedForm } from "./ExtendedForm";
-import { useToast } from "@/context/toastContext";
-import { MinifiedWine } from "@/typings/winery";
-import { minifiedWineInitData } from "@/data/minifiedWineInitData";
-import { Timestamp } from "firebase/firestore";
-import { useWineClient } from "@/context/wineClientSdkContext";
 
 export const WineForm = () => {
   const router = useRouter();
@@ -54,8 +49,6 @@ export const WineForm = () => {
   const [showExtendedForm, setShowExtendedForm] = useState<boolean | null>(
     null
   );
-
-  const sendEmail = httpsCallable(functions, "email-sendEmail");
 
   useEffect(() => {
     updateBanner(false, "");
@@ -115,124 +108,109 @@ export const WineForm = () => {
     }
   }, [showExtendedForm]);
 
-  const handleRegistration = () => {
+  const handleRegistration = (qrCodeFile: File, base64: string) => {
     setIsLoading(true);
     updateAppLoading(true);
     if (!wineForm.isEditing) {
-      uploadQrCodeToStorage(
-        user?.uid as string,
-        getQrCodeImageData("euLabelQrCode"),
-        wineForm.formData.referenceNumber as string,
-        (url: string) => {
+      // * SET WINE FOR THE FIRST TIME
+      console.log("qrCodeFile", qrCodeFile);
+      console.log("wineForm", wineForm);
+
+      // * Upload Generated QR Code to Storage
+      storage.wine.upload(
+        qrCodeFile,
+        `images/${user?.uid}/${wineForm.formData.referenceNumber}.png`,
+        (progress: any) => {},
+        (error: any) => {},
+        async (url: string) => {
+          // * After file uploaded to storage
           wineForm.formData.createdAt = Timestamp.now();
           wineForm.formData.generalInformation.wineryId = user?.uid as string;
           wineForm.formData.minifiedWine.wineryId = user?.uid as string;
           wineForm.formData.minifiedWine.qrCodeUrl = url;
           wineForm.formData.generalInformation.qrCodeUrl = url;
-          // Register the wine
-          wineClient &&
-            wineClient.winery
-              .registerWineryWine({
-                uid: user?.uid as string,
-                wine: wineForm.formData,
-              })
-              .then((result: any) => {
-                setIsLoading(false);
-                sendEmail({
-                  data: {
-                    from: "it@blazarlabs.io",
-                    to: user?.email,
-                    subject: "Your new EU label has been created!",
-                    text: `Congratulations, you have successfuly registered a new EU Label.`,
-                    html: generateWineHtml(
-                      wineUrlComposerRef(
-                        wineForm.formData.referenceNumber as string
-                      ),
-                      wineForm.formData.generalInformation.qrCodeUrl as string
-                    ),
+
+          // * Save new wine to DB
+          db.wine
+            .set(user?.uid as string, wineForm.formData as Wine)
+            .then((res: DbReturn) => {
+              console.log("res", res);
+              setIsLoading(false);
+              updateAppLoading(false);
+              updateToast({
+                show: true,
+                message: "Wine registered successfully",
+                status: "success",
+                timeout: 3000,
+              });
+
+              // * Send QRCODE Email
+              fetch("/api/send-email", {
+                method: "POST",
+                body: JSON.stringify({
+                  to: "fitosegrera@gmail.com",
+                  templateId: "d-e43ea96c084e472abf812e22f2412c8e",
+                  dynamic_template_data: {
+                    qrCodeUrl: url,
                   },
-                })
-                  .then((result) => {
-                    // Read result of the Cloud Function.
-                    /** @type {any} */
-                    const data = result.data;
-                    const sanitizedMessage: any = data;
-
-                    updateAppLoading(false);
-                    updateModal({
-                      show: true,
-                      title: "Success",
-                      description:
-                        "Your EU Label has been registered, and an email has been sent to you with the details.",
-                      action: {
-                        label: "OK",
-                        onAction: () => {
-                          updateModal({
-                            show: false,
-                            title: "",
-                            description: "",
-                            action: { label: "", onAction: () => {} },
-                          });
-                          router.replace("/home");
-                        },
-                      },
-                    });
-                  })
-                  .catch((error) => {
-                    const errorCode = error.code;
-                    const errorMessage = error.message;
-
-                    updateAppLoading(false);
-                    updateModal({
-                      show: true,
-                      title: "Error",
-                      description: firebaseAuthErrors[errorCode] as string,
-                      action: {
-                        label: "OK",
-                        onAction: () => {
-                          updateModal({
-                            show: false,
-                            title: "",
-                            description: "",
-                            action: { label: "", onAction: () => {} },
-                          });
-                        },
-                      },
-                    });
-                  });
+                  attachments: [
+                    {
+                      content: base64,
+                      filename: qrCodeFile.name,
+                      type: qrCodeFile.type,
+                      disposition: "attachment",
+                      // cid: "euLabelQrCode",
+                      // content_id: "euLabelQrCode",
+                    },
+                  ],
+                }),
+                headers: {
+                  "content-type": "application/json",
+                },
               })
-              .catch((error: any) => {});
+                .then(async (res) => {
+                  console.log("Email sent");
+                  console.log(await res.json());
+                })
+                .catch((error) => {
+                  console.error(error);
+                });
+            })
+            .catch((err: DbReturn) => {
+              console.log("err", err);
+            });
         }
       );
     } else {
+      // * UPDATE WINE IN DATABASE
       setIsLoading(true);
       updateAppLoading(true);
       // Update the wine
-      wineClient &&
-        wineClient.winery
-          .updateWineryWine({ uid: user?.uid, wine: wineForm.formData })
-          .then((result: any) => {
-            setIsLoading(false);
-            updateAppLoading(false);
-            updateToast({
-              show: true,
-              status: "success",
-              message: "Wine updated successfully",
-              timeout: 3000,
-            });
-          })
-          .catch((error: any) => {
-            setIsLoading(false);
-            updateAppLoading(false);
-            updateToast({
-              show: true,
-              status: "error",
-              message: "Error updating wine",
-              timeout: 3000,
-            });
-          });
+      // wineClient &&
+      //   wineClient.winery
+      //     .updateWineryWine({ uid: user?.uid, wine: wineForm.formData })
+      //     .then((result: any) => {
+      //       setIsLoading(false);
+      //       updateAppLoading(false);
+      //       updateToast({
+      //         show: true,
+      //         status: "success",
+      //         message: "Wine updated successfully",
+      //         timeout: 3000,
+      //       });
+      //     })
+      //     .catch((error: any) => {
+      //       setIsLoading(false);
+      //       updateAppLoading(false);
+      //       updateToast({
+      //         show: true,
+      //         status: "error",
+      //         message: "Error updating wine",
+      //         timeout: 3000,
+      //       });
+      //     });
 
-      router.replace("/home");
+      // router.replace("/home");
     }
   };
 
@@ -275,12 +253,12 @@ export const WineForm = () => {
     >
       {showReview && (
         <ReviewWine
-          qrCodeValue={wineUrlComposerRef(
-            wineForm.formData.referenceNumber as string
-          )}
-          qrCodeId={"euLabelQrCode"}
-          onAccept={() => {
-            handleRegistration();
+          urlValue={`${
+            process.env.NEXT_PUBLIC_DYNAMIC_QR_CODES_STATIC_URL as string
+          }${wineForm.formData.referenceNumber}`}
+          qrCodeId={wineForm.formData.referenceNumber as string}
+          onSave={(qrCodeFile: File, qrBase64: string) => {
+            handleRegistration(qrCodeFile, qrBase64);
             setShowReview(false);
           }}
           onCancel={() => setShowReview(false)}
@@ -320,7 +298,7 @@ export const WineForm = () => {
             if (!wineForm.isEditing) {
               setShowReview(true);
             } else {
-              handleRegistration();
+              // handleRegistration();
             }
           }}
           onCancel={() => router.replace("/home")}
@@ -331,7 +309,7 @@ export const WineForm = () => {
             if (!wineForm.isEditing) {
               setShowReview(true);
             } else {
-              handleRegistration();
+              // handleRegistration();
             }
           }}
           onCancel={() => router.replace("/home")}
