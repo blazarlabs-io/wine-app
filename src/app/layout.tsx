@@ -5,6 +5,7 @@ import "./globals.css";
 import { Suspense } from "react";
 import Loading from "./loading";
 import { Modal } from "@/components";
+import { RouteBlocker } from "@/components/pages/RouteBlocker";
 
 const inter = Khula({
   weight: "400",
@@ -51,7 +52,7 @@ export default function RootLayout({
           <Suspense fallback={<Loading />}>
             <div className="relative w-full h-full">
               <Modal />
-              {children}
+              <RouteBlocker>{children}</RouteBlocker>
             </div>
           </Suspense>
         </Providers>
