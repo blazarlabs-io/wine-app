@@ -10,34 +10,32 @@ export const HomePage = () => {
   const { responsiveSize } = useResponsive();
   const { updateModal } = useModal();
 
-  useEffect(() => {
-    updateModal({
-      title: "Important Notice",
-      description:
-        "You’ve  been using our prototype Wine QR Code Solution, and we’re excited to announce that a brand-new Wine QR Generator website is coming soon! Rest assured, all QR codes—past and future—will remain fully active and functional.",
-      show: true,
-      action: {
-        label: "Ok",
-        onAction: () => {
-          updateModal({
-            show: false,
-            title: "",
-            description: "",
-            action: {
-              label: "",
-              onAction: () => {},
-            },
-          });
-        },
-      },
-    });
-    // modal.title = "Modal Title";
-    //modal.description =
-    //   "You’ve  been using our prototype Wine QR Code Solution, and we’re excited to announce that a brand-new Wine QR Generator website is coming soon! Rest assured, all QR codes—past and future—will remain fully active and functional.";
-  }, []);
+  // useEffect(() => {
+  //   updateModal({
+  //     title: "Important Notice",
+  //     description:
+  //       "You’ve  been using our prototype Wine QR Code Solution, and we’re excited to announce that a brand-new Wine QR Generator website is coming soon! Rest assured, all QR codes—past and future—will remain fully active and functional.",
+  //     show: true,
+  //     action: {
+  //       label: "Ok",
+  //       onAction: () => {
+  //         updateModal({
+  //           show: false,
+  //           title: "",
+  //           description: "",
+  //           action: {
+  //             label: "",
+  //             onAction: () => {},
+  //           },
+  //         });
+  //       },
+  //     },
+  //   });
+
+  // }, []);
   return (
     <Container intent="flexColTop" className="w-full h-full">
-      <div
+      {/* <div
         style={{
           backgroundImage:
             responsiveSize === "mobile"
@@ -56,7 +54,18 @@ export const HomePage = () => {
         }}
         className=""
       />
-      <HeroSection />
+      <HeroSection /> */}
+      <div className="w-full h-screen flex items-center justify-center">
+        <span className="text-on-surface">
+          Great news! We have a new website. Please visit{" "}
+          <a
+            className="text-primary-light font-bold underline"
+            href="https://tracecork.com"
+          >
+            Tracecork
+          </a>
+        </span>
+      </div>
     </Container>
   );
 };

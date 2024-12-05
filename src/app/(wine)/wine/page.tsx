@@ -1,6 +1,6 @@
 "use client";
 
-import { WinePage } from "@/components";
+import { SpinnerLoader, WinePage } from "@/components";
 import { Wine, WineryGeneralInfo } from "@/typings/winery";
 import { useAppState } from "@/context/appStateContext";
 import { Suspense, useEffect, useState } from "react";
@@ -15,47 +15,36 @@ export default function WineDetail() {
   const searchParams = useSearchParams();
 
   const [ref, setRef] = useState<string | null>(searchParams.get("ref"));
-  const [generalInfo, setGeneralInfo] = useState<WineryGeneralInfo | null>(
-    null
-  );
-  const [wine, setWine] = useState<DocumentData | null>(null);
+  // const [generalInfo, setGeneralInfo] = useState<WineryGeneralInfo | null>(
+  //   null
+  // );
+  // const [wine, setWine] = useState<DocumentData | null>(null);
 
-  useEffect(() => {
-    if (ref && wineClient) {
-      wineClient.winery
-        .getWineByRefNumber(ref)
-        .then((res: any) => {
-          console.log("Wine Data", res);
-          setWine(res.data);
-        })
-        .catch((error: any) => {
-          console.error("Error getting document:", error);
-        });
-      wineClient.winery
-        .getWineryByWineRefNumber(ref)
-        .then((result: any) => {
-          console.log("Winery Data", result);
-          setGeneralInfo(result.data.generalInfo as WineryGeneralInfo);
-        })
-        .catch((error: any) => {
-          console.error("Error getting document:", error);
-        });
-    }
-  }, [ref, wineClient]);
+  // useEffect(() => {
+  //   if (ref && wineClient) {
+  //     console.log("REF QUERY /wine?ref=", ref);
+  //   }
+  // }, [ref, wineClient]);
 
   useEffect(() => {
     updateAppLoading(false);
     setRef(searchParams.get("ref"));
+    if (typeof window !== "undefined")
+      window.location.href = `${process.env.NEXT_PUBLIC_TRACECORK_REDIRECT}${ref}`;
   }, []);
+
   return (
     <>
       <Suspense>
-        {wine && generalInfo && (
+        <div className="flex items-center justify-center w-full h-screen">
+          <SpinnerLoader width="48px" height="48px" />
+        </div>
+        {/* {wine && generalInfo && (
           <WinePage
             generalInfo={generalInfo as WineryGeneralInfo}
             wine={wine as Wine}
           />
-        )}
+        )} */}
       </Suspense>
     </>
   );
