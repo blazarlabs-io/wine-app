@@ -4,65 +4,76 @@ import { Container } from "../core/Container";
 import { HeroSection } from "../sections/Home/HeroSection";
 import { useResponsive } from "@/hooks/useResponsive";
 import { useModal } from "@/context/modalContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export const HomePage = () => {
-  const { responsiveSize } = useResponsive();
-  const { updateModal } = useModal();
+  const [timeLeft, setTimeLeft] = useState<number>(20);
 
-  // useEffect(() => {
-  //   updateModal({
-  //     title: "Important Notice",
-  //     description:
-  //       "You’ve  been using our prototype Wine QR Code Solution, and we’re excited to announce that a brand-new Wine QR Generator website is coming soon! Rest assured, all QR codes—past and future—will remain fully active and functional.",
-  //     show: true,
-  //     action: {
-  //       label: "Ok",
-  //       onAction: () => {
-  //         updateModal({
-  //           show: false,
-  //           title: "",
-  //           description: "",
-  //           action: {
-  //             label: "",
-  //             onAction: () => {},
-  //           },
-  //         });
-  //       },
-  //     },
-  //   });
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    let reverseCount = timeLeft;
+    if (typeof window !== "undefined") {
+      interval = setInterval(() => {
+        reverseCount--;
+        setTimeLeft(reverseCount);
+        if (reverseCount <= 0) {
+          clearInterval(interval);
 
-  // }, []);
+          window.location.href = "https://tracecork.com/";
+        }
+      }, 1000);
+    }
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <Container intent="flexColTop" className="w-full h-full">
-      {/* <div
-        style={{
-          backgroundImage:
-            responsiveSize === "mobile"
-              ? "url('/bg-mobile-2.png')"
-              : "url('/bg-2.png')",
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "top left 40%",
-          width: "100%",
-          height: "100%",
-          // maxHeight: "100vh",
-          top: 0,
-          left: 0,
-          position: "absolute",
-          zIndex: -1,
-        }}
-        className=""
-      />
-      <HeroSection /> */}
-      <div className="w-full h-screen flex items-center justify-center">
-        <span className="text-on-surface">
-          Great news! We have a new website. Please visit{" "}
+      {/* 
+We’re thrilled to announce an exciting update!
+
+https://wines.blazarlabs.io/  is moving to a new home to bring you a faster, better experience. You don’t need to do a thing—your browser will automatically redirect you to our new site in a few seconds.
+
+Your account is secure, and no action is needed. For questions, contact it@blazarlabs.io
+
+Thank you for your support—we can’t wait to show you around our new home Tracecork.com!
+
+*/}
+
+      <div className="w-full h-screen flex items-center flex-col justify-center text-on-surface max-w-[640px] gap-4">
+        <span className="text-center text-2xl font-bold">
+          🍷We’re thrilled to announce an exciting update!
+        </span>
+        <span className="text-center">
+          <span className="font-semibold text-primary-light">
+            https://wines.blazarlabs.io/
+          </span>{" "}
+          is moving to a new platform to bring you a faster, better experience.
+          You don’t need to do a thing—your browser will automatically redirect
+          you to our new site in{" "}
+          <span className="font-semibold text-primary-light">
+            {timeLeft} seconds
+          </span>
+          .
+        </span>
+        <span className="text-center">
+          Your account is secure, and no action is needed. For questions,
+          contact{" "}
           <a
-            className="text-primary-light font-bold underline"
-            href="https://tracecork.com"
+            href="mailto:it@blazarlabs.io"
+            className="font-semibold text-primary-light"
           >
-            Tracecork
+            it@blazarlabs.io
+          </a>
+        </span>
+        <span className="text-center">
+          Thank you for your support—we can’t wait to show you around our new
+          home{" "}
+          <a
+            href="https://tracecork.com/"
+            className="font-semibold underline text-[#31CECE]"
+          >
+            Tracecork.com!
           </a>
         </span>
       </div>
