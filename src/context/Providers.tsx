@@ -26,26 +26,25 @@ export const Providers = ({ children }: ProvidersProps) => {
         <WineClientProvider>
           <UiContextProvider>
             <AuthProvider>
-              <RealtimeDbProvider>
-                <FormsProvider>
-                  <FiltersProvider>
-                    <BannerProvider>
-                      <ToastProvider>
-                        <ModalProvider>
-                          <APIProvider
-                            apiKey={
-                              process.env
-                                .NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string
-                            }
-                          >
-                            {children}
-                          </APIProvider>
-                        </ModalProvider>
-                      </ToastProvider>
-                    </BannerProvider>
-                  </FiltersProvider>
-                </FormsProvider>
-              </RealtimeDbProvider>
+              {/* <RealtimeDbProvider> */}
+              <FormsProvider>
+                {/* <FiltersProvider> */}
+                <BannerProvider>
+                  <ToastProvider>
+                    <ModalProvider>
+                      <APIProvider
+                        apiKey={
+                          process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string
+                        }
+                      >
+                        {children}
+                      </APIProvider>
+                    </ModalProvider>
+                  </ToastProvider>
+                </BannerProvider>
+                {/* </FiltersProvider> */}
+              </FormsProvider>
+              {/* </RealtimeDbProvider> */}
             </AuthProvider>
           </UiContextProvider>
         </WineClientProvider>

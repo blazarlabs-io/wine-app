@@ -1,6 +1,6 @@
 "use client";
 
-import { WinePage } from "@/components";
+import { SpinnerLoader, WinePage } from "@/components";
 import { Wine, WineryGeneralInfo } from "@/typings/winery";
 import { useAppState } from "@/context/appStateContext";
 import { Suspense, useEffect, useState } from "react";
@@ -23,38 +23,31 @@ export default function Page({ params }: PageProps) {
   );
   const [wine, setWine] = useState<DocumentData | null>(null);
 
+  // useEffect(() => {
+  //   if (ref && wineClient) {
+  //     console.log("REF dynamic /wine/[ref]", ref);
+  //   }
+  // }, [ref, wineClient]);
+
   useEffect(() => {
-    if (ref && wineClient) {
-      wineClient.winery
-        .getWineByRefNumber(ref)
-        .then((res: any) => {
-          console.log("Wine Data", res);
-          setWine(res.data);
-        })
-        .catch((error: any) => {
-          console.error("Error getting document:", error);
-        });
-      wineClient.winery
-        .getWineryByWineRefNumber(ref)
-        .then((result: any) => {
-          console.log("Winery Data", result);
-          setGeneralInfo(result.data.generalInfo as WineryGeneralInfo);
-        })
-        .catch((error: any) => {
-          console.error("Error getting document:", error);
-        });
+    if (params.ref) {
+      if (typeof window !== "undefined")
+        window.location.href = `${process.env.NEXT_PUBLIC_TRACECORK_REDIRECT}${params.ref}`;
     }
-  }, [ref, wineClient]);
+  }, [params.ref]);
 
   return (
     <>
       <Suspense>
-        {wine && generalInfo && (
+        <div className="flex items-center justify-center w-full h-screen">
+          <SpinnerLoader width="48px" height="48px" />
+        </div>
+        {/* {wine && generalInfo && (
           <WinePage
             generalInfo={generalInfo as WineryGeneralInfo}
             wine={wine as Wine}
           />
-        )}
+        )} */}
       </Suspense>
     </>
   );

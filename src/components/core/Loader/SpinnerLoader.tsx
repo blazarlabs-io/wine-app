@@ -12,7 +12,7 @@ export interface SpinnerLoaderProps {
 export const SpinnerLoader = ({
   width = "16px",
   height = "16px",
-  color = "#dddddd",
+  color = "#aaa",
 }: SpinnerLoaderProps) => {
   return (
     <Container intent="flexRowCenter" className="max-w-fit">
